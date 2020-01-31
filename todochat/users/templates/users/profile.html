@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% include "app_base.html" %}
+
+<main class="content content--profile">
+    <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    <h1 class="title--thin">{{ user.username }}</h1>
+    <span class="profile__description">Account created:</span>
+    <h3 class="profile__content">{{ user.date_joined|date:"d F Y"}}</h3>
+    <span class="profile__description">E-mail:</span>
+    <h3 class="profile__content">{{ user.email }}</h3>
+</main>
+{% endblock content %}

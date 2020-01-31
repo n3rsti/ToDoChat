@@ -1,0 +1,78 @@
+{% load static %}
+
+    <header class="header">
+        <h2 class="task__bar">Tasks: <span class="li__span">1</span></h2>
+        <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
+            aria-controls="side-nav" tabindex="0">
+            <hr class="button__hr">
+            <hr class="button__hr">
+            <hr class="button__hr">
+        </button>
+    </header>
+    <nav class="side__nav" name="side-nav">
+        <div class="hello__div">
+            <a href="{% url 'profile' %}">
+                <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
+            </a>
+            
+            <h2 class="hello">
+
+                {{ user.username }}
+            </h2>
+        </div>
+        <section class="nav__groups">
+            <ul class="groups__ul">
+                <li class="groups__li">Home <span class="li__span">8</span></li>
+                <li class="groups__li">Work <span class="li__span">2</span></li>
+                <li class="groups__li">Friends <span class="li__span">1</span></li>
+                <div class="add__li">
+                    <button class="create_server__button">
+                        Add server
+                        <span class="li__span li__plus">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                    </button>
+                </div>
+                
+            </ul>
+            <ul class="groups__ul">
+                {% for group in groups %}
+                <li class="groups__li">{{ group }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <div class="bottom__side">
+            <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout"
+                tabindex="-1">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+            <a href="{% url 'index' %}" class="bottom__button bottom__button-home"
+                tabindex="-1">
+                <i class="fas fa-home"></i>
+            </a>
+            <button class="bottom__button bottom__button-settings">
+                <i class="fas fa-cog"></i>
+            </button>
+
+
+
+        </div>
+
+    </nav>
+    
+    <div class="create_server_menu">
+        <button class="create__exit"><i class="fas fa-times"></i></button>
+        <form action="/create_server/" class="form" method="post">
+                {% csrf_token %}
+             <!--   <div class="form__div"> -->
+                    <label class="form__label" for="server_name">Server name:</label>
+                    <input type="text" name="server_name" id="server_name" class="form__input" autocomplete="off" required>
+                    <hr class="form__hr">
+          <!--    </div> -->  
+                <button class="form__button" name="server_submit" type="submit" value="create server">create server</button>
+    
+
+            </form>
+    </div>
+
+<script src="{% static 'js/app.js' %}"></script>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+{% endblock extra_head %}
+{% block content %}
+    {% include "app_base.html" %}
+    <main class="content">
+        <section class="section__news">
+            <h2 class="news__title">Latest news</h2>
+            <article class="news__content">
+                <div class="article__img">
+                    <img src="https://cdn.vox-cdn.com/thumbor/KeohNG2jPZnFhw70SNy3FvsDNJU=/0x0:2048x1410/1200x800/filters:focal(861x542:1187x868)/cdn.vox-cdn.com/uploads/chorus_image/image/63696407/facebook_website_redesign_1.9.jpg" alt="" class="img__content">
+                </div>
+                <h3 class="article__title">ToDoChat new feature coming soon!</h3>
+                <p class="article__description">ToDoChat announced new feature coming soon
+                    to their application: Live Chat! You can chat with co-workers and complete task
+                    in one app.
+                </p>
+                <a href="#" class="article__link">Read more</a>
+            </article>
+            <article class="news__content">
+                <div class="article__img">
+                    <img class="img__content" src="https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/wp-cms/uploads/2018/02/p-1-slack.jpg">
+                </div>
+                <h3 class="article__title">ToDoChat v1.2</h3>
+                <p class="article__description">ToDoChat announced new feature coming soon
+                    to their application: Live Chat! You can chat with co-workers and complete task
+                    in one app.
+                </p>
+                <a href="#" class="article__link">Read more</a>
+            </article>
+            
+
+        </section>
+    </main>
+
+
+
+
+   
+{% endblock content %}
