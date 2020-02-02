@@ -487,9 +487,8 @@ body {
     margin-bottom: 20px;
 }
 .content {
-    margin-top: 10vh;
     width: 100%;
-    min-height: 90vh;
+    min-height: calc(100vh - 65px - 10vh);
 }
 .content--profile {
     display: flex;
@@ -517,10 +516,10 @@ body {
 .anchor {
     -webkit-tap-highlight-color: transparent;
 }
-.profile__description, .profile__content {
+span.profile__description, .profile__content {
     margin-left: 20px;
 }
-.profile__description {
+span.profile__description {
     font-size: 13px;
     color: #464242;
 }
@@ -528,4 +527,52 @@ body {
     font-size: 16px;
     font-family: 'Blinker', sans-serif;
     margin: 5px 0 0 20px;
+}
+.edit__button {
+    background: var(--primary);
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 9999px;
+}
+.edit__button > .fas {
+    font-size: 20px;
+}
+.edit__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.edit__form > p > label {
+    display: block;
+}
+.edit__form > p > input {
+    display: block;
+}
+p.profile__description {
+    text-align: center;
+}
+.edit__textarea {
+    border: 1px solid var(--primary);
+    font-family: 'Montserrat', sans-serif;
+    width: 90%;
+    padding: 5px;
+}
+.alerts {
+    display: block;
+    background: var(--light);
+    height: 10%;
+    margin-top: 65px;
+}
+.alert {
+    color: #fff;
+    font-family: 'Blinker', sans-serif;
+    padding: 5px;
+    text-align: center;
+}
+.form__button--edit {
+    margin: 10px;
 }

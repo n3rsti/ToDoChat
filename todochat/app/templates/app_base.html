@@ -1,5 +1,4 @@
 {% load static %}
-
     <header class="header">
         <h2 class="task__bar">Tasks: <span class="li__span">1</span></h2>
         <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
@@ -9,6 +8,7 @@
             <hr class="button__hr">
         </button>
     </header>
+    
     <nav class="side__nav" name="side-nav">
         <div class="hello__div">
             <a href="{% url 'profile' %}">
@@ -74,5 +74,14 @@
 
             </form>
     </div>
+        
+        <div class="alerts">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    
 
 <script src="{% static 'js/app.js' %}"></script>
