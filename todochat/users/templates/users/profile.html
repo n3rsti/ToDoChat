@@ -6,6 +6,7 @@
 <main class="content content--profile">
     <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
     <h1 class="title--thin">{{ user.username }}</h1>
+    <script>console.log('{{ user.id }}')</script>
     {% if user.profile.description %}
     <p class="profile__description">{{ user.profile.description }}</p>
     {% endif %}

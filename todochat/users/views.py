@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import DetailView
+from .models import User, Profile
+from django.shortcuts import get_object_or_404
 
 def register(request):
     if request.method == "POST":
@@ -43,3 +47,16 @@ def profile_edit(request):
         'title': 'Edit profile'
     }
     return render(request, 'users/profile_edit.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class UserDetailView(DetailView):
+    model = User
+    context_object_name = "users"
+    slug_field = "username"
+    slug_url_kwarg = "username"
+    template_name = 'users/user_detail.html'
+
+    def get_object(self):
+        user_pk = get_object_or_404(User, username=self.kwargs.get("username"))
+        return user_pk

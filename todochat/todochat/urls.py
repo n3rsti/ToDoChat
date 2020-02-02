@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from app.views import main_view
-from users.views import register, profile, profile_edit
+from users.views import register, profile, profile_edit, UserDetailView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,7 +28,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
     path('register/', register, name="register"),
     path('profile/', profile, name="profile"),
-    path('profile/edit/', profile_edit, name="profile_edit")
+    path('profile/edit/', profile_edit, name="profile_edit"),
+    path('profile/<str:username>/', UserDetailView.as_view(), name='user_detail'),
 ]
 
 if settings.DEBUG:
