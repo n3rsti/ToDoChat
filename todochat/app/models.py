@@ -8,11 +8,11 @@ from django.urls import reverse
 class Server(models.Model):
     name = models.CharField(max_length=20, primary_key=True)
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        User, 
         on_delete=models.CASCADE,
     )
     users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, 
+        User, 
         default=owner, 
         related_name='server_users',
     )
@@ -22,8 +22,9 @@ class Server(models.Model):
         return f'{self.name} server'
     
     def save(self, *args, **kwargs):
+        
         super().save()
-
+        self.users.add(self.owner)
         img = Image.open(self.image.path)
 
         if img.height > 300 or img.width > 300:

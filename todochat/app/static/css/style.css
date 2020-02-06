@@ -296,6 +296,9 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
 }
 .groups__li:focus, .groups__li:hover {
     background: var(--dark);

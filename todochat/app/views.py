@@ -5,7 +5,11 @@ from .models import Server
 
 @login_required
 def main_view(request):
-    return render(request, 'index.html')
+    user = request.user
+    profile = user.profile
+    servers = Server.objects.filter(users=user)
+
+    return render(request, 'index.html', {'servers': servers})
 
 class CreateServerView(CreateView):
     template_name = 'create_server.html'
