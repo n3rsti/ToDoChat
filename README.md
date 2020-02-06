@@ -2,7 +2,10 @@
 ## Setup
 ### Setup virtual environment
 
-`virtualenv -p python3 venv/`
+```
+virtualenv -p python3 venv/
+source venv/bin/activate
+```
 
 ### Install packages
 
