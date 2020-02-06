@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% include "app_base.html" %}
+<main class="content content--profile">
+    <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    <form method="POST" enctype="multipart/form-data" class="login__form">
+        {% csrf_token %}
+        {{ form }}
+        <button class="form__button form__button--edit" name="login_button" type="submit">Create server</button>
+    </form>
+</main>
+{% endblock content %}
