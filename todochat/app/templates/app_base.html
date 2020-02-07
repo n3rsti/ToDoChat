@@ -23,7 +23,7 @@
         <section class="nav__groups">
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
-                <a href="{% url 'server_detail' server.name %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
+                <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
                 {% endfor %}
                 <div class="add__li">
                     <a href="{% url 'create_server' %}" class="create_server__button">

@@ -1,12 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
-from users.models import Profile
 from PIL import Image
-from django.conf import settings
 from django.urls import reverse
+from datetime import datetime
+import random
+
+def create_id(name):
+    name = str(name)
+    id = ''
+    now = datetime.now()
+    current_time = now.strftime("%S%d%m%y")
+    for letter in name:
+        id += str(ord(letter))
+    id = current_time + id[:6]
+    id += str(random.randint(1000, 9999))
+    id = id[::-1]
+    return id
 
 class Server(models.Model):
-    name = models.CharField(max_length=20, primary_key=True)
+    name = models.CharField(max_length=20)
+    id = models.CharField(primary_key=True, default=name, max_length=18)
     owner = models.ForeignKey(
         User, 
         on_delete=models.CASCADE,
@@ -22,7 +35,6 @@ class Server(models.Model):
         return f'{self.name} server'
     
     def save(self, *args, **kwargs):
-        
         super().save()
         self.users.add(self.owner)
         img = Image.open(self.image.path)
@@ -33,5 +45,4 @@ class Server(models.Model):
             img.save(self.image.path)
 
     def get_absolute_url(self):
-        return reverse('server_detail', kwargs={'pk': self.name})
-
+        return reverse('server_detail', kwargs={'pk': self.id})

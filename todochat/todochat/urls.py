@@ -1,5 +1,4 @@
 """todochat URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
@@ -31,7 +30,7 @@ urlpatterns = [
     path('profile/edit/', profile_edit, name="profile_edit"),
     path('profile/<str:username>/', UserDetailView.as_view(), name='user_detail'),
     path('server/new/', CreateServerView.as_view(), name="create_server"),
-    path('server/<pk>', DetailServerView.as_view(), name="server_detail")
+    path('server/<int:pk>/', DetailServerView.as_view(), name="server_detail")
 ]
 
 if settings.DEBUG:

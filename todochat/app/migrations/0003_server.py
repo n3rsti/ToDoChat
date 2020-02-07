@@ -18,7 +18,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Server',
             fields=[
-                ('name', models.CharField(max_length=20, primary_key=True, serialize=False)),
+                ('id', models.IntegerField(default=404, primary_key=True, serialize=False)),
+                ('name', models.CharField(max_length=20)),
                 ('image', models.ImageField(default='default.png', upload_to='server_pics')),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('users', models.ManyToManyField(default=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL), related_name='server_users', to=settings.AUTH_USER_MODEL)),
