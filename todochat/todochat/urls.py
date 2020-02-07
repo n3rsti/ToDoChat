@@ -1,5 +1,4 @@
 """todochat URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
@@ -16,7 +15,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from app.views import main_view
+from app.views import main_view, CreateServerView, DetailServerView
 from users.views import register, profile, profile_edit, UserDetailView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,6 +29,8 @@ urlpatterns = [
     path('profile/', profile, name="profile"),
     path('profile/edit/', profile_edit, name="profile_edit"),
     path('profile/<str:username>/', UserDetailView.as_view(), name='user_detail'),
+    path('server/new/', CreateServerView.as_view(), name="create_server"),
+    path('server/<int:pk>/', DetailServerView.as_view(), name="server_detail")
 ]
 
 if settings.DEBUG:

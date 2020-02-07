@@ -22,16 +22,16 @@
         </div>
         <section class="nav__groups">
             <ul class="groups__ul">
-                <li class="groups__li">Home <span class="li__span">8</span></li>
-                <li class="groups__li">Work <span class="li__span">2</span></li>
-                <li class="groups__li">Friends <span class="li__span">1</span></li>
+                {% for server in user.server_set.all %}
+                <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
+                {% endfor %}
                 <div class="add__li">
-                    <button class="create_server__button">
+                    <a href="{% url 'create_server' %}" class="create_server__button">
                         Add server
                         <span class="li__span li__plus">
                             <i class="fas fa-plus"></i>
                         </span>
-                    </button>
+                    </a>
                 </div>
                 
             </ul>
@@ -59,21 +59,6 @@
         </div>
 
     </nav>
-    
-    <div class="create_server_menu">
-        <button class="create__exit"><i class="fas fa-times"></i></button>
-        <form action="/create_server/" class="form" method="post">
-                {% csrf_token %}
-             <!--   <div class="form__div"> -->
-                    <label class="form__label" for="server_name">Server name:</label>
-                    <input type="text" name="server_name" id="server_name" class="form__input" autocomplete="off" required>
-                    <hr class="form__hr">
-          <!--    </div> -->  
-                <button class="form__button" name="server_submit" type="submit" value="create server">create server</button>
-    
-
-            </form>
-    </div>
         
         <div class="alerts">
             {% for message in messages %}

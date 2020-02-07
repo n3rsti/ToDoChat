@@ -1,7 +1,5 @@
 window.onload = function () {
     document.querySelector('.header__button').addEventListener("click", openNav);
-    document.querySelector('.create_server__button').addEventListener("click", createServerMenu)
-    document.querySelector('.create__exit').addEventListener("click", closeCreateMenu)
 }
 let opened = false
 function openNav() {
@@ -18,13 +16,4 @@ function openNav() {
         document.querySelector('.header__button').setAttribute('aria-expanded', 'false');
         opened = true
     }
-}
-function createServerMenu(){
-    openNav();
-    document.querySelector('.create_server_menu').classList.toggle('create_server_menu--open');
-    document.querySelector('.content').classList.toggle('section__news--blur');
-}
-function closeCreateMenu(){
-    document.querySelector('.create_server_menu').classList.toggle('create_server_menu--open');
-    document.querySelector('.content').classList.toggle('section__news--blur');
 }

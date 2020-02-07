@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "app_base.html" %}
+
+<main class="content content--profile">
+    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
+    <h1 class="title--thin">{{ object.name }}</h1>
+    {{ object.owner.name }}
+    {% for user in object.users.all %}
+    {{ user }}
+    {% endfor %}
+</main>
+{% endblock content %}
