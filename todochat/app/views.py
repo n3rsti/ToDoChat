@@ -20,9 +20,7 @@ def create_id(name):
 
 @login_required
 def main_view(request):
-    user = request.user
-    profile = user.profile
-    servers = Server.objects.filter(users=user)
+    return render(request, 'index.html')
 
 class CreateServerView(LoginRequiredMixin, CreateView):
     template_name = 'create_server.html'
