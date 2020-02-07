@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/n3rsti/ToDoChat.svg?branch=master)](https://travis-ci.com/n3rsti/ToDoChat)
 # ToDoChat
 ## Setup
 ### Setup virtual environment
