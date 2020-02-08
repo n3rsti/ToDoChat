@@ -1,13 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
-{% include "app_base.html" %}
+{% include "server_base.html" %}
 
 <main class="content content--profile">
+    <button  onClick="window.history.back();return false;" class="back__button">
+        <i class="fas fa-angle-left"></i>
+   </button>
     <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
     <h1 class="title--thin">{{ object.name }}</h1>
     {{ object.owner.name }}
+    <ul class="users__list">
     {% for user in object.users.all %}
-    {{ user }}
+    <li class="user__li">
+        <a href="{% url 'user_detail' user.username %}" class="users__anchor">
+            <img src="{{ user.profile.image.url }}" alt="" class="users__img"> {{ user.username }}
+        </a>
+    </li>
     {% endfor %}
+    </ul>
+    {% if user == object.owner %}
+    <a href="{% url 'server_update' server.id %}" class="edit__button">
+        <i class="fas fa-pen"></i>
+    </a>
+    {% endif %}
+    
 </main>
 {% endblock content %}

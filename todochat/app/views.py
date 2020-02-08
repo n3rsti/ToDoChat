@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server
 from datetime import datetime
@@ -43,5 +43,16 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         server = self.get_object()
         if self.request.user in server.users.all():
+            return True
+        return False
+
+class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    template_name = 'server_update.html'
+    model = Server
+    fields = ['name']
+
+    def test_func(self):
+        server = self.get_object()
+        if self.request.user == server.owner:
             return True
         return False

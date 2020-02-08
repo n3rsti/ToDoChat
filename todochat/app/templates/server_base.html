@@ -1,6 +1,9 @@
 {% load static %}
     <header class="header">
-        <h2 class="task__bar">Tasks: <span class="li__span">1</span></h2>
+        <a href="{% url 'server_detail' server.id %}" class="header__server-link">
+            <img src="{{ object.image.url }}" alt="" class="nav__server-logo">
+            <h1 class="task__bar">{{ object.name }}</h1>
+        </a>
         <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
             aria-controls="side-nav" tabindex="0">
             <hr class="button__hr">
@@ -21,25 +24,20 @@
             </h2>
         </div>
         <section class="nav__groups">
-            <h2 class="groups__h2">Groups</h2>
+            <h2 class="groups__h2">Channels</h2>
             <ul class="groups__ul">
-                {% for server in user.server_set.all %}
+                {% for channel in object.channel_set.all %}
                 <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
                 {% endfor %}
                 <div class="add__li">
-                    <a href="{% url 'create_server' %}" class="create_server__button">
-                        Add group
+                    <a href="" class="create_server__button">
+                        Add channel
                         <span class="li__span li__plus">
                             <i class="fas fa-plus"></i>
                         </span>
                     </a>
                 </div>
                 
-            </ul>
-            <ul class="groups__ul">
-                {% for group in groups %}
-                <li class="groups__li">{{ group }}</li>
-                {% endfor %}
             </ul>
         </section>
         <div class="bottom__side">

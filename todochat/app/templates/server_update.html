@@ -1,17 +1,20 @@
 {% extends "base.html" %}
-{% load static %}
 {% block content %}
-{% include "app_base.html" %}
+{% include "server_base.html" %}
+
 <main class="content content--profile">
+    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
+    <h1 class="title--thin">{{ object.name }}</h1>
+    {{ object.owner.name }}
     <button  onClick="window.history.back();return false;" class="back__button">
-        <i class="fas fa-angle-left"></i>
-   </button>
-    <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
-    <form method="POST" enctype="multipart/form-data" class="login__form">
+         <i class="fas fa-angle-left"></i>
+    </button>
+    <form method="POST" class="login__form">
         {% csrf_token %}
-        {{ u_form }}
-        {{ p_form }}
+        {{ form }}
         <button class="form__button form__button--edit" name="login_button" type="submit">Update</button>
     </form>
+   
+    
 </main>
 {% endblock content %}

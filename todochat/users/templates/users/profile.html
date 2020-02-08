@@ -4,9 +4,11 @@
 {% include "app_base.html" %}
 
 <main class="content content--profile">
+    <button  onClick="window.history.back();return false;" class="back__button">
+        <i class="fas fa-angle-left"></i>
+   </button>
     <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
     <h1 class="title--thin">{{ user.username }}</h1>
-    <script>console.log('{{ user.id }}')</script>
     {% if user.profile.description %}
     <p class="profile__description">{{ user.profile.description }}</p>
     {% endif %}
