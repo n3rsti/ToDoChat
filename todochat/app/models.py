@@ -2,20 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 from django.urls import reverse
-from datetime import datetime
-import random
 
-def create_id(name):
-    name = str(name)
-    id = ''
-    now = datetime.now()
-    current_time = now.strftime("%S%d%m%y")
-    for letter in name:
-        id += str(ord(letter))
-    id = current_time + id[:6]
-    id += str(random.randint(1000, 9999))
-    id = id[::-1]
-    return id
 
 class Server(models.Model):
     name = models.CharField(max_length=20)
@@ -46,8 +33,6 @@ class Server(models.Model):
 
     def get_absolute_url(self):
         return reverse('server_detail', kwargs={'pk': self.id})
-
-
 
 
 class Channel(models.Model):

@@ -1,3 +1,6 @@
+.idea/
+todochat/media/server_pics/*
+todochat/media/profile_pics/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

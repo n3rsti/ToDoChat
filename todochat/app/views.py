@@ -6,6 +6,7 @@ from .models import Server
 from datetime import datetime
 import random
 
+
 def create_id(name):
     name = str(name)
     id = ''
@@ -18,9 +19,11 @@ def create_id(name):
     id = id[::-1]
     return id
 
+
 @login_required
 def main_view(request):
     return render(request, 'index.html')
+
 
 class CreateServerView(LoginRequiredMixin, CreateView):
     template_name = 'create_server.html'
@@ -37,17 +40,17 @@ class CreateServerView(LoginRequiredMixin, CreateView):
         form.instance.id = create_id(form_name)
         return super().form_valid(form)
 
-    
-
 
 class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     template_name = 'server_detail.html'
     model = Server
+
     def test_func(self):
         server = self.get_object()
         if self.request.user in server.users.all():
             return True
         return False
+
 
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'

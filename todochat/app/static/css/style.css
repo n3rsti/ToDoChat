@@ -509,6 +509,7 @@ body {
 .profile__img {
     border-radius: 9999px;
     width: 130px;
+    height: 130px;
     margin-top: 20px;
     object-fit: cover;
     align-self: center;

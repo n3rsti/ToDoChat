@@ -4,8 +4,9 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
-from .models import User, Profile
+from .models import User
 from django.shortcuts import get_object_or_404
+
 
 def register(request):
     if request.method == "POST":
@@ -26,6 +27,7 @@ def profile(request):
     if request.user.is_authenticated:
         username = request.user.username
     return render(request, 'users/profile.html', {'title': username})
+
 
 @login_required
 def profile_edit(request):
