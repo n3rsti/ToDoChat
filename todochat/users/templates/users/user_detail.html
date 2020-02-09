@@ -7,7 +7,7 @@
     <button  onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
    </button>
-    <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img">
+    <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img {% if object.profile.is_online %}online{% else %}offline{% endif %}">
     <h1 class="title--thin">{{ object.username }}</h1>
     {% if object.profile.description %}
     <p class="profile__description">{{ object.profile.description }}</p>
