@@ -13,7 +13,7 @@
     {% for user in object.users.all %}
     <li class="user__li">
         <a href="{% url 'user_detail' user.username %}" class="users__anchor">
-            <img src="{{ user.profile.image.url }}" alt="" class="users__img"> {{ user.username }}
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="users__img"> {{ user.username }}
         </a>
     </li>
     {% endfor %}

@@ -668,3 +668,18 @@ p.profile__description {
     font-weight: 600;
     border-radius: 999px;
 }
+.flex {
+    display: flex;
+}
+.friends__ul .groups__li {
+    padding: 0;
+}
+.friends__ul .users__img {
+    margin-left: 15px;
+}
+img.offline {
+    border: 3px solid #95a5a6;
+}
+img.online {
+    border: 3px solid #2ecc71;
+}

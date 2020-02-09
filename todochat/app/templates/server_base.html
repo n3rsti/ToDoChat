@@ -1,7 +1,7 @@
 {% load static %}
     <header class="header">
         <a href="{% url 'server_detail' server.id %}" class="header__server-link">
-            <img src="{{ object.image.url }}" alt="" class="nav__server-logo">
+            <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="nav__server-logo">
             <h1 class="task__bar">{{ object.name }}</h1>
         </a>
         <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"

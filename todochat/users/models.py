@@ -1,11 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from django.core.cache import cache 
+import datetime
+from todochat import settings
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.png', upload_to='profile_pics')
     description = models.CharField(max_length=100, default='')
+    is_online = models.BooleanField(default=False)
     friends = models.ManyToManyField(User, related_name='friends')
 
     def __str__(self):

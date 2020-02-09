@@ -35,7 +35,16 @@
                 <a href="" class="load_more">Load more</a>
             {% endif %}
             {% if user.profile.friends.count > 0 %}
-            <h2 class="groups__h2 margin-top">Friends</h2>
+                <h2 class="groups__h2 margin-top">Friends</h2>
+                <ul class="groups__ul friends__ul">
+                    {% for friend in user.profile.friends.all %}
+                    <li class="flex">
+                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture" class="users__img {% if friend.profile.is_online %}online{% else %}offline{% endif %}">
+                        <a href="{% url 'user_detail' friend.username %}" class="groups__li">{{ friend.username }}</a>
+                    </li>
+                
+                    {% endfor %}
+                </ul>
             {% endif %}
             <div class="add__li">
                 <a href="{% url 'create_server' %}" class="create_server__button">
