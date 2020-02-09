@@ -48,6 +48,8 @@ class Server(models.Model):
         return reverse('server_detail', kwargs={'pk': self.id})
 
 
+
+
 class Channel(models.Model):
     server = models.ForeignKey(Server, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)

@@ -30,6 +30,10 @@ class CreateServerView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         form_name = form.cleaned_data.get('name')
+        form_id = create_id(form_name)
+        # Check if there is existing Server with created id
+        while len(Server.objects.filter(id=form_id)) > 0:
+            form_id = create_id(form_name)
         form.instance.id = create_id(form_name)
         return super().form_valid(form)
 
@@ -39,7 +43,6 @@ class CreateServerView(LoginRequiredMixin, CreateView):
 class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     template_name = 'server_detail.html'
     model = Server
-    
     def test_func(self):
         server = self.get_object()
         if self.request.user in server.users.all():

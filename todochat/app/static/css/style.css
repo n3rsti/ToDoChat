@@ -282,6 +282,8 @@ body {
 .nav__groups {
     width: 100%;
     margin-top: 5px;
+    display: flex;
+    flex-direction: column;
 }
 .groups__ul {
     color: #fff;
@@ -649,4 +651,20 @@ p.profile__description {
     padding: 0 0 4px 15px;
     margin: 2px 0 10px 0;
     border-bottom: 3px solid var(--dark);
+}
+.groups__h2.margin-top {
+    margin-top: 15px;
+}
+.load_more {
+    margin-top: 10px;
+    text-align: center;
+    width: 60%;
+    align-self: center;
+    padding: 3px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid #fff;
+    font-weight: 600;
+    border-radius: 999px;
 }

@@ -1,3 +1,4 @@
+{% load templatetags %}
 {% load static %}
     <header class="header">
         <h2 class="task__bar">Tasks: <span class="li__span">1</span></h2>
@@ -23,19 +24,27 @@
         <section class="nav__groups">
             <h2 class="groups__h2">Groups</h2>
             <ul class="groups__ul">
-                {% for server in user.server_set.all %}
-                <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
+                {% for server in user.server_set.all|get_first_num:5 %}
+                <li>
+                    <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
+                </li>
                 {% endfor %}
-                <div class="add__li">
-                    <a href="{% url 'create_server' %}" class="create_server__button">
-                        Add group
-                        <span class="li__span li__plus">
-                            <i class="fas fa-plus"></i>
-                        </span>
-                    </a>
-                </div>
                 
             </ul>
+            {% if user.server_set.all.count > 4 %}
+                <a href="" class="load_more">Load more</a>
+            {% endif %}
+            {% if user.profile.friends.count > 0 %}
+            <h2 class="groups__h2 margin-top">Friends</h2>
+            {% endif %}
+            <div class="add__li">
+                <a href="{% url 'create_server' %}" class="create_server__button">
+                    Add group
+                    <span class="li__span li__plus">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                </a>
+            </div>
             <ul class="groups__ul">
                 {% for group in groups %}
                 <li class="groups__li">{{ group }}</li>
