@@ -24,7 +24,7 @@
         <section class="nav__groups">
             <h2 class="groups__h2">Groups</h2>
             <ul class="groups__ul">
-                {% for server in user.server_set.all|get_first_num:5 %}
+                {% for server in user.server_users.all|get_first_num:5 %}
                 <li>
                     <a href="{% url 'server_detail' server.id %}" class="groups__li">{{ server.name }}<span class="li__span">8</span></a>
                 </li>
