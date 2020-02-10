@@ -55,7 +55,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'
     model = Server
-    fields = ['name']
+    fields = ['name', 'image']
 
     def test_func(self):
         server = self.get_object()

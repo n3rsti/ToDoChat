@@ -9,7 +9,7 @@
     <button  onClick="window.history.back();return false;" class="back__button">
          <i class="fas fa-angle-left"></i>
     </button>
-    <form method="POST" class="login__form">
+    <form method="POST" class="login__form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button class="form__button form__button--edit" name="login_button" type="submit">Update</button>
