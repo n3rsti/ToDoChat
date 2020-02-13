@@ -31,7 +31,7 @@ urlpatterns = [
     path('profile/<str:username>/', UserDetailView.as_view(), name='user_detail'),
     path('server/new/', CreateServerView.as_view(), name="create_server"),
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
-    path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update")
+    path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
 ]
 
 if settings.DEBUG:

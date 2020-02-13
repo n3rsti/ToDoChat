@@ -8,7 +8,7 @@ class Profile(models.Model):
     image = models.ImageField(default='default.png', upload_to='profile_pics')
     description = models.CharField(max_length=100, default='')
     is_online = models.BooleanField(default=False)
-    friends = models.ManyToManyField(User, related_name='friends')
+    friends = models.ManyToManyField(User, related_name='friends_set')
 
     def __str__(self):
         return f'{self.user.username} Profile'

@@ -10,11 +10,11 @@ class Server(models.Model):
     owner = models.ForeignKey(
         User, 
         on_delete=models.CASCADE,
+        related_name='ownership_servers',
     )
     users = models.ManyToManyField(
         User, 
-        default=owner, 
-        related_name='server_users',
+        default=owner,  
     )
     image = models.ImageField(default='default.png', upload_to='server_pics')
 
