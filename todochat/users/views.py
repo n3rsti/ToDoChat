@@ -4,7 +4,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
-from .models import User
+from .models import User, UserInvitation
 from django.shortcuts import get_object_or_404
 
 
@@ -62,3 +62,13 @@ class UserDetailView(DetailView):
     def get_object(self):
         user_pk = get_object_or_404(User, username=self.kwargs.get("username"))
         return user_pk
+
+
+def invite_friend(request, username):
+    invited_user = User.objects.filter(username=username).first()
+    user = User.objects.filter(username=request.user.username).first()
+    if not invited_user == None:
+        invitation = UserInvitation(inviting=user, invited=invited_user)
+        invitation.save()
+        messages.success(request, 'User invited!')
+    return redirect('user_detail', username)

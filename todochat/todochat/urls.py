@@ -16,7 +16,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView
-from users.views import register, profile, profile_edit, UserDetailView
+from users.views import register, profile, profile_edit, UserDetailView, invite_friend
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('server/new/', CreateServerView.as_view(), name="create_server"),
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
+    path('profile/<str:username>/invite', invite_friend, name='user_invite'),
 ]
 
 if settings.DEBUG:

@@ -25,7 +25,6 @@ def main_view(request):
     return render(request, 'index.html')
 
 
-
 class CreateServerView(LoginRequiredMixin, CreateView):
     template_name = 'create_server.html'
     model = Server

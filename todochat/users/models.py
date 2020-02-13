@@ -22,3 +22,9 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
+class UserInvitation(models.Model):
+    inviting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inviting_set')
+    invited = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invited_user')
+    
