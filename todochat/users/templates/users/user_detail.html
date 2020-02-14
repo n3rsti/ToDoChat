@@ -9,7 +9,25 @@
    </button>
     <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img {% if object.profile.is_online %}online{% else %}offline{% endif %}">
     {% if not object == user %}
-    <a href="{% url 'user_invite' object.username %}" class="invite__button"> <i class="fas fa-user-plus"></i>Add</a>
+    {% if object in user.profile.friends.all %}
+    <div class="friend__info">
+        <button class="invite__button friends"><i class="fas fa-check"></i>Friends <i class="fas fa-angle-down"></i></button>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="removed" value="{{ object.username }}">
+            <button type="submit" name="button" value="remove" class="invite__button remove">Remove friend</button>
+        </form>
+        
+    </div>
+    
+
+    {% else %}
+    <form method="POST" class="user_detail_form">
+        {% csrf_token %}
+        <input type="hidden" name="invited" value="{{ object.username }}">
+        <button class="invite__button" name="button" value="invite"> <i class="fas fa-user-plus"></i>Add</button>
+    </form>
+    {% endif %}
     {% endif %}
     <h1 class="title--thin">{{ object.username }}</h1>
     {% if object.profile.description %}

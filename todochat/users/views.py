@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from .models import User, UserInvitation
 from django.shortcuts import get_object_or_404
 
@@ -51,24 +51,54 @@ def profile_edit(request):
     return render(request, 'users/profile_edit.html', context)
 
 
-@method_decorator(login_required, name='dispatch')
-class UserDetailView(DetailView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     context_object_name = "users"
     slug_field = "username"
     slug_url_kwarg = "username"
     template_name = 'users/user_detail.html'
 
+    def post(self, request, username):
+        if request.POST.get('button') == 'remove':
+            user = self.request.user
+            removed = User.objects.filter(username=self.request.POST.get('removed')).first()
+            user.profile.friends.remove(removed)
+            removed.profile.friends.remove(user)
+            return redirect('user_detail', request.POST.get('removed'))
+        else:
+            invited_user = User.objects.filter(username=request.POST.get('invited')).first()
+            user = request.user
+            if not invited_user == None:
+                invitation = UserInvitation(inviting=user, invited=invited_user)
+                invitation.save()
+                messages.success(request, 'User invited!')
+            return redirect('user_detail', invited_user.username)
+
     def get_object(self):
         user_pk = get_object_or_404(User, username=self.kwargs.get("username"))
         return user_pk
 
 
-def invite_friend(request, username):
-    invited_user = User.objects.filter(username=username).first()
-    user = User.objects.filter(username=request.user.username).first()
-    if not invited_user == None:
-        invitation = UserInvitation(inviting=user, invited=invited_user)
-        invitation.save()
-        messages.success(request, 'User invited!')
-    return redirect('user_detail', username)
+class UserInvitations(LoginRequiredMixin, ListView):
+    model = UserInvitation
+    template_name = 'users/user_invitations.html'
+
+    def post(self, request):
+        user = request.user
+        inviting = User.objects.filter(username=request.POST.get('inviting')).first()
+        invitation = UserInvitation.objects.filter(inviting=inviting, invited=user).first()
+        print(invitation)
+        if request.POST.get('button') == 'accept':
+            print("Accepted")
+            user.profile.friends.add(inviting)
+            inviting.profile.friends.add(user)
+            invitation.delete()
+            messages.success(request, 'Added friend!')
+            return redirect('user_detail', request.POST.get('inviting'))
+        else:
+            print("Rejected")
+            invitation.delete()
+            return redirect('user_invitations')
+
+    def get_queryset(self):
+        return UserInvitation.objects.filter(invited=self.request.user)

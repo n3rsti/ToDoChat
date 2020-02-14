@@ -1,5 +1,11 @@
 window.onload = function () {
     document.querySelector('.header__button').addEventListener("click", openNav);
+    if(document.querySelector('.invite__button.friends')){
+        document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
+    }
+}
+function openFriendInfo(){
+    document.querySelector('.invite__button.remove').classList.toggle('button--opened')
 }
 let opened = false
 function openNav() {

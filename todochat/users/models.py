@@ -27,4 +27,3 @@ class Profile(models.Model):
 class UserInvitation(models.Model):
     inviting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inviting_set')
     invited = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invited_user')
-    

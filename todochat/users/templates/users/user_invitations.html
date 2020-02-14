@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% include "app_base.html" %}
+
+<main class="content content--profile">
+    <button  onClick="window.history.back();return false;" class="back__button">
+        <i class="fas fa-angle-left"></i>
+   </button>
+   {% if object_list.count == 0 %}
+   <h2 class="title--thin">No invitations.</h2>
+   {% endif %}
+    {% for invitation in object_list %}
+    <article class="invitation">
+        <a href="{% url 'user_detail' invitation.inviting.username %}" class="invitation__top">
+                <img src="{{ invitation.inviting.profile.image.url }}" alt="" class="profile__photo">
+                <h2 class="invitation__inviting">{{ invitation.inviting }}</h2>
+        </a>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="inviting" value="{{ invitation.inviting.username }}">
+            <input type="hidden" name="invited" value="{{ invitation.invited.username }}">
+            <button name="button" type="submit" value="accept" class="invitation__button accept"><i class="fas fa-check"></i>Accept</button><button type="submit" name="button" value="reject" class="invitation__button reject">Reject</button>
+        </form>
+    </article>
+    {% endfor %}
+    {{ object }}
+</main>
+{% endblock content %}

@@ -499,7 +499,7 @@ body {
 }
 .content {
     width: 100%;
-    min-height: calc(100vh - 65px);
+    min-height: calc(100vh - 65px - 40px);
 }
 .content--profile {
     display: flex;
@@ -692,7 +692,6 @@ img.online {
     border: 3px solid #2ecc71;
 }
 .invite__button {
-    width: 120px;
     font-size: 16px;
     display: flex;
     align-self: center;
@@ -706,7 +705,72 @@ img.online {
     padding: 12px;
     margin: 20px 0 10px 0;
     text-decoration: none;
+    min-width: 150px;
 }
-.invite__button .fas {
+.invite__button.friends {
+    background: #dddddd;
+    color: #262629;
+    margin-bottom: 0;
+    
+}
+.invite__button.remove {
+    display: none;
+}
+.invite__button.button--opened {
+    display: block;
+}
+.invite__button .fa-check {
     margin-right: 13px;
+}
+.invite__button .fa-angle-down {
+    margin-left: 13px;
+}
+a.groups__h2 {
+    font-weight: 700;
+    text-decoration: none;
+}
+.invitation {
+    align-self: center;
+    width: 250px;
+    padding: 10px;
+}
+.invitation__inviting {
+    color: #262629;
+    font-size: 18px;
+    margin-left: 10px;
+}
+.invitation__top {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.invitation__button {
+    width: 50%;
+    padding: 10px;
+    outline: none;
+    border: 0;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+.invitation__button.accept {
+    background: var(--primary);
+}
+.invitation__button.reject {
+    color: #262629;
+}
+.invitation__button .fas {
+    margin-right: 6px;
+}
+.invite__button.remove {
+    margin-top: 0;
+    position: absolute;
+}
+.friend__info {
+    position: relative;
+    align-self: center;
+}
+.user_detail_form {
+    align-self: center;
 }
