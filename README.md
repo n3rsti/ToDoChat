@@ -24,8 +24,23 @@ user = user
 password = mysql_password
 default-character-set = utf8
 ```
+### Frontend
+
+`npm install sass`
+
+`sass --watch todochat/app/static/scss:css`
 
 ### Migrate and start server
 
 `python3 manage.py migrate`
+
 `python3 manage.py runserver`
+
+## Troubleshooting
+### Error: EACCES: permission denied, access '/usr/local/lib' (npm install sass error)**
+
+`sudo npm install sass`
+
+### Problems installing mysqclient
+
+`sudo apt-get install libssl-dev`
