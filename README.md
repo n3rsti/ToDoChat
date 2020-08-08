@@ -43,4 +43,4 @@ default-character-set = utf8
 
 ### Problems installing mysqclient
 
-`sudo apt-get install libssl-dev`
+`sudo apt-get install libmysqlclient-dev`
