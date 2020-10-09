@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'app.apps.AppConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'channels',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -71,7 +73,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'todochat.wsgi.application'
-
+ASGI_APPLICATION = "todochat.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -80,7 +90,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
+            'read_default_file': '/etc/mysql/my2.cnf',
         },
     }
 }

@@ -31,6 +31,7 @@ urlpatterns = [
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
     path('profile/', include('users.urls')),
+    path('chat/', include('chat.urls'))
     
 ]
 
