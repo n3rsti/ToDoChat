@@ -893,5 +893,34 @@ a.groups__h2 {
 .user_detail_form {
   align-self: center;
 }
-
+.channelcreation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 140px;
+  background: #0166ab;
+  z-index: 1;
+  border-radius: 5px;
+}
+.channelcreation-form__input {
+  color: var(--primary);
+  background-color: #fff;
+  font-size: 15px;
+  width: 70%;
+  max-width: 300px;
+  height: 40px;
+}
+.channelcreation-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.channel-creation-form__label {
+  width: 70%;
+  max-width: 300px;
+  color: #fff;
+}
 /*# sourceMappingURL=style.css.map */

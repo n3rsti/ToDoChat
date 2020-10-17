@@ -19,6 +19,7 @@ from app.views import main_view, CreateServerView, DetailServerView, UpdateServe
 from users.views import register, profile, profile_edit, UserDetailView, UserInvitations
 from django.conf import settings
 from django.conf.urls.static import static
+from chat.views import ChannelDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,10 +29,11 @@ urlpatterns = [
     path('register/', register, name="register"),
     path('server/new/', CreateServerView.as_view(), name="create_server"),
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
+    path('server/<int:pk>', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
     path('profile/', include('users.urls')),
-    path('chat/', include('chat.urls'))
+    path('server/<int:pk>/channel/<str:room_name>/', ChannelDetailView.as_view(), name='room'),
     
 ]
 

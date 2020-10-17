@@ -5,9 +5,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server
 from datetime import datetime
 import random
+from chat.models import Channel
+from django.http import HttpResponse
 
-
-def create_id(name):
+def create_id(name, max):
     name = str(name)
     id = ''
     now = datetime.now()
@@ -15,7 +16,7 @@ def create_id(name):
     for letter in name:
         id += str(ord(letter))
     id = current_time + id[:6]
-    id += str(random.randint(1000, 9999))
+    id += str(random.randint(1000, max))
     id = id[::-1]
     return id
 
@@ -33,11 +34,11 @@ class CreateServerView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         form_name = form.cleaned_data.get('name')
-        form_id = create_id(form_name)
+        form_id = create_id(form_name, 9999)
         # Check if there is existing Server with created id
         while len(Server.objects.filter(id=form_id)) > 0:
-            form_id = create_id(form_name)
-        form.instance.id = create_id(form_name)
+            form_id = create_id(form_name, 9999)
+        form.instance.id = create_id(form_name, 9999)
         return super().form_valid(form)
 
 
@@ -50,7 +51,15 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if self.request.user in server.users.all():
             return True
         return False
-
+    
+    def post(self, request, pk):
+        name = request.POST.get("name", "")
+        server = Server.objects.get(id=pk)
+        if not server is None:
+            channel = Channel(name=name, server=server)
+            channel.save()
+        return redirect("server_detail", pk)
+    
 
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'

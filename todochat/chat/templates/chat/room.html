@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <title>Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 </head>
 <body>
     <ul class="chat-log"></ul>
@@ -15,11 +16,12 @@
         if(window.location.protocol == 'https:'){
             wsStart = 'wss://'
         }
-        const chatSocket = new WebSocket(
+        const chatSocket = new ReconnectingWebSocket(
             wsStart
             + window.location.host
-            + '/ws/chat/'
-            + roomName
+            + '/ws/server/'
+            + '{{ object.server.id }}' + '/channel/'
+            + '{{ object.name }}'
             + '/'
         );
 
