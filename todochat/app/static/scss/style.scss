@@ -389,6 +389,7 @@ body {
     color: white;
     height: 40px;
     text-decoration: none;
+    background: var(--primary);
 }
 .create_server_menu {
     position: fixed;
@@ -772,15 +773,20 @@ a.groups__h2 {
     align-self: center;
 }
 .channelcreation {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0);
     width: 250px;
     height: 140px;
     background: #0166ab;
     z-index: 1;
     border-radius: 5px;
+    transition: transform .3s;
+
+    &.opened {
+        transform: translate(-50%, -50%) scale(1);
+    }
   }
   .channelcreation-form__input {
     color: var(--primary);
@@ -801,3 +807,76 @@ a.groups__h2 {
     max-width: 300px;
     color: #fff;
   }
+main.chat {
+    width: 100%;
+    height: 100vh;
+}
+.chat__form {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+}
+.chat-message-submit {
+    width: 20%;
+    background: var(--primary);
+    outline: none;
+    color: #fff;
+    border: 0;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+.chat-message-input {
+    width: 80%;
+    border: 1px solid var(--primary);
+    outline: none;
+    padding: 3px;
+
+    &:focus {
+        border: 3px solid var(--primary);
+    }
+}
+.chat-log {
+    margin-bottom: 50px;
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.chat-log__li {
+    width: 70%;
+    margin: 4px;
+    margin-left: 0;
+    color: #fff;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+
+    &.author {
+        align-self: flex-end;
+        flex-direction: row;
+    }
+}
+.chat-log__message {
+    background: gray;
+    padding: 10px;
+    width: 80%;
+    white-space: initial;
+    overflow-wrap: break-word;
+    margin: 0;
+    border-radius: 5px;
+
+    &.author {
+        background: var(--primary);
+    }
+}
+.chat-log__image {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+    margin: 5px;
+}

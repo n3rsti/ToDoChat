@@ -1,16 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
-</head>
-<body>
-    <ul class="chat-log"></ul>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
+{% extends "base.html" %}
+    {% block title %}<title>ToDoChat - {{ object.name }}</title>{% endblock title %}
+    {% block extra_head %}<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>{% endblock extra_head %}
+    {% block content %}
+    {% include "server_base.html" %}
+    <main class="chat content">
+        <ul class="chat-log">
+        {% for message in chat_messages %}
+        <li class="chat-log__li {% if message.author.username == user.username %}author{% endif %}">
+            <p class="chat-log__message {% if message.author.username == user.username %}author{% endif %}">{{ message.content }}</p>
+            <a href="{% url 'user_detail' message.author.username %}">
+                <img src="{{ message.author.profile.image.url }}" alt="" class="chat-log__image">
+            </a>
+            
+        </li>
+        {% endfor %}
+        </ul>
+        <form action="" method="post" class="chat__form">
+            {% csrf_token %}
+            <input type="hidden" name="author" value="{{ user.username }}">
+            <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" class="chat-message-input"><br>
+            <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit">Send</button>
+        </form>
+    </main>
+    
     {{ room_name|json_script:"room-name" }}
     <script>
+        function scrollBottom(){
+            let max_height = Math.max( document.body.scrollHeight, document.body.offsetHeight, 
+                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );
+            window.scrollBy(0, max_height);
+        }
+        scrollBottom();
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
         let wsStart = 'ws://'
         if(window.location.protocol == 'https:'){
@@ -27,9 +47,24 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data); // data.message
-            let list = document.createElement("li")
-            list.innerText = data.message
-            document.querySelector('.chat-log').appendChild(list)
+            let list = document.createElement("li");
+            let list_p = document.createElement("p");
+            let img = document.createElement("img");
+            img.src = data.image;
+            img.alt = `${data.author} profile image`;
+            img.classList.add('chat-log__image');
+            list.classList.add('chat-log__li');
+            list_p.classList.add('chat-log__message');
+            let me = '{{ user.username }}';
+            if(me == data.author){
+                list_p.classList.add('author');
+                list.classList.add('author');
+            }
+            list_p.innerText = data.message;
+            document.querySelector('.chat-log').appendChild(list);
+            list.appendChild(list_p);
+            list.appendChild(img);
+            scrollBottom();
         };
 
         chatSocket.onclose = function(e) {
@@ -37,20 +72,18 @@
         };
 
         document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
 
         document.querySelector('#chat-message-submit').onclick = function(e) {
+            e.preventDefault()
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': message,
+                'author': '{{ user }}',
+                'image': '{{ user.profile.image.url }}'
             }));
             messageInputDom.value = '';
+            scrollBottom();
         };
     </script>
-</body>
-</html>
+{% endblock content %}

@@ -60,6 +60,12 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             channel.save()
         return redirect("server_detail", pk)
     
+    def get_context_data(self, **kwargs):
+        server = Server.objects.get(id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
+        context['server'] = server
+        return context
+    
 
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'
@@ -71,3 +77,9 @@ class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == server.owner:
             return True
         return False
+    
+    def get_context_data(self, **kwargs):
+        server = Server.objects.get(id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
+        context['server'] = server
+        return context
