@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load url_target_blank %}
+
     {% block title %}<title>ToDoChat - {{ object.name }}</title>{% endblock title %}
     {% block extra_head %}<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>{% endblock extra_head %}
     {% block content %}
@@ -7,9 +9,9 @@
         <ul class="chat-log">
         {% for message in chat_messages %}
         <li class="chat-log__li {% if message.author.username == user.username %}author{% endif %}">
-            <p class="chat-log__message {% if message.author.username == user.username %}author{% endif %}">{{ message.content }}</p>
+            <p class="chat-log__message {% if message.author.username == user.username %}author{% endif %}">{{ message.content|urlize|url_target_blank }}</p>
             <a href="{% url 'user_detail' message.author.username %}">
-                <img src="{{ message.author.profile.image.url }}" alt="" class="chat-log__image">
+                <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image" class="chat-log__image">
             </a>
             
         </li>
@@ -18,19 +20,34 @@
         <form action="" method="post" class="chat__form">
             {% csrf_token %}
             <input type="hidden" name="author" value="{{ user.username }}">
-            <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" class="chat-message-input"><br>
+            <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" minlength="1" class="chat-message-input"><br>
             <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit">Send</button>
         </form>
     </main>
     
     {{ room_name|json_script:"room-name" }}
     <script>
+        const chatInput = document.querySelector(".chat-message-input");
+        chatInput.addEventListener('input', () => {
+            let button = document.querySelector(".chat-message-submit")
+            if(chatInput.value.length > 0){
+                button.classList.add("sendable");
+            } else {
+                button.classList.remove("sendable");
+            }
+        });
         function scrollBottom(){
             let max_height = Math.max( document.body.scrollHeight, document.body.offsetHeight, 
                    document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );
             window.scrollBy(0, max_height);
         }
         scrollBottom();
+        function urlify(text){
+            let urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+            return text.replace(urlRegex, function(url){
+                return '<a "target="_blank" href="' + url + '" rel="nofollow" >' + url + '</a>';
+            })
+        }
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
         let wsStart = 'ws://'
         if(window.location.protocol == 'https:'){
@@ -60,7 +77,7 @@
                 list_p.classList.add('author');
                 list.classList.add('author');
             }
-            list_p.innerText = data.message;
+            list_p.innerHTML = urlify(data.message);
             document.querySelector('.chat-log').appendChild(list);
             list.appendChild(list_p);
             list.appendChild(img);
@@ -77,11 +94,13 @@
             e.preventDefault()
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'author': '{{ user }}',
-                'image': '{{ user.profile.image.url }}'
-            }));
+            if(message.length !== 0){
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'author': '{{ user }}',
+                    'image': '{{ user.profile.image.url }}'
+                }));
+            }
             messageInputDom.value = '';
             scrollBottom();
         };
