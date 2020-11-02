@@ -45,7 +45,7 @@ default-character-set = utf8
 
 `sudo apt-get install libmysqlclient-dev`
 
-### Technologies used
+## Technologies used
 * Django
 * WebSockets (django-channels + redis)
 * MySQL
