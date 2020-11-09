@@ -15,14 +15,14 @@
     <ul class="users__list">
     {% for user in object.users.all %}
     <li class="user__li">
-        <a href="{% url 'user_detail' user.username %}" class="users__anchor">
+        <a href="{% url 'user_detail' user.username %}" class="users__link" title="{{user.username}} profile">
             <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="users__img"> {{ user.username }}
         </a>
     </li>
     {% endfor %}
     </ul>
     {% if user == object.owner %}
-    <a href="{% url 'server_update' server.id %}" class="edit__button">
+    <a href="{% url 'server_update' server.id %}" class="edit__button" title="Update server">
         <i class="fas fa-pen"></i>
     </a>
     {% endif %}

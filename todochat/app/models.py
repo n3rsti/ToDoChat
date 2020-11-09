@@ -23,6 +23,8 @@ class Server(models.Model):
     
     def save(self, *args, **kwargs):
         super().save()
+        if self.channel_set.count() == 0:
+            Channel.objects.create(server=self, name="main")
         self.users.add(self.owner)
         img = Image.open(self.image.path)
 

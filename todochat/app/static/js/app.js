@@ -17,6 +17,7 @@ function openNav() {
     document.querySelector('.content').classList.toggle('content--open');
     document.querySelector('.header').classList.toggle('header--dark');
     document.querySelector('.side__nav').classList.toggle('side__nav--open');
+    document.querySelector('.header__button').classList.toggle('header__button--open');
     if (opened === false) {
         document.querySelector('.header__button').setAttribute('aria-label', 'Close navigation');
         document.querySelector('.header__button').setAttribute('aria-expanded', 'true');

@@ -38,7 +38,7 @@
     <span class="profile__description">E-mail:</span>
     <h3 class="profile__content">{{ object.email }}</h3>
     {% if object == user %}
-    <a href="{% url 'profile_edit' %}" class="edit__button">
+    <a href="{% url 'profile_edit' %}" class="edit__button" title="Edit profile">
         <i class="fas fa-pen"></i>
     </a>
     {% endif %}

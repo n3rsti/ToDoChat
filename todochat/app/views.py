@@ -64,6 +64,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['server'] = server
+        context['heading'] = server.name #h1 in server_base.html
         return context
     
 

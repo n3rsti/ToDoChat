@@ -6,8 +6,8 @@
     <img src="{% static 'img/logo.png' %}" alt="Todochat logo" class="logo--big">
     <h1 class="title--thin">Logged out!</h1>
     <nav class="logout__nav">
-        <p class="logout__paragraph"><a href="{% url 'login' %}" class="logout__link">Log in</a> to existing account</p>
-        <p class="logout__paragraph"><a href="{% url 'register' %}" class="logout__link">Register</a> a new account.</p>
+        <p class="logout__paragraph"><a href="{% url 'login' %}" class="logout__link" title="Login">Log in</a> to existing account</p>
+        <p class="logout__paragraph"><a href="{% url 'register' %}" class="logout__link" title="Register">Register</a> a new account.</p>
     </nav>
     
 </main>

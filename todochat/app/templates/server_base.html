@@ -1,9 +1,17 @@
 {% load static %}
     <header class="header">
-        <a href="{% url 'server_detail' server.id %}" class="header__server-link">
+        <a href="{% url 'server_detail' server.id %}" class="header__server-link" title="{{server.name}} groupdetails">
+            {% if server.image == 'default.png' %}
+            <div class="nav__server-logo">{{ server.name.0 }}</div>
+            {% else %}
             <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="nav__server-logo">
-            <h1 class="task__bar">{{ server.name }}</h1>
+            {% endif %}
         </a>
+        {% if heading == server.name %}
+        <h1 class="task__bar">{{ heading }}</h1>
+        {% else %}
+        <h1 class="task__bar">#{{ heading }}</h1>
+        {% endif %}
         <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
             aria-controls="side-nav" tabindex="0">
             <hr class="button__hr">
@@ -14,7 +22,7 @@
     
     <nav class="side__nav" name="side-nav">
         <div class="hello__div">
-            <a href="{% url 'profile' %}">
+            <a href="{% url 'profile' %}" title="Profile">
                 <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
             </a>
             
@@ -24,10 +32,20 @@
             </h2>
         </div>
         <section class="nav__groups">
-            <h2 class="groups__h2">Channels</h2>
+            <h2 class="groups__h2">Server</h2>
+            <section class="groups__li groups__li--server">
+                
+            {% if server.image == 'default.png' %}
+                    <div class="groups__img">{{ server.name.0 }}</div>
+                    {% else %}
+                    <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
+                    {% endif %}
+                    <a href="{% url 'server_detail' server.id %}" class="groups__li" title="{{server.name}} group">{{ server.name }}</a>
+            </section>
+            <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
             <ul class="groups__ul">
                 {% for channel in server.channel_set.all %}
-                <a href="{% url 'room' server.id channel.name %}" class="groups__li">{{ channel.name }}<span class="li__span">8</span></a>
+                <a href="{% url 'room' server.id channel.name %}" class="groups__li" title="{{channel.name}} channel">#{{ channel.name }}</a>
                 {% endfor %}
                 <div class="add__li">
                     <button class="create_server__button" aria-label="Open channel creation" aria-expanded="false">
@@ -42,16 +60,16 @@
         </section>
         <div class="bottom__side">
             <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout"
-                tabindex="-1">
+                tabindex="-1" title="Logout">
                 <i class="fas fa-sign-out-alt"></i>
             </a>
             <a href="{% url 'index' %}" class="bottom__button bottom__button-home"
-                tabindex="-1">
+                tabindex="-1" title="Home">
                 <i class="fas fa-home"></i>
             </a>
-            <button class="bottom__button bottom__button-settings">
+            <a class="bottom__button bottom__button-settings" href="{% url 'profile_edit' %}" title="Settings">
                 <i class="fas fa-cog"></i>
-            </button>
+            </a>
 
 
 

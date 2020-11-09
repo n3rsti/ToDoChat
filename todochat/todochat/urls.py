@@ -33,7 +33,7 @@ urlpatterns = [
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
     path('profile/', include('users.urls')),
-    path('server/<int:pk>/channel/<str:room_name>/', ChannelDetailView.as_view(), name='room'),
+    path('server/<int:pk>/<str:room_name>/', ChannelDetailView.as_view(), name='room'),
     
 ]
 

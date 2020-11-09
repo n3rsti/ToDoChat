@@ -9,4 +9,6 @@ def get_first_num(value, arg):
     return value[:arg]
 
 
-    
+@register.filter
+def shorter_name(value, length):
+    return f'{value[:length]}...' if len(value) > length else value

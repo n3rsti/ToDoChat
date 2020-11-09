@@ -8,16 +8,22 @@
     <main class="chat content">
         <ul class="chat-log">
         {% for message in chat_messages %}
-        <li class="chat-log__li {% if message.author.username == user.username %}author{% endif %}">
-            <p class="chat-log__message {% if message.author.username == user.username %}author{% endif %}">{{ message.content|urlize|url_target_blank }}</p>
-            <a href="{% url 'user_detail' message.author.username %}">
+        <li class="chat-log__li {% if object.id|author_filter:forloop.counter is False %}margin-top{% endif %} {% if message.author == request.user %}author{% endif %}">
+            {% if object.id|author_filter:forloop.counter is False %}
+            <a href="{% url 'user_detail' message.author.username %}" class="chat-log__link" title="{{message.author.username}} profile">
                 <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image" class="chat-log__image">
             </a>
-            
+            <div class="chat__msg-content">
+                <a href="{% url 'user_detail' message.author.username %}" class="chat__msg-author">{{ message.author }}</a>
+                <p class="chat-log__message">{{ message.content|urlize|url_target_blank }}</p>
+            </div>
+            {% else %}
+            <p class="chat-log__message same-author">{{ message.content|urlize|url_target_blank }}</p>
+            {% endif %}
         </li>
         {% endfor %}
         </ul>
-        <form action="" method="post" class="chat__form">
+        <form method="post" class="chat__form">
             {% csrf_token %}
             <input type="hidden" name="author" value="{{ user.username }}">
             <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" minlength="1" class="chat-message-input"><br>
@@ -45,7 +51,7 @@
         function urlify(text){
             let urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
             return text.replace(urlRegex, function(url){
-                return '<a "target="_blank" href="' + url + '" rel="nofollow" >' + url + '</a>';
+                return `<a target="_blank" href="${url}" rel="nofollow" title="${url}">${url}</a>`;
             })
         }
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -57,30 +63,51 @@
             wsStart
             + window.location.host
             + '/ws/server/'
-            + '{{ object.server.id }}' + '/channel/'
+            + '{{ object.server.id }}/'
             + '{{ object.name }}'
             + '/'
         );
-
+        
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data); // data.message
+            let messages = document.querySelectorAll('.chat__msg-author');
+            isPreviousAuthor = messages[messages.length-1].innerText == data.author
             let list = document.createElement("li");
-            let list_p = document.createElement("p");
-            let img = document.createElement("img");
-            img.src = data.image;
-            img.alt = `${data.author} profile image`;
-            img.classList.add('chat-log__image');
+            let paragraphList = document.createElement("p");
             list.classList.add('chat-log__li');
-            list_p.classList.add('chat-log__message');
-            let me = '{{ user.username }}';
-            if(me == data.author){
-                list_p.classList.add('author');
+            paragraphList.classList.add('chat-log__message');
+            paragraphList.innerHTML = urlify(data.message);
+            document.querySelector('.chat-log').appendChild(list);
+            
+            if(!isPreviousAuthor){
+                list.classList.add('margin-top')
+                let img = document.createElement("img");
+                let imgProfileLink = document.createElement("a");
+                imgProfileLink.classList.add('chat-log__link');
+                imgProfileLink.href = `/profile/${data.author}`;
+                img.src = data.image;
+                img.alt = `${data.author} profile image`;
+                img.classList.add('chat-log__image');
+                let messageContent = document.createElement("div");
+                messageContent.classList.add('chat__msg-content');
+                let textProfileLink = document.createElement("a");
+                textProfileLink.classList.add('chat__msg-author');
+                textProfileLink.innerText = data.author;
+                textProfileLink.href = `/profile/${data.author}`;
+                list.appendChild(imgProfileLink);
+                list.appendChild(messageContent);
+                messageContent.append(textProfileLink);
+                messageContent.append(paragraphList);
+                imgProfileLink.appendChild(img);
+            }
+            else {
+                paragraphList.classList.add("same-author")
+                list.append(paragraphList);
+            }
+            if(data.author == '{{ user.username }}'){
                 list.classList.add('author');
             }
-            list_p.innerHTML = urlify(data.message);
-            document.querySelector('.chat-log').appendChild(list);
-            list.appendChild(list_p);
-            list.appendChild(img);
+            
             scrollBottom();
         };
 

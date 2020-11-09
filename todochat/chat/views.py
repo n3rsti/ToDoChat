@@ -19,6 +19,7 @@ class ChannelDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['chat_messages'] = messages
         context['server'] = server
+        context['heading'] = channel.name #h1 in server_base.html
         return context
 
     def get_object(self):

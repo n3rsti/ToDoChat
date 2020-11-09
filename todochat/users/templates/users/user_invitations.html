@@ -12,8 +12,8 @@
    {% endif %}
     {% for invitation in object_list %}
     <article class="invitation">
-        <a href="{% url 'user_detail' invitation.inviting.username %}" class="invitation__top">
-                <img src="{{ invitation.inviting.profile.image.url }}" alt="" class="profile__photo">
+        <a href="{% url 'user_detail' invitation.inviting.username %}" class="invitation__top" title="{{invitation.inviting.username}} profile">
+                <img src="{{ invitation.inviting.profile.image.url }}" alt="{{invitation.inviting.username}} image" class="profile__photo">
                 <h2 class="invitation__inviting">{{ invitation.inviting }}</h2>
         </a>
         <form method="POST">
