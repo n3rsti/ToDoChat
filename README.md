@@ -44,3 +44,8 @@ default-character-set = utf8
 ### Problems installing mysqclient
 
 `sudo apt-get install libmysqlclient-dev`
+
+## Technologies used
+* Django
+* WebSockets (django-channels + redis)
+* MySQL
