@@ -519,10 +519,10 @@ div.groups__img, div.nav__server-logo {
 }
 .title--thin {
     font-size: 25px;
-    font-family: 'Blinker', sans-serif;
-    font-weight: 400;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 .content {
     width: 100%;
@@ -537,7 +537,7 @@ div.groups__img, div.nav__server-logo {
     border-radius: 9999px;
     width: 130px;
     height: 130px;
-    margin-top: 20px;
+    margin-top: 20vh;
     object-fit: cover;
     align-self: center;
 }
@@ -715,7 +715,10 @@ p.profile__description {
     padding: 0;
 }
 .friends__ul .users__img {
-    margin-left: 15px;
+    margin-left: 3px;
+}
+.friends__ul .flex {
+    padding: 3px;
 }
 img.offline {
     border: 3px solid #95a5a6;
@@ -723,7 +726,7 @@ img.offline {
 img.online {
     border: 3px solid #2ecc71;
 }
-.invite__button {
+.invite__button, .message__button.friends {
     font-size: 16px;
     display: flex;
     align-self: center;
@@ -735,15 +738,21 @@ img.online {
     border: 0;
     outline: none;
     padding: 12px;
-    margin: 20px 0 10px 0;
+    margin: 0;
     text-decoration: none;
-    min-width: 150px;
+    
 }
 .invite__button.friends {
     background: #dddddd;
     color: #262629;
     margin-bottom: 0;
+    height: 40px;
     
+}
+.message__button.friends {
+    background: var(--primary);
+    height: 40px;
+
 }
 .invite__button.remove {
     display: none;
@@ -935,4 +944,17 @@ main.chat {
     margin-left: 5px;
     display: inline-block;
     width: 40px;
+}
+.profile__image-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25vh;
+    margin-bottom: 10vh;
+}
+.friend__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
 }

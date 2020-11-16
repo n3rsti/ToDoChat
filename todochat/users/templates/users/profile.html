@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}<title>{{ user.username }} | ToDoChat</title>{% endblock title %}
 {% block content %}
 {% include "app_base.html" %}
 
 <main class="content content--profile">
-    <button  onClick="window.history.back();return false;" class="back__button">
+    <button onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
-   </button>
-    <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    </button>
+    <section class="profile__image-section">
+        <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    </section>
     <h1 class="title--thin">{{ user.username }}</h1>
     {% if user.profile.description %}
     <p class="profile__description">{{ user.profile.description }}</p>
@@ -19,6 +22,12 @@
     <a href="{% url 'profile_edit' %}" class="edit__button" title="Edit profile">
         <i class="fas fa-pen"></i>
     </a>
-    
+
 </main>
+<style>
+    .profile__image-section {
+        background: url('{{ user.profile.background.url}}');
+        background-size: cover;
+    }
+</style>
 {% endblock content %}

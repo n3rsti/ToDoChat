@@ -4,8 +4,10 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
-from .models import User, UserInvitation
+from users.models import User, UserInvitation, UsersChat, UsersMessage
 from django.shortcuts import get_object_or_404
+from chat.models import Channel
+
 
 
 def register(request):
@@ -102,3 +104,33 @@ class UserInvitations(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return UserInvitation.objects.filter(invited=self.request.user)
+
+class UserChatView(LoginRequiredMixin, DetailView):
+    model = UsersChat
+    template_name = 'users/chat_room.html'
+
+    def get_object(self):
+        friend = User.objects.get(username=self.kwargs['username'])
+        chat = UsersChat.objects.filter(users=self.request.user)
+        for chat_channel in chat:
+            if friend in chat_channel.users.all():
+                return chat_channel
+        
+        chat = UsersChat.objects.create()
+        chat.users.add(friend, self.request.user)
+        chat.save()
+        return chat
+        
+
+
+    def get_context_data(self, **kwargs):
+        friend = User.objects.get(username=self.kwargs['username'])
+        chat = UsersChat.objects.filter(users=self.request.user)
+        for chat_channel in chat:
+            if friend in chat_channel.users.all():
+                return chat_channel
+        
+        chat = UsersChat.objects.create()
+        chat.users.add(friend, self.request.user)
+        chat.save()
+        return chat

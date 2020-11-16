@@ -27,7 +27,7 @@
             {% if user.server_set.count > 0 %}
             <h2 class="groups__h2">Groups</h2>
             <ul class="groups__ul">
-                {% for server in user.server_set.all|get_first_num:5 %}
+                {% for server in user.server_set.all|get_first_num:8 %}
                 <li class="groups__li base">
                     {% if server.image == 'default.png' %}
                     <div class="groups__img">{{ server.name.0 }}</div>
@@ -40,7 +40,7 @@
                 
             </ul>
             {% endif %}
-            {% if user.server_set.all.count > 5 %}
+            {% if user.server_set.all.count > 8 %}
                 <button class="load_more">Load more</button>
             {% endif %}
             {% if user.profile.friends.count > 0 %}

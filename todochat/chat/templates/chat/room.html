@@ -71,7 +71,12 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data); // data.message
             let messages = document.querySelectorAll('.chat__msg-author');
-            isPreviousAuthor = messages[messages.length-1].innerText == data.author
+            if(messages.length == 0){
+                isPreviousAuthor = false
+            }
+            else {
+                isPreviousAuthor = messages[messages.length-1].innerText == data.author
+            }
             let list = document.createElement("li");
             let paragraphList = document.createElement("p");
             list.classList.add('chat-log__li');

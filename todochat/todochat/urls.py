@@ -29,7 +29,7 @@ urlpatterns = [
     path('register/', register, name="register"),
     path('server/new/', CreateServerView.as_view(), name="create_server"),
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
-    path('server/<int:pk>', DetailServerView.as_view(), name="server_detail"),
+    path('server/<int:pk>/', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
     path('profile/', include('users.urls')),

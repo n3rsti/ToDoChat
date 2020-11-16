@@ -4,23 +4,27 @@
 {% include "app_base.html" %}
 
 <main class="content content--profile">
-    <button  onClick="window.history.back();return false;" class="back__button">
+    <button onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
-   </button>
-    <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img {% if object.profile.is_online %}online{% else %}offline{% endif %}">
+    </button>
+    <section class="profile__image-section">
+        <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img">
+    </section>
+    <h1 class="title--thin">{{ object.username }}</h1>
     {% if not object == user %}
     {% if object in user.profile.friends.all %}
-    <div class="friend__info">
-        <button class="invite__button friends"><i class="fas fa-check"></i>Friends <i class="fas fa-angle-down"></i></button>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="removed" value="{{ object.username }}">
-            <button type="submit" name="button" value="remove" class="invite__button remove">Remove friend</button>
-        </form>
-        
-    </div>
+    <section class="friend__buttons">
+        <button class="friends message__button">Send message</button>
+        <div class="friend__info">
+            <button class="invite__button friends"><i class="fas fa-user-check"></i></button>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="removed" value="{{ object.username }}">
+                <button type="submit" name="button" value="remove" class="invite__button remove">Remove friend</button>
+            </form>
+        </div>
+    </section>
     
-
     {% else %}
     <form method="POST" class="user_detail_form">
         {% csrf_token %}
@@ -29,7 +33,6 @@
     </form>
     {% endif %}
     {% endif %}
-    <h1 class="title--thin">{{ object.username }}</h1>
     {% if object.profile.description %}
     <p class="profile__description">{{ object.profile.description }}</p>
     {% endif %}
@@ -43,4 +46,10 @@
     </a>
     {% endif %}
 </main>
+<style>
+    .profile__image-section {
+        background: url('{{ object.profile.background.url}}');
+        background-size: cover;
+    }
+</style>
 {% endblock content %}

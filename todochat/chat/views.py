@@ -27,11 +27,14 @@ class ChannelDetailView(LoginRequiredMixin, DetailView):
 
     def post(self, request, pk, room_name):
         message = request.POST.get("message")
-        if len(message) == 0 or len(message) > 100:
-            return redirect("room", pk=pk, room_name=room_name)
+        if message is not None:
+            if len(message) == 0 or len(message) > 100:
+                return redirect("room", pk=pk, room_name=room_name)
+            else:
+                channel = Channel.objects.get(server=Server.objects.get(id=pk), name=room_name)
+                id = create_id(message, 99999)
+                author = User.objects.get(username=request.POST.get("author"))
+                ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author)
+                return redirect("room", pk=pk, room_name=room_name)
         else:
-            channel = Channel.objects.get(server=Server.objects.get(id=pk), name=room_name)
-            id = create_id(message, 99999)
-            author = User.objects.get(username=request.POST.get("author"))
-            ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author)
-            return redirect("room", pk=pk, room_name=room_name)
+            return redirect("index")

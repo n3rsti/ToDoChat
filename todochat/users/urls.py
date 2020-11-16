@@ -15,7 +15,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from users.views import register, profile, profile_edit, UserDetailView, UserInvitations
+from users.views import register, profile, profile_edit, UserDetailView, UserInvitations, UserChatView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path('', profile, name="profile"),
     path('edit/', profile_edit, name="profile_edit"),
     path('<str:username>/', UserDetailView.as_view(), name='user_detail'),
+    path('<str:username>/chat/', UserChatView.as_view(), name='user_chat')
     
 ]
 
