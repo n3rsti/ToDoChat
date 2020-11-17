@@ -11,7 +11,8 @@
    <h2 class="title--thin">No invitations.</h2>
    {% endif %}
     {% for invitation in object_list %}
-    <article class="invitation">
+    
+    <article class="invitation {% if forloop.first %}invitation--first{% endif %}">
         <a href="{% url 'user_detail' invitation.inviting.username %}" class="invitation__top" title="{{invitation.inviting.username}} profile">
                 <img src="{{ invitation.inviting.profile.image.url }}" alt="{{invitation.inviting.username}} image" class="profile__photo">
                 <h2 class="invitation__inviting">{{ invitation.inviting }}</h2>

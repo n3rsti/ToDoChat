@@ -19,7 +19,6 @@
             <hr class="button__hr">
         </button>
     </header>
-    
     <nav class="side__nav" name="side-nav">
         <div class="hello__div">
             <a href="{% url 'profile' %}" title="Profile">
@@ -83,13 +82,6 @@
             <input type="text" name="name"class="channelcreation-form__input">
             <button type="submit">Create channel</button>
         </form>
-    </div>
-    <div class="alerts">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
     </div>
     
 

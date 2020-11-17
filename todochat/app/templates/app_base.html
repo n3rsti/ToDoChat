@@ -1,95 +1,97 @@
 {% load templatetags %}
 {% load static %}
-    <header class="header">
-        <h2 class="task__bar">Tasks: <span class="li__span">1</span></h2>
-        <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
-            aria-controls="side-nav" tabindex="0">
-            <hr class="button__hr">
-            <hr class="button__hr">
-            <hr class="button__hr">
-        </button>
-    </header>
-    
-    <nav class="side__nav" name="side-nav">
-        <div class="hello__div">
-            <a href="{% url 'profile' %}" title="My profile">
-                <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
-            </a>
-            
-            <h2 class="hello">
-                {{ user.username }}
-            </h2>
-        </div>
-        <section class="nav__groups">
-            {% if user.invited_user.count > 0 %}
-            <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations<span class="li__span">{{ user.invited_user.count }}</span></a>
-            {% endif %}
-            {% if user.server_set.count > 0 %}
-            <h2 class="groups__h2">Groups</h2>
-            <ul class="groups__ul">
-                {% for server in user.server_set.all|get_first_num:8 %}
-                <li class="groups__li base">
-                    {% if server.image == 'default.png' %}
-                    <div class="groups__img">{{ server.name.0 }}</div>
-                    {% else %}
-                    <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
-                    {% endif %}
-                    <a href="{% url 'server_detail' server.id %}" class="groups__li" title="{{server.name}} group">{{ server.name|shorter_name:12 }}</a>
-                </li>
-                {% endfor %}
-                
-            </ul>
-            {% endif %}
-            {% if user.server_set.all.count > 8 %}
-                <button class="load_more">Load more</button>
-            {% endif %}
-            {% if user.profile.friends.count > 0 %}
-                <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
-                <ul class="groups__ul friends__ul">
-                    {% for friend in user.profile.friends.all %}
-                    <li class="flex">
-                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture" class="users__img {% if friend.profile.is_online %}online{% else %}offline{% endif %}">
-                        <a href="{% url 'user_detail' friend.username %}" class="groups__li" title="{{ friend.username }} profile">{{ friend.username }}</a>
-                    </li>
-                
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            <div class="add__li">
-                <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
-                    Add group
-                    <span class="li__span li__plus">
-                        <i class="fas fa-plus"></i>
-                    </span>
-                </a>
-            </div>
-        </section>
-        <div class="bottom__side">
-            <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout"
-                tabindex="-1" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </a>
-            <a href="{% url 'index' %}" class="bottom__button bottom__button-home"
-                tabindex="-1" title="Home">
-                <i class="fas fa-home"></i>
-            </a>
-            <a class="bottom__button bottom__button-settings" href="{% url 'profile_edit' %}" title="Profile settings">
-                <i class="fas fa-cog"></i>
-            </a>
+<header class="header">
+    {% if taskbar_img %}
+    <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
+        <img src="{{ friend.profile.image.url }}" alt="" class="nav__server-logo">
+        <h2 class="task__bar">{{ taskbar_title }}</h2>
+    </a>
+    {% else %}
+    <h2 class="task__bar">{{ taskbar_title }}</h2>
+    {% endif %}
 
+    <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
+        aria-controls="side-nav" tabindex="0">
+        <hr class="button__hr">
+        <hr class="button__hr">
+        <hr class="button__hr">
+    </button>
+</header>
 
+<nav class="side__nav" name="side-nav">
+    <div class="hello__div">
+        <a href="{% url 'profile' %}" title="My profile">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
+        </a>
 
-        </div>
-
-    </nav>
-        
-        <div class="alerts">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
+        <h2 class="hello">
+            {{ user.username }}
+        </h2>
+    </div>
+    <section class="nav__groups">
+        {% if user.invited_user.count > 0 %}
+        <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations<span
+                class="li__span">{{ user.invited_user.count }}</span></a>
+        {% endif %}
+        {% if user.server_set.count > 0 %}
+        <h2 class="groups__h2">Groups</h2>
+        <ul class="groups__ul">
+            {% for server in user.server_set.all|get_first_num:8 %}
+            <li class="groups__li base">
+                {% if server.image == 'default.png' %}
+                <div class="groups__img">{{ server.name.0 }}</div>
+                {% else %}
+                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
+                {% endif %}
+                <a href="{% url 'server_detail' server.id %}" class="groups__li"
+                    title="{{server.name}} group">{{ server.name|shorter_name:12 }}</a>
+            </li>
             {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% if user.server_set.all.count > 8 %}
+        <button class="load_more">Load more</button>
+        {% endif %}
+        {% if user.profile.friends.count > 0 %}
+        <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
+        <ul class="groups__ul friends__ul">
+            {% for friend in user.profile.friends.all %}
+            <li class="flex">
+                <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                    class="users__img {% if friend.profile.is_online %}online{% else %}offline{% endif %}">
+                <a href="{% url 'user_detail' friend.username %}" class="groups__li"
+                    title="{{ friend.username }} profile">{{ friend.username }}</a>
+            </li>
+
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="add__li">
+            <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
+                Add group
+                <span class="li__span li__plus">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </a>
         </div>
-    
+    </section>
+    <div class="bottom__side">
+        <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout" tabindex="-1" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+        <a href="{% url 'index' %}" class="bottom__button bottom__button-home" tabindex="-1" title="Home">
+            <i class="fas fa-home"></i>
+        </a>
+        <a class="bottom__button bottom__button-settings" href="{% url 'profile_edit' %}" title="Profile settings">
+            <i class="fas fa-cog"></i>
+        </a>
+
+
+
+    </div>
+
+</nav>
+
 
 <script src="{% static 'js/app.js' %}"></script>

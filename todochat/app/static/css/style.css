@@ -321,9 +321,12 @@ body {
 
 .nav__groups {
   width: 100%;
+  height: calc(100% - 40px - 35px - 65px - 5px);
+  /* height of .hello__div, .add__li, .bottom__side  */
   margin-top: 5px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .groups__ul {
@@ -457,17 +460,20 @@ div.groups__img, div.nav__server-logo {
 .add__li {
   position: absolute;
   bottom: 40px;
-  margin-bottom: 6px;
   width: 100%;
   padding: 0;
   transition: background-color 0.3s;
-  text-align: center;
+  background: var(--primary);
+  height: 35px;
+  border-top: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .create_server__button {
   border: 0;
   color: white;
-  height: 40px;
   text-decoration: none;
   background: var(--primary);
 }
@@ -590,6 +596,9 @@ div.groups__img, div.nav__server-logo {
   text-align: center;
   margin-bottom: 0;
 }
+.title--thin.profile_invited {
+  margin: 0 0 15px 0;
+}
 
 .content {
   width: 100%;
@@ -636,6 +645,10 @@ span.profile__description, .profile__content {
 span.profile__description {
   font-size: 13px;
   color: #464242;
+}
+
+span.profile__description:nth-of-type(1) {
+  margin-top: 30px;
 }
 
 .profile__content {
@@ -685,20 +698,6 @@ p.profile__description {
   font-family: "Montserrat", sans-serif;
   width: 90%;
   padding: 5px;
-}
-
-.alerts {
-  display: block;
-  background: var(--light);
-  height: 10%;
-  margin-top: 65px;
-}
-
-.alert {
-  color: #fff;
-  font-family: "Blinker", sans-serif;
-  padding: 5px;
-  text-align: center;
 }
 
 .form__button--edit {
@@ -854,26 +853,43 @@ img.online {
   margin-bottom: 0;
   height: 40px;
 }
+.invite__button.remove {
+  display: none;
+  margin-top: 0;
+  position: absolute;
+}
+.invite__button.button--opened {
+  display: block;
+}
+.invite__button .fa-check {
+  margin-right: 13px;
+}
+.invite__button .fa-user-plus {
+  margin-right: 8px;
+}
+.invite__button .message__button.friends {
+  font-size: 16px;
+  display: flex;
+  align-self: center;
+  text-align: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  background: var(--primary);
+  border: 0;
+  outline: none;
+  padding: 12px;
+  margin: 0;
+  text-decoration: none;
+}
+.invite__button.reject {
+  color: #262629;
+  background: #EFEFEF;
+}
 
 .message__button.friends {
   background: var(--primary);
   height: 40px;
-}
-
-.invite__button.remove {
-  display: none;
-}
-
-.invite__button.button--opened {
-  display: block;
-}
-
-.invite__button .fa-check {
-  margin-right: 13px;
-}
-
-.invite__button .fa-angle-down {
-  margin-left: 13px;
 }
 
 a.groups__h2 {
@@ -885,6 +901,9 @@ a.groups__h2 {
   align-self: center;
   width: 250px;
   padding: 10px;
+}
+.invitation.invitation--first {
+  margin-top: 65px;
 }
 
 .invitation__inviting {
@@ -922,11 +941,6 @@ a.groups__h2 {
   margin-right: 6px;
 }
 
-.invite__button.remove {
-  margin-top: 0;
-  position: absolute;
-}
-
 .friend__info {
   position: relative;
   align-self: center;
@@ -934,6 +948,15 @@ a.groups__h2 {
 
 .user_detail_form {
   align-self: center;
+  display: flex;
+}
+.user_detail_form.invited {
+  width: 60%;
+  align-items: center;
+  justify-content: center;
+}
+.user_detail_form.invited .invite__button {
+  width: 50%;
 }
 
 .channelcreation {
@@ -1010,7 +1033,7 @@ main.chat {
 }
 
 .chat-log {
-  margin-bottom: 50px;
+  margin: 65px 0 50px 0;
   list-style-type: none;
   padding: 0;
   display: flex;
@@ -1080,14 +1103,13 @@ main.chat {
   align-items: center;
   justify-content: center;
   height: 25vh;
-  margin-bottom: 10vh;
+  margin: 65px 0 10vh 0;
 }
 
 .friend__buttons {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -33,6 +33,7 @@ class UserInvitation(models.Model):
 
 
 class UsersChat(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
     users = models.ManyToManyField(User, related_name="users_chat")
 
 class UsersMessage(models.Model):
@@ -48,4 +49,4 @@ class UsersMessage(models.Model):
         if not self.id:
             self.created = timezone.now()
         self.modified = timezone.now()
-        return super(ChannelMessage, self).save(*args, **kwargs)
+        return super(UsersMessage, self).save(*args, **kwargs)
