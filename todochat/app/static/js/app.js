@@ -6,6 +6,9 @@ window.onload = function () {
     if(document.querySelector('.create_server__button')){
         document.querySelector('.create_server__button').addEventListener("click", openChannelCreation);
     }
+    if(document.querySelector('.load_more')){
+        document.querySelector('.load_more').addEventListener("click", loadGroups);
+    }
     
 }
 function openFriendInfo(){
@@ -34,12 +37,38 @@ function openChannelCreation(){
     if (opened === false) {
         document.querySelector('.create_server__button').setAttribute('aria-label', 'Close navigation');
         document.querySelector('.create_server__button').setAttribute('aria-expanded', 'true');
-        opened = true
+        opened = true;
     }
     else if (opened === true) {
         document.querySelector('.create_server__button').setAttribute('aria-label', 'Open navigation');
         document.querySelector('.create_server__button').setAttribute('aria-expanded', 'false');
-        opened = true
+        opened = true;
     }
     openNav();
+}
+function loadGroups(){
+    let button = document.querySelector('.load_more');
+    let groups = document.querySelectorAll(".groups__li.base");
+    button.setAttribute('aria-label', 'Hide additional groups');
+    button.setAttribute('aria-expanded', 'true')
+    button.innerText = "Hide";
+    button.classList.toggle("opened");
+    button.removeEventListener("click", loadGroups);
+    button.addEventListener("click", hideGroups);
+    for(let i = 5; i < groups.length; i++){
+        groups[i].classList.toggle("opened")
+    }
+}
+function hideGroups(){
+    let button = document.querySelector('.load_more');
+    let groups = document.querySelectorAll(".groups__li.base");
+    button.setAttribute('aria-label', 'Show additional groups');
+    button.setAttribute('aria-expanded', 'false');
+    button.innerText = "Show more";
+    button.classList.toggle("opened");
+    button.removeEventListener("click", hideGroups);
+    button.addEventListener("click", loadGroups);
+    for(let i = 5; i < groups.length; i++){
+        groups[i].classList.toggle("opened")
+    }
 }

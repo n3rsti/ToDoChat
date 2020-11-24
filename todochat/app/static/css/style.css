@@ -356,21 +356,25 @@ div.groups__img, div.nav__server-logo {
   margin: 0;
   padding: 6px;
   padding-left: 15px;
-  display: flex;
   align-items: center;
   cursor: pointer;
   color: #fff;
   text-decoration: none;
   font-weight: 600;
+  display: flex;
 }
 .groups__li.base {
   padding-left: 6px;
+  display: none;
 }
 .groups__li a.groups__li {
   padding-left: 6px;
 }
 .groups__li.groups__li--server {
   padding: 0 0 0 6px;
+}
+.groups__li.base.opened {
+  display: flex;
 }
 
 .groups__li:focus, .groups__li:hover {
@@ -476,6 +480,7 @@ div.groups__img, div.nav__server-logo {
   color: white;
   text-decoration: none;
   background: var(--primary);
+  text-align: center;
 }
 
 .create_server_menu {
@@ -805,10 +810,16 @@ p.profile__description {
   border: 2px solid #fff;
   font-weight: 600;
   border-radius: 999px;
+  outline: none;
+}
+.load_more.opened {
+  color: var(--primary);
+  background: #fff;
 }
 
 .flex {
   display: flex;
+  align-items: center;
 }
 
 .friends__ul .groups__li {

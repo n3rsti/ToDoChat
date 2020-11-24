@@ -150,9 +150,7 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             if friend in chat_channel.users.all():
                 return chat_channel
         
-        chat = UsersChat.objects.create()
-        id = f'{friend.username}_{self.request.user.username}'
-        chat.id=id
+        chat = UsersChat.objects.create(id = f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
         chat.save()
         return chat
@@ -172,9 +170,7 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 return context
                 
         
-        chat = UsersChat.objects.create()
-        id = f'{friend.username}_{self.request.user.username}'
-        chat.id=id
+        chat = UsersChat.objects.create(id = f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
         chat.save()
         context["messages"] = chat.usersmessage_set.all()

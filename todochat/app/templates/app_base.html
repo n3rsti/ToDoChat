@@ -29,15 +29,16 @@
         </h2>
     </div>
     <section class="nav__groups">
+        
         {% if user.invited_user.count > 0 %}
         <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations<span
                 class="li__span">{{ user.invited_user.count }}</span></a>
         {% endif %}
-        {% if user.server_set.count > 0 %}
         <h2 class="groups__h2">Groups</h2>
+        {% if user.server_set.count > 0 %}
         <ul class="groups__ul">
-            {% for server in user.server_set.all|get_first_num:8 %}
-            <li class="groups__li base">
+            {% for server in user.server_set.all %}
+            <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %}">
                 {% if server.image == 'default.png' %}
                 <div class="groups__img">{{ server.name.0 }}</div>
                 {% else %}
@@ -49,9 +50,16 @@
             {% endfor %}
 
         </ul>
+        {% else %}
+        <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
+            Add group
+            <span class="li__span li__plus">
+                <i class="fas fa-plus"></i>
+            </span>
+        </a>
         {% endif %}
-        {% if user.server_set.all.count > 8 %}
-        <button class="load_more">Load more</button>
+        {% if user.server_set.all.count > 5 %}
+        <button class="load_more" aria-expanded="false" aria-label="Show additional groups">Load more</button>
         {% endif %}
         {% if user.profile.friends.count > 0 %}
         <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
@@ -67,6 +75,7 @@
             {% endfor %}
         </ul>
         {% endif %}
+        {% if user.server_set.count > 0 %}
         <div class="add__li">
             <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
                 Add group
@@ -75,6 +84,7 @@
                 </span>
             </a>
         </div>
+        {% endif %}
     </section>
     <div class="bottom__side">
         <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout" tabindex="-1" title="Logout">

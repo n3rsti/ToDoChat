@@ -316,21 +316,25 @@ div.groups__img, div.nav__server-logo {
     margin: 0;
     padding: 6px;
     padding-left: 15px;
-    display: flex;
     align-items: center;
     cursor: pointer;
     color: #fff;
     text-decoration: none;
     font-weight: 600; 
+    display: flex;
 
     &.base {
         padding-left: 6px;
+        display: none;
     }
     a.groups__li {
         padding-left: 6px;
     }
     &.groups__li--server {
         padding: 0 0 0 6px;
+    }
+    &.base.opened {
+        display: flex;
     }
 }
 .groups__li:focus, .groups__li:hover {
@@ -424,6 +428,7 @@ div.groups__img, div.nav__server-logo {
     color: white;
     text-decoration: none;
     background: var(--primary);
+    text-align: center;
 }
 .create_server_menu {
     position: fixed;
@@ -707,9 +712,16 @@ p.profile__description {
     border: 2px solid #fff;
     font-weight: 600;
     border-radius: 999px;
+    outline: none;
+
+    &.opened {
+        color: var(--primary);
+        background: #fff;
+    }
 }
 .flex {
     display: flex;
+    align-items: center;
 }
 .friends__ul .groups__li {
     padding: 0;
