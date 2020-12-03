@@ -1,6 +1,6 @@
 {% load templatetags %}
 {% load static %}
-<header class="header">
+<header class="navbar header bg-primary">
     {% if taskbar_img %}
     <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
         <img src="{{ friend.profile.image.url }}" alt="" class="nav__server-logo">
@@ -18,7 +18,7 @@
     </button>
 </header>
 
-<nav class="side__nav" name="side-nav">
+<nav class="side__nav bg-primary" name="side-nav">
     <div class="hello__div">
         <a href="{% url 'profile' %}" title="My profile">
             <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
@@ -51,7 +51,7 @@
 
         </ul>
         {% else %}
-        <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
+        <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
             Add group
             <span class="li__span li__plus">
                 <i class="fas fa-plus"></i>
@@ -67,7 +67,7 @@
             {% for friend in user.profile.friends.all %}
             <li class="flex">
                 <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                    class="users__img {% if friend.profile.is_online %}online{% else %}offline{% endif %}">
+                    class="users__img">
                 <a href="{% url 'user_detail' friend.username %}" class="groups__li"
                     title="{{ friend.username }} profile">{{ friend.username }}</a>
             </li>
@@ -75,9 +75,17 @@
             {% endfor %}
         </ul>
         {% endif %}
-        {% if user.server_set.count > 0 %}
         <div class="add__li">
-            <a href="{% url 'create_server' %}" class="create_server__button" title="Create server">
+            <a href="{% url 'create_server' %}" class="nav__add-button nav__add-button--friend" title="Create server">
+                Add friend
+                <span class="li__span li__plus">
+                    <i class="fas fa-user-plus"></i>
+                </span>
+            </a>
+        </div>
+        {% if user.server_set.count > 0 %}
+        <div class="add__li add__li--friend">
+            <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
                 Add group
                 <span class="li__span li__plus">
                     <i class="fas fa-plus"></i>

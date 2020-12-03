@@ -5,17 +5,6 @@ from .models import Profile
 from django.contrib.auth.signals import user_logged_in, user_logged_out 
 
 
-@receiver(user_logged_in)
-def got_online(sender, user, request, **kwargs):    
-    user.profile.is_online = True
-    user.profile.save()
-
-
-@receiver(user_logged_out)
-def got_offline(sender, user, request, **kwargs):   
-    user.profile.is_online = False
-    user.profile.save()
-
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):

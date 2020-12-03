@@ -27,7 +27,7 @@
             {% csrf_token %}
             <input type="hidden" name="author" value="{{ user.username }}">
             <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" minlength="1" class="chat-message-input"><br>
-            <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit">Send</button>
+            <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit btn btn-primary" disabled>Send</button>
         </form>
     </main>
     
@@ -37,9 +37,9 @@
         chatInput.addEventListener('input', () => {
             let button = document.querySelector(".chat-message-submit")
             if(chatInput.value.length > 0){
-                button.classList.add("sendable");
+                button.disabled = false;
             } else {
-                button.classList.remove("sendable");
+                button.disabled = true;
             }
         });
         function scrollBottom(){

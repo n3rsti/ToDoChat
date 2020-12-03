@@ -9,7 +9,11 @@
     <button  onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
     </button>
+    {% if server.image == 'default.png' %}
+    <div class="profile__img no-img">{{ server.name.0 }}</div>
+    {% else %}
     <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
+    {% endif %}
     <h1 class="title--thin">{{ object.name }}</h1>
     {{ object.owner.name }}
     <ul class="users__list">
@@ -22,8 +26,8 @@
     {% endfor %}
     </ul>
     {% if user == object.owner %}
-    <a href="{% url 'server_update' server.id %}" class="edit__button" title="Update server">
-        <i class="fas fa-pen"></i>
+    <a href="{% url 'server_update' server.id %}" class="edit__button edit__button--top" title="Update server">
+        <i class="fas fa-cog"></i>
     </a>
     {% endif %}
 </main>

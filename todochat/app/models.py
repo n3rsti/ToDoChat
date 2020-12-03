@@ -16,7 +16,7 @@ class Server(models.Model):
         User, 
         default=owner,  
     )
-    image = models.ImageField(default='default.png', upload_to='server_pics')
+    image = models.ImageField(default='default.png', upload_to='server_pics', blank=True)
 
     def __str__(self):
         return f'{self.name} server'

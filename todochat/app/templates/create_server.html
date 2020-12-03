@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block content %}
 {% include "app_base.html" %}
-<main class="content content--profile">
+<main class="content content--profile content-create_server">
     <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
     <form method="POST" enctype="multipart/form-data" class="login__form">
         {% csrf_token %}

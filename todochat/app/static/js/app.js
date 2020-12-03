@@ -3,8 +3,8 @@ window.onload = function () {
     if(document.querySelector('.invite__button.friends')){
         document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
     }
-    if(document.querySelector('.create_server__button')){
-        document.querySelector('.create_server__button').addEventListener("click", openChannelCreation);
+    if(document.querySelector('.nav__add-button')){
+        document.querySelector('.nav__add-button').addEventListener("click", openChannelCreation);
     }
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
@@ -35,13 +35,13 @@ function openNav() {
 function openChannelCreation(){
     channelcreation.classList.toggle("opened")
     if (opened === false) {
-        document.querySelector('.create_server__button').setAttribute('aria-label', 'Close navigation');
-        document.querySelector('.create_server__button').setAttribute('aria-expanded', 'true');
+        document.querySelector('.nav__add-button').setAttribute('aria-label', 'Close navigation');
+        document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'true');
         opened = true;
     }
     else if (opened === true) {
-        document.querySelector('.create_server__button').setAttribute('aria-label', 'Open navigation');
-        document.querySelector('.create_server__button').setAttribute('aria-expanded', 'false');
+        document.querySelector('.nav__add-button').setAttribute('aria-label', 'Open navigation');
+        document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'false');
         opened = true;
     }
     openNav();

@@ -89,6 +89,13 @@ class UserDetailView(LoginRequiredMixin, DetailView):
             invitation.delete()
             return redirect('user_detail', inviting_user.username)
         
+        elif request.POST.get('invite_button') == 'cancel':
+            inviting_user = self.request.user
+            invited_user = User.objects.get(username=self.request.POST.get('invited'))
+            invitation = UserInvitation.objects.get(inviting=inviting_user, invited=invited_user)
+            invitation.delete()
+            return redirect('user_detail', invited_user.username)
+        
         return redirect('index')
 
 

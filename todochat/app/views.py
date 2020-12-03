@@ -7,6 +7,7 @@ from datetime import datetime
 import random
 from chat.models import Channel
 from django.http import HttpResponse
+from app.forms import ServerUpdateForm, ServerCreateForm
 
 def create_id(name, max):
     name = str(name)
@@ -29,7 +30,7 @@ def main_view(request):
 class CreateServerView(LoginRequiredMixin, CreateView):
     template_name = 'create_server.html'
     model = Server
-    fields = ['name', 'image']
+    form_class = ServerCreateForm
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -71,7 +72,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'
     model = Server
-    fields = ['name', 'image']
+    form_class = ServerUpdateForm
 
     def test_func(self):
         server = self.get_object()
@@ -83,4 +84,5 @@ class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['server'] = server
+        context['heading'] = server.name
         return context
