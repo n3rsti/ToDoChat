@@ -615,6 +615,10 @@ div.groups__img, div.nav__server-logo {
 .title--thin.profile_invited {
   margin: 0 0 15px 0;
 }
+.title--thin.margin {
+  margin-top: 75px;
+  margin-bottom: 10px;
+}
 
 .content {
   width: 100%;
@@ -1124,6 +1128,16 @@ main.chat {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.search_form {
+  justify-content: center;
+}
+.search_form .input-group {
+  width: 70%;
+}
+.search_form .btn {
+  width: 25%;
 }
 
 /*# sourceMappingURL=style.css.map */

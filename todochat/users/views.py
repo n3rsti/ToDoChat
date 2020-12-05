@@ -182,3 +182,17 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         chat.save()
         context["messages"] = chat.usersmessage_set.all()
         return context
+
+class UserSearchView(LoginRequiredMixin, ListView):
+    template_name = "user_search.html"
+    model = User
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_name = self.request.GET.get('user', '')
+        if not user_name == '':
+            context['all_search_results'] = User.objects.filter(username__icontains=user_name )
+            if context['all_search_results'].count() == 0:
+                context['search_msg'] = 'Not found'
+            context['prev_placeholder'] = user_name
+        return context

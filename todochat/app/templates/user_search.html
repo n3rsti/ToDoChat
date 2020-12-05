@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}<title>Search | ToDoChat</title>{% endblock title %}
+{% block content %}
+{% include "app_base.html" %}
+<main class="content content--profile">
+    <h1 class="title--thin margin">Search users</h1>
+    <form class="search_form form-inline" method="GET">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="text" class="form-control" value="{% if prev_placeholder %}{{ prev_placeholder }}{% endif %}" placeholder="Username" aria-label="Username"
+                aria-describedby="basic-addon1" name="user">
+        </div>
+        <button type="submit" class="btn btn-primary">
+            Search
+        </button>
+    </form>
+    {% if all_search_results %}
+    <ul>
+        {% for result in all_search_results %}
+        <li>
+            {{ result.username }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    {% if search_msg %}
+    {{ search_msg }}
+    {% endif %}
+    {% endif %}
+
+</main>
+{% endblock content %}

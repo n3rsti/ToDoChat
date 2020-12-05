@@ -541,6 +541,10 @@ div.groups__img, div.nav__server-logo {
     &.profile_invited {
         margin: 0 0 15px 0;
     }
+    &.margin {
+        margin-top: 75px;
+        margin-bottom: 10px;
+    }
 }
 .content {
     width: 100%;
@@ -997,5 +1001,14 @@ main.chat {
 .friend__buttons {
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+.search_form {
+    .input-group {
+        width: 70%;
+    }
+    .btn {
+        width: 25%;
+    }
     justify-content: center;
 }

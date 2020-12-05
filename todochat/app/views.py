@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server
 from datetime import datetime
@@ -19,6 +19,8 @@ def create_id(name, max):
     id = current_time + id[:6]
     id += str(random.randint(1000, max))
     id = id[::-1]
+    if id[0] == "0":
+        id[0] = "1"
     return id
 
 
