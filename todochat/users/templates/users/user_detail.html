@@ -43,7 +43,7 @@
     <form method="POST" class="user_detail_form">
         {% csrf_token %}
         <input type="hidden" name="invited" value="{{ object.username }}">
-        <button type="submit" class="btn btn-primary" value="invite" name="invite_button"><i class="fas fa-user-plus"></i>Add</button>
+        <button type="submit" class="btn btn-primary invite" value="invite" name="invite_button"><i class="fas fa-user-plus"></i>Add</button>
     </form>
     {% endif %}
     {% endif %}

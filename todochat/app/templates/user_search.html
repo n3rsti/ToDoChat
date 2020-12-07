@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load templatetags %}
 {% block title %}<title>Search | ToDoChat</title>{% endblock title %}
 {% block content %}
 {% include "app_base.html" %}
@@ -9,26 +10,63 @@
             <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">@</span>
             </div>
-            <input type="text" class="form-control" value="{% if prev_placeholder %}{{ prev_placeholder }}{% endif %}" placeholder="Username" aria-label="Username"
-                aria-describedby="basic-addon1" name="user">
+            <input type="text" class="form-control" value="{% if prev_placeholder %}{{ prev_placeholder }}{% endif %}"
+                placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name="user">
         </div>
         <button type="submit" class="btn btn-primary">
             Search
         </button>
     </form>
     {% if all_search_results %}
-    <ul>
+    <ul class="user_search_list">
         {% for result in all_search_results %}
-        <li>
-            {{ result.username }}
+        <li class="search__li">
+            <div class="card user_search">
+                <div class="card__description" style="background-image: url('{{ result.profile.background.url }}')">
+                        <img src="{{ result.profile.image.url }}" class="card-img-top"
+                            alt="{{ result }} profile picture">
+                        <a class="card__title" href="{% url 'user_detail' result %}">{{ result.username }}</a>
+                </div>
+
+                <div class="card-body">
+                    <a href="{% url 'user_detail' result %}" class="btn btn-primary">Profile</a>
+                    {% if not result == request.user %}
+                    {% if result|get_invitation_status:request.user == "invited" %}
+                    <form method="POST" class="search_invite-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ result }}">
+                        <button type="submit" class="btn btn-success" value="invite" name="invite_button">Accept</button>
+                    </form>
+                    <form method="POST" class="search_invite-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ result }}">
+                        <button type="submit" class="btn btn-danger" value="reject" name="invite_button">Reject</button>
+                    </form>
+                    {% elif result|get_invitation_status:request.user == "inviting" %}
+                    <form method="POST" class="search_invite-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ result }}">
+                        <button type="submit" class="btn btn-danger" value="cancel" name="invite_button">Cancel</button>
+                    </form>
+                    {% else %}
+                    <form method="POST" class="search_invite-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ result }}">
+                        <button type="submit" class="btn btn-primary" value="invite" name="invite_button">Invite</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
         </li>
         {% endfor %}
     </ul>
     {% else %}
     {% if search_msg %}
-    {{ search_msg }}
+    <h2 class="not_found">{{ search_msg }}</h2>
     {% endif %}
     {% endif %}
+
 
 </main>
 {% endblock content %}
