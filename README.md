@@ -34,6 +34,8 @@ default-character-set = utf8
 
 `python3 manage.py migrate`
 
+`docker run -p 6379:6379 -d redis:5`
+
 `python3 manage.py runserver`
 
 ## Troubleshooting
@@ -43,9 +45,12 @@ default-character-set = utf8
 
 ### Problems installing mysqclient
 
-`sudo apt-get install libmysqlclient-dev`
+`sudo apt-get install python3-dev default-libmysqlclient-dev build-essential`
 
 ## Technologies used
 * Django
 * WebSockets (django-channels + redis)
 * MySQL
+* Redis
+* HTML / Css / JS
+* Bootstrap
