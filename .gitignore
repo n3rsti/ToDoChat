@@ -1,4 +1,6 @@
-*/media/*
+*/media/background_images
+*/media/profile_pics
+*/media/server_pics
 #Scss files
 .sass-cache/
 *.css.map

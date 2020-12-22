@@ -79,12 +79,13 @@
 
 </nav>
 <div class="channelcreation">
-    <form action="" method="POST" class="channelcreation-form">
+    <form action="" method="POST" class="channelcreation-form bg-primary">
         {% csrf_token %}
-        <label for="name" class="channel-creation-form__label">Name: </label>
-        <input type="text" name="name" class="channelcreation-form__input">
-        <button type="submit">Create channel</button>
+        <label for="name" class="form-label text-light">Name: </label>
+        <input type="text" name="name" class="form-control w-75">
+        <button type="submit" class="btn btn-light mt-2">Create channel</button>
     </form>
+    
 </div>
 
 

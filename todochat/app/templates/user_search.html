@@ -27,7 +27,6 @@
                             alt="{{ result }} profile picture">
                         <a class="card__title" href="{% url 'user_detail' result %}">{{ result.username }}</a>
                 </div>
-
                 <div class="card-body">
                     <a href="{% url 'user_detail' result %}" class="btn btn-primary">Profile</a>
                     {% if not result == request.user %}
@@ -48,6 +47,8 @@
                         <input type="hidden" name="invited" value="{{ result }}">
                         <button type="submit" class="btn btn-danger" value="cancel" name="invite_button">Cancel</button>
                     </form>
+                    {% elif result in request.user.profile.friends.all %}
+                    <a type="submit" href="{% url 'user_chat' result.username %}" class="btn btn-primary" value="invite" name="invite_button">Message</a>
                     {% else %}
                     <form method="POST" class="search_invite-form">
                         {% csrf_token %}

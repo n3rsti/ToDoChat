@@ -9,8 +9,15 @@ window.onload = function () {
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
     }
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
     
 }
+window.addEventListener('resize', () => {
+    // We execute the same script as before
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  });
 function openFriendInfo(){
     document.querySelector('.invite__button.remove').classList.toggle('button--opened')
 }
@@ -33,18 +40,22 @@ function openNav() {
     }
 }
 function openChannelCreation(){
+    openNav();
     channelcreation.classList.toggle("opened")
     if (opened === false) {
         document.querySelector('.nav__add-button').setAttribute('aria-label', 'Close navigation');
         document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'true');
+        document.querySelector('.content').classList.add('content--open');
+        document.querySelector('.header__button').removeEventListener("click", openNav);
         opened = true;
     }
     else if (opened === true) {
         document.querySelector('.nav__add-button').setAttribute('aria-label', 'Open navigation');
         document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'false');
+        document.querySelector('.content').classList.remove('content--open');
+        document.querySelector('.header__button').addEventListener("click", openNav);
         opened = true;
     }
-    openNav();
 }
 function loadGroups(){
     let button = document.querySelector('.load_more');

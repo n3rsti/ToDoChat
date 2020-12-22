@@ -1,140 +1,150 @@
 {% extends "base.html" %}
 {% load url_target_blank %}
-
-    {% block title %}<title>ToDoChat - {{ object.name }}</title>{% endblock title %}
-    {% block extra_head %}<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>{% endblock extra_head %}
-    {% block content %}
-    {% include "server_base.html" %}
-    <main class="chat content">
-        <ul class="chat-log">
+{% load static %}
+{% block title %}<title>ToDoChat - {{ object.name }}</title>{% endblock title %}
+{% block extra_head %}
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+{% endblock extra_head %}
+{% block content %}
+{% include "server_base.html" %}
+<main class="chat content">
+    <ul class="chat-log">
         {% for message in chat_messages|get_last_messages:50 %}
-        <li class="chat-log__li {% if object.id|author_filter:forloop.counter is False %}margin-top{% endif %} {% if message.author == request.user %}author{% endif %}">
+        <li
+            class="chat-log__li {% if object.id|author_filter:forloop.counter is False %}margin-top{% endif %} {% if message.author == request.user %}author{% endif %}">
             {% if object.id|author_filter:forloop.counter is False %}
-            <a href="{% url 'user_detail' message.author.username %}" class="chat-log__link" title="{{message.author.username}} profile">
-                <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image" class="chat-log__image">
+            <a href="{% url 'user_detail' message.author.username %}" class="chat-log__link"
+                title="{{message.author.username}} profile">
+                <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image"
+                    class="chat-log__image">
             </a>
             <div class="chat__msg-content">
-                <a href="{% url 'user_detail' message.author.username %}" class="chat__msg-author">{{ message.author }}</a>
-                <p class="chat-log__message">{{ message.content|urlize|url_target_blank }}</p>
+                <a href="{% url 'user_detail' message.author.username %}"
+                    class="chat__msg-author">{{ message.author }}</a>
+                <p class="chat-log__message">{{ message.content|safe|urlize|url_target_blank}}</p>
             </div>
             {% else %}
-            <p class="chat-log__message same-author">{{ message.content|urlize|url_target_blank }}</p>
+            <p class="chat-log__message same-author">
+                {{ message.content|urlize|url_target_blank }}
+            </p>
             {% endif %}
         </li>
         {% endfor %}
-        </ul>
-        <form method="post" class="chat__form">
-            {% csrf_token %}
-            <input type="hidden" name="author" value="{{ user.username }}">
-            <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200" minlength="1" class="chat-message-input"><br>
-            <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit btn btn-primary" disabled>Send</button>
-        </form>
-    </main>
-    
-    {{ room_name|json_script:"room-name" }}
-    <script>
-        const chatInput = document.querySelector(".chat-message-input");
-        chatInput.addEventListener('input', () => {
-            let button = document.querySelector(".chat-message-submit")
-            if(chatInput.value.length > 0){
-                button.disabled = false;
-            } else {
-                button.disabled = true;
-            }
-        });
-        function scrollBottom(){
-            let max_height = Math.max( document.body.scrollHeight, document.body.offsetHeight, 
-                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );
-            window.scrollBy(0, max_height);
+    </ul>
+    <form method="post" class="chat__form">
+        {% csrf_token %}
+        <input type="hidden" name="author" value="{{ user.username }}">
+        <input autocomplete="off" id="chat-message-input" name="message" type="text" size="100" maxlength="200"
+            minlength="1" class="chat-message-input"><br>
+        <button id="chat-message-submit" type="submit" value="Send" class="chat-message-submit btn btn-primary"
+            disabled>Send</button>
+    </form>
+</main>
+
+{{ room_name|json_script:"room-name" }}
+<script>
+    const chatInput = document.querySelector(".chat-message-input");
+    chatInput.addEventListener('input', () => {
+        let button = document.querySelector(".chat-message-submit")
+        if (chatInput.value.length > 0) {
+            button.disabled = false;
+        } else {
+            button.disabled = true;
         }
+    });
+    function scrollBottom() {
+        let log = document.querySelector('.chat-log');
+        log.scrollTop = log.scrollHeight;
+    }
+    scrollBottom();
+    function urlify(text) {
+        let urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+        return text.replace(urlRegex, function (url) {
+            return `<a target="_blank" href="${url}" rel="nofollow" title="${url}">${url}</a>`;
+        })
+    }
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    let wsStart = 'ws://'
+    if (window.location.protocol == 'https:') {
+        wsStart = 'wss://'
+    }
+    const chatSocket = new ReconnectingWebSocket(
+        wsStart
+        + window.location.host
+        + '/ws/server/'
+        + '{{ object.server.id }}/'
+        + '{{ object.name }}'
+        + '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data); // data.message
+        let messages = document.querySelectorAll('.chat__msg-author');
+        if (messages.length == 0) {
+            isPreviousAuthor = false
+        }
+        else {
+            isPreviousAuthor = messages[messages.length - 1].innerText == data.author
+        }
+        let list = document.createElement("li");
+        let paragraphList = document.createElement("p");
+        list.classList.add('chat-log__li');
+        paragraphList.classList.add('chat-log__message');
+        paragraphList.innerHTML = urlify(data.message);
+        document.querySelector('.chat-log').appendChild(list);
+
+        if (!isPreviousAuthor) {
+            list.classList.add('margin-top')
+            let img = document.createElement("img");
+            let imgProfileLink = document.createElement("a");
+            imgProfileLink.classList.add('chat-log__link');
+            imgProfileLink.href = `/profile/${data.author}`;
+            img.src = data.image;
+            img.alt = `${data.author} profile image`;
+            img.classList.add('chat-log__image');
+            let messageContent = document.createElement("div");
+            messageContent.classList.add('chat__msg-content');
+            let textProfileLink = document.createElement("a");
+            textProfileLink.classList.add('chat__msg-author');
+            textProfileLink.innerText = data.author;
+            textProfileLink.href = `/profile/${data.author}`;
+            list.appendChild(imgProfileLink);
+            list.appendChild(messageContent);
+            messageContent.append(textProfileLink);
+            messageContent.append(paragraphList);
+            imgProfileLink.appendChild(img);
+        }
+        else {
+            paragraphList.classList.add("same-author")
+            list.append(paragraphList);
+        }
+        if (data.author == '{{ user.username }}') {
+            list.classList.add('author');
+        }
+
         scrollBottom();
-        function urlify(text){
-            let urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-            return text.replace(urlRegex, function(url){
-                return `<a target="_blank" href="${url}" rel="nofollow" title="${url}">${url}</a>`;
-            })
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        e.preventDefault()
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        if (message.length !== 0) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'author': '{{ user }}',
+                'image': '{{ user.profile.image.url }}'
+            }));
         }
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        let wsStart = 'ws://'
-        if(window.location.protocol == 'https:'){
-            wsStart = 'wss://'
-        }
-        const chatSocket = new ReconnectingWebSocket(
-            wsStart
-            + window.location.host
-            + '/ws/server/'
-            + '{{ object.server.id }}/'
-            + '{{ object.name }}'
-            + '/'
-        );
-        
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data); // data.message
-            let messages = document.querySelectorAll('.chat__msg-author');
-            if(messages.length == 0){
-                isPreviousAuthor = false
-            }
-            else {
-                isPreviousAuthor = messages[messages.length-1].innerText == data.author
-            }
-            let list = document.createElement("li");
-            let paragraphList = document.createElement("p");
-            list.classList.add('chat-log__li');
-            paragraphList.classList.add('chat-log__message');
-            paragraphList.innerHTML = urlify(data.message);
-            document.querySelector('.chat-log').appendChild(list);
-            
-            if(!isPreviousAuthor){
-                list.classList.add('margin-top')
-                let img = document.createElement("img");
-                let imgProfileLink = document.createElement("a");
-                imgProfileLink.classList.add('chat-log__link');
-                imgProfileLink.href = `/profile/${data.author}`;
-                img.src = data.image;
-                img.alt = `${data.author} profile image`;
-                img.classList.add('chat-log__image');
-                let messageContent = document.createElement("div");
-                messageContent.classList.add('chat__msg-content');
-                let textProfileLink = document.createElement("a");
-                textProfileLink.classList.add('chat__msg-author');
-                textProfileLink.innerText = data.author;
-                textProfileLink.href = `/profile/${data.author}`;
-                list.appendChild(imgProfileLink);
-                list.appendChild(messageContent);
-                messageContent.append(textProfileLink);
-                messageContent.append(paragraphList);
-                imgProfileLink.appendChild(img);
-            }
-            else {
-                paragraphList.classList.add("same-author")
-                list.append(paragraphList);
-            }
-            if(data.author == '{{ user.username }}'){
-                list.classList.add('author');
-            }
-            
-            scrollBottom();
-        };
-
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            e.preventDefault()
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            if(message.length !== 0){
-                chatSocket.send(JSON.stringify({
-                    'message': message,
-                    'author': '{{ user }}',
-                    'image': '{{ user.profile.image.url }}'
-                }));
-            }
-            messageInputDom.value = '';
-            scrollBottom();
-        };
-    </script>
+        messageInputDom.value = '';
+        scrollBottom();
+    };
+</script>
 {% endblock content %}

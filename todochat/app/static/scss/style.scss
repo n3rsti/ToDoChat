@@ -10,9 +10,6 @@ body {
     margin: 0;
     padding: 0;
 }
-html, body {
-    height: 100%;
-}
 .content::before {
     content: '';
     width: 100vw;
@@ -876,13 +873,18 @@ a.groups__h2 {
     transform: translate(-50%, -50%) scale(0);
     width: 250px;
     height: 140px;
-    background: #0166ab;
-    z-index: 1;
-    border-radius: 5px;
+    z-index: 3;
+    padding: 50%;
+    box-sizing: content-box;
     transition: transform .3s;
 
     &.opened {
         transform: translate(-50%, -50%) scale(1);
+    }
+    .close {
+        position: absolute;
+        right: 5px;
+        top: 5px;
     }
   }
   .channelcreation-form__input {
@@ -898,6 +900,10 @@ a.groups__h2 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: .25rem;
+    position: relative;
   }
   .channel-creation-form__label {
     width: 70%;
@@ -906,13 +912,14 @@ a.groups__h2 {
   }
 main.chat {
     width: 100%;
+    height: calc(var(--vh, 1vh) * 100 - 65px);
 }
 .chat__form {
     width: 100%;
     height: 50px;
-    position: fixed;
-    bottom: 0;
     display: flex;
+    position: fixed;
+    top: calc(var(--vh, 1vh) * 100 - 50px);
 }
 .chat-message-submit {
     width: 20%;
@@ -931,11 +938,14 @@ main.chat {
     }
 }
 .chat-log {
-    margin: 65px 0 50px 0;
+    margin: 0;
+    margin-top: 65px;
     list-style-type: none;
     padding: 0;
     display: flex;
     flex-direction: column;
+    height: calc(var(--vh, 1vh) * 100 - 65px - 50px);
+    overflow: auto;
 }
 .chat-log__li {
     width: 100%;
