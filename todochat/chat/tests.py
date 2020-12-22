@@ -2,6 +2,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 from django.contrib.auth.models import User
 from users.models import Profile
 
@@ -23,7 +24,7 @@ class ChatTests(ChannelsLiveServerTestCase):
         super().setUpClass()
         try:
             # NOTE: Requires "chromedriver" binary to be installed in $PATH
-            cls.driver = webdriver.Chrome()
+            cls.driver = webdriver.Chrome(ChromeDriverManager().install())
         except:
             super().tearDownClass()
             raise
