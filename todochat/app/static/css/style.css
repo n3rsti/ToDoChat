@@ -322,7 +322,8 @@ div.groups__img, div.nav__server-logo {
     display: flex; }
 
 .groups__li:focus, .groups__li:hover {
-  background: var(--dark); }
+  background: var(--dark);
+  color: #fff; }
 
 .groups__li:focus .li__span, .groups__li:hover .li__span {
   background: var(--primary); }

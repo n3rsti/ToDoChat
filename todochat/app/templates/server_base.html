@@ -45,6 +45,9 @@
             <a href="{% url 'server_detail' server.id %}" class="groups__li"
                 title="{{server.name}} group">{{ server.name }}</a>
         </section>
+        <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
+        <a href="" class="groups__li">All tasks</a>
+        <a href="" class="groups__li">My tasks</a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
