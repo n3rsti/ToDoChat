@@ -9,6 +9,11 @@ window.onload = function () {
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
     }
+    if(document.querySelector('.create_task')){
+        document.querySelector('.create_task').addEventListener("click", collapseTaskForm);
+        document.querySelector('.close_task').addEventListener("click", collapseTaskForm);
+        window.scrollTo(0,document.body.scrollHeight);
+    }
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     
@@ -82,4 +87,23 @@ function hideGroups(){
     for(let i = 5; i < groups.length; i++){
         groups[i].classList.toggle("opened")
     }
+}
+function collapseFormSection(button, aria_expanded){
+    $(`[name=${button.dataset.controls}]`).collapse('toggle');
+    btnIcon = button.querySelector('.fas');
+    if(aria_expanded=="true"){
+        btnIcon.classList.remove('fa-minus');
+        btnIcon.classList.add('fa-plus');
+        button.setAttribute('aria-expanded', 'false');
+    }
+    else {
+        btnIcon.classList.remove('fa-plus');
+        btnIcon.classList.add('fa-minus');
+        button.setAttribute('aria-expanded', 'true');
+    }
+
+}
+function collapseTaskForm(){
+    taskForm = document.querySelector('.task_section');
+    taskForm.classList.toggle('task_section--open');
 }

@@ -17,6 +17,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView
 from users.views import register, profile, profile_edit, UserDetailView, UserInvitations, UserSearchView
+from tasks.views import TaskListView
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.views import ChannelDetailView
@@ -32,6 +33,7 @@ urlpatterns = [
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/edit', UpdateServerView.as_view(), name="server_update"),
+    path('server/<int:server_id>/tasks', TaskListView.as_view(), name="server_tasks"),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
     path('profile/', include('users.urls')),
     path('server/<int:pk>/<str:room_name>/', ChannelDetailView.as_view(), name='room'),

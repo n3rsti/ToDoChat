@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load markdownify %}
+{% block title %}
+<title>ToDoChat | {{ server.name }}</title>
+{% endblock title %}
+{% block content %}
+{% include "server_base.html" %}
+<main class="content chat">
+    {% if task_list.count is 0 %}
+    No tasks
+    {% else %}
+    <ul class="task__list">
+    {% for task in task_list %}
+    <li class="task__li">
+        <article class="task">
+            <section class="task__top">
+                <strong>#{{ task.task_id }}</strong> {{ task.title }}
+                <div class="top__users">
+                    {% for user in task.assigned_for.all %}
+                    <img src="{{ user.profile.image.url }}" alt="" class="top__img">
+                    {% endfor %}
+                </div>
+            </section>
+            {% if task.description %}
+            <section class="task__description">
+                {{ task.description|markdownify }}
+            </section>
+            {% endif %}
+            <section class="task__date">
+                <i class="far fa-clock"></i>
+                {{ task.created }}
+            </section>
+        <article>
+    </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+            <button class="create_task btn-primary btn">Create task <i class="fas fa-plus"></i></button>
+            <div class="task_section">
+                <button class="close_task">
+                    <i class="far fa-times-circle"></i>
+                </button>
+
+
+                <form method="POST" class="task__form">
+                    {% csrf_token %}
+                    <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
+                        data-controls="form_title">
+
+                        <i class="fas fa-minus"></i>Title
+                    </button>
+                    <div class="form_section show" name="form_title">
+                        <label for="title" hidden>Title</label>
+                        <input type="text" name="title" id="title" class="form-control"
+                            placeholder="For example: make an app" required>
+                        <small class="form-text text-muted">Description can be maximum 20 characters long.</small>
+                    </div>
+                    <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
+                        data-controls="form_asigned">
+                        <i class="fas fa-plus"></i>Assigned for
+                    </button>
+                    <div class="form_section collapse" name="form_asigned">
+                        {% for user in server.users.all %}
+                        <div class="form-check">
+                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input">
+                            <label for="{{ user.username }}" class="form-check-label">{{ user.username }}</label>
+                        </div>
+                        {% endfor %}
+                        <small class="form-text text-muted">Assign the task to chosen users.</small>
+                    </div>
+                    <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
+                        data-controls="form_description">
+                        <i class="fas fa-plus"></i>Description
+                    </button>
+                    <div class="form_section collapse" name="form_description">
+                        <label for="form_description" hidden>Description</label>
+                        <textarea name="description" id="form_description" cols="30" rows="5" maxlength="500"
+                            class="form-control" placeholder="Describe your task"></textarea>
+                        <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
+</main>
+{% endblock content %}

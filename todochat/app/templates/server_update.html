@@ -7,9 +7,9 @@
 
 <main class="content content--profile profile--edit">
     {% if server.image == 'default.png' %}
-    <div class="profile__img no-img">{{ server.name.0 }}</div>
+    <div class="profile__img no-img server">{{ server.name.0 }}</div>
     {% else %}
-    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
+    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img server">
     {% endif %}
     <h1 class="title--thin">{{ object.name }}</h1>
     {{ object.owner.name }}

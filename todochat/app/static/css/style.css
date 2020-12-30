@@ -231,7 +231,7 @@ body {
 .news__title {
   text-align: center;
   font-weight: 400;
-  margin-top: 80px; }
+  margin-top: 15px; }
 
 .section__news {
   width: 100%;
@@ -291,7 +291,9 @@ body {
 .groups__img {
   width: 30px;
   height: 30px;
-  border-radius: 9999px; }
+  border-radius: 9999px;
+  display: flex;
+  align-items: center; }
 
 div.groups__img, div.nav__server-logo {
   display: flex;
@@ -525,12 +527,13 @@ div.groups__img, div.nav__server-logo {
   .title--thin.profile_invited {
     margin: 0 0 15px 0; }
   .title--thin.margin {
-    margin-top: 75px;
+    margin-top: 10px;
     margin-bottom: 10px; }
 
 .content {
   width: 100%;
-  min-height: calc(100vh - 65px - 40px); }
+  min-height: calc(100vh - 65px - 40px);
+  margin-top: 65px; }
   .content.content-create_server {
     align-items: center; }
 
@@ -557,6 +560,8 @@ div.groups__img, div.nav__server-logo {
     color: #fff;
     font-size: 35px;
     font-weight: 600; }
+  .profile__img.server {
+    margin-top: 50px; }
 
 .logout__nav {
   position: fixed;
@@ -598,7 +603,7 @@ span.profile__description:nth-of-type(1) {
   bottom: 20px;
   display: flex; }
   .edit__button.edit__button--top {
-    top: 70px;
+    top: 10px;
     right: 5px;
     bottom: initial;
     display: flex; }
@@ -896,7 +901,6 @@ main.chat {
 
 .chat-log {
   margin: 0;
-  margin-top: 65px;
   list-style-type: none;
   padding: 0;
   display: flex;
@@ -957,7 +961,7 @@ main.chat {
   align-items: center;
   justify-content: center;
   height: 25vh;
-  margin: 65px 0 10vh 0; }
+  margin: 0 0 10vh 0; }
 
 .friend__buttons {
   display: flex;
@@ -1038,5 +1042,98 @@ main.chat {
   font-weight: 600;
   text-align: center;
   margin-top: 30px; }
+
+.task_section {
+  position: fixed;
+  bottom: 0;
+  transform: translateY(100%);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  z-index: 1;
+  border-top: 2px solid var(--primary);
+  transition: transform .3s; }
+  .task_section .close_task {
+    position: absolute;
+    top: .375rem;
+    right: .75rem;
+    color: var(--primary);
+    font-size: 2rem;
+    background: none;
+    outline: none;
+    border: 0;
+    padding: 0;
+    display: flex; }
+  .task_section.task_section--open {
+    transform: translateY(0); }
+
+.task__form {
+  display: flex;
+  flex-direction: column;
+  width: 100%; }
+  .task__form .btn {
+    text-align: left; }
+    .task__form .btn.btn-primary {
+      text-align: center;
+      width: 100px;
+      align-self: center; }
+  .task__form .btn[type=submit] {
+    margin-bottom: 30px; }
+
+.task__form .fas {
+  margin-right: 5px; }
+
+.task__form .form_section {
+  margin: 0 .75rem 0 .75rem; }
+
+.task__form .btn {
+  margin: 5px; }
+
+.create_task {
+  align-self: center;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 20px; }
+
+.task {
+  width: 100%;
+  display: flex;
+  flex-direction: column; }
+  .task .task__date, .task .task__description, .task .task__top {
+    width: 100%;
+    padding: 10px; }
+  .task .top__users {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%); }
+  .task .task__top {
+    position: relative;
+    color: #fff;
+    background: var(--primary); }
+  .task .task__date {
+    background: #ecf0f1;
+    color: #111; }
+
+.task__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px; }
+  .task__list .task__li {
+    width: 90%;
+    border: 1px solid var(--primary);
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden; }
+  .task__list .top__img {
+    height: 25px;
+    width: 25px;
+    border-radius: 9999px;
+    margin-left: -15px; }
 
 /*# sourceMappingURL=style.css.map */

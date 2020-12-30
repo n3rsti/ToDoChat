@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'channels',
-    'chat'
+    'chat.apps.ChatConfig',
+    'tasks',
+    'markdownify'
 ]
 
 MIDDLEWARE = [
@@ -82,6 +84,23 @@ CHANNEL_LAYERS = {
         },
     },
 }
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'acronym',
+    'b',
+    'blockquote',
+    'em',
+    'i',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul',
+    'h1',
+    'h2',
+    'h3'
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

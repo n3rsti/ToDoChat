@@ -46,7 +46,7 @@
                 title="{{server.name}} group">{{ server.name }}</a>
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
-        <a href="" class="groups__li">All tasks</a>
+        <a href="{% url 'server_tasks' server.id %}" class="groups__li">All tasks</a>
         <a href="" class="groups__li">My tasks</a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
@@ -85,7 +85,7 @@
     <form action="" method="POST" class="channelcreation-form bg-primary">
         {% csrf_token %}
         <label for="name" class="form-label text-light">Name: </label>
-        <input type="text" name="name" class="form-control w-75">
+        <input type="text" name="name" id="name" class="form-control w-75">
         <button type="submit" class="btn btn-light mt-2">Create channel</button>
     </form>
     
