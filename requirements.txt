@@ -8,3 +8,4 @@ channels==2.4.0
 channels-redis==3.1.0
 selenium
 webdriver-manager
+django-markdownify
