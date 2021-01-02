@@ -2,13 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from app.models import Server
 from django.utils import timezone
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 class Task(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     task_id = models.CharField(max_length=50)
     title = models.CharField(max_length=20)
-    description = models.CharField(max_length=500)
+    description = RichTextField(blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_created_tasks')
     assigned_for = models.ManyToManyField(User, related_name='users_tasks')
     created     = models.DateTimeField(editable=False, default=timezone.now)

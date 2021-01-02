@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'channels',
     'chat.apps.ChatConfig',
     'tasks',
-    'markdownify'
+    'ckeditor',
+    'ckeditor_uploader'
 ]
 
 MIDDLEWARE = [
@@ -84,23 +85,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'acronym',
-    'b',
-    'blockquote',
-    'em',
-    'i',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul',
-    'h1',
-    'h2',
-    'h3'
-]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -162,3 +146,18 @@ LOGIN_URL = 'login'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList', 'Outdent', 'Indent',],
+            ['Link', 'Unlink'],
+        ],
+        'width': '100%',
+        'height': '100'
+    }
+}

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% load markdownify %}
+{% block extra_head %}
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
 {% block title %}
 <title>ToDoChat | {{ server.name }}</title>
 {% endblock title %}
@@ -16,19 +19,16 @@
             <section class="task__top">
                 <strong>#{{ task.task_id }}</strong> {{ task.title }}
                 <div class="top__users">
-                    {% for user in task.assigned_for.all %}
-                    <img src="{{ user.profile.image.url }}" alt="" class="top__img">
-                    {% endfor %}
+                    <i class="fas fa-exclamation top__status"></i>
                 </div>
             </section>
             {% if task.description %}
-            <section class="task__description">
-                {{ task.description|markdownify }}
-            </section>
             {% endif %}
             <section class="task__date">
-                <i class="far fa-clock"></i>
-                {{ task.created }}
+                Created on
+                {{ task.created|date:"d M, Y" }}
+                by 
+                <a href="{% url 'user_detail' task.created_by %}">{{ task.created_by }}</a>
             </section>
         <article>
     </li>
@@ -77,8 +77,8 @@
                     </button>
                     <div class="form_section collapse" name="form_description">
                         <label for="form_description" hidden>Description</label>
-                        <textarea name="description" id="form_description" cols="30" rows="5" maxlength="500"
-                            class="form-control" placeholder="Describe your task"></textarea>
+                        {{ desc_form.media }}
+                        {{ desc_form.as_p }}
                         <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>

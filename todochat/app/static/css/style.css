@@ -1054,7 +1054,9 @@ main.chat {
   background: #fff;
   z-index: 1;
   border-top: 2px solid var(--primary);
-  transition: transform .3s; }
+  transition: transform .3s;
+  max-height: 100%;
+  overflow: auto; }
   .task_section .close_task {
     position: absolute;
     top: .375rem;
@@ -1103,7 +1105,8 @@ main.chat {
   flex-direction: column; }
   .task .task__date, .task .task__description, .task .task__top {
     width: 100%;
-    padding: 10px; }
+    padding: 10px;
+    padding-bottom: 2px; }
   .task .top__users {
     position: absolute;
     right: 5px;
@@ -1111,11 +1114,22 @@ main.chat {
     transform: translateY(-50%); }
   .task .task__top {
     position: relative;
-    color: #fff;
-    background: var(--primary); }
+    color: #151B26;
+    font-weight: 600; }
+    .task .task__top .top__status {
+      color: #2ecc71;
+      padding: 10px;
+      border-radius: 9999px;
+      border: 3px solid #2ecc71;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center; }
   .task .task__date {
-    background: #ecf0f1;
-    color: #111; }
+    color: #586069;
+    font-weight: 400;
+    font-size: .8rem; }
 
 .task__list {
   list-style: none;
@@ -1125,15 +1139,11 @@ main.chat {
   align-items: center;
   margin-bottom: 20px; }
   .task__list .task__li {
-    width: 90%;
-    border: 1px solid var(--primary);
-    margin-top: 20px;
-    border-radius: 10px;
-    overflow: hidden; }
-  .task__list .top__img {
-    height: 25px;
-    width: 25px;
-    border-radius: 9999px;
-    margin-left: -15px; }
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid var(--primary); }
+
+.django-ckeditor-widget {
+  width: 100%; }
 
 /*# sourceMappingURL=style.css.map */

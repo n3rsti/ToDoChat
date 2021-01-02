@@ -14,7 +14,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include
+from django.urls import path, include, re_path
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView
 from users.views import register, profile, profile_edit, UserDetailView, UserInvitations, UserSearchView
 from tasks.views import TaskListView
@@ -25,6 +25,7 @@ from users.forms import UserLoginForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     path('', main_view, name="index"),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm), name="login"),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),

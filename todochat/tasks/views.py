@@ -1,14 +1,21 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task
 from app.models import Server
+from .forms import TaskDescriptionForm
 import uuid
 import datetime
 
-class TaskListView(ListView, LoginRequiredMixin):
+class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
     template_name = "task_list.html"
     model = Task
+
+    def test_func(self):
+        server = self.get_object().server
+        if self.request.user in server.users.all():
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -16,6 +23,7 @@ class TaskListView(ListView, LoginRequiredMixin):
         context['server'] = server
         context['task_list'] = Task.objects.filter(server=server).order_by('created')
         context['heading'] = 'All tasks'
+        context['desc_form'] = TaskDescriptionForm
         return context
     
     def post(self, request, server_id):
@@ -37,3 +45,4 @@ class TaskListView(ListView, LoginRequiredMixin):
                     task.assigned_for.add(server.users.all()[i])
         task.save()
         return redirect("server_tasks", server_id)
+
