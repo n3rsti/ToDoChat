@@ -159,7 +159,6 @@ CKEDITOR_CONFIGS = {
             ['Image']
         ],
         'width': '100%',
-        'height': 100,
         'extraPlugins': ','.join(
             [
                 #'easyimage',

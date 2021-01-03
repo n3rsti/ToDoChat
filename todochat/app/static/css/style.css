@@ -790,7 +790,7 @@ a.groups__h2 {
   width: 250px;
   padding: 10px; }
   .invitation.invitation--first {
-    margin-top: 65px; }
+    margin-top: 25px; }
 
 .invitation__inviting {
   color: #262629;
@@ -804,13 +804,8 @@ a.groups__h2 {
   margin-bottom: 10px; }
 
 .invitation__button {
-  width: 50%;
-  padding: 10px;
-  outline: none;
-  border: 0;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer; }
+  width: 49%;
+  padding: 10px; }
 
 .invitation__button.accept {
   background: var(--primary); }
@@ -1167,5 +1162,32 @@ main.task {
       margin-right: 5px; }
   main.task section {
     border-bottom: 1px solid #e8ecee; }
+  main.task .title {
+    display: flex;
+    align-items: center;
+    position: relative; }
+    main.task .title .fas {
+      color: #2ecc71;
+      padding: 10px;
+      border-radius: 9999px;
+      border: 3px solid #2ecc71;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: calc(50% - .2rem);
+      right: 10px;
+      transform: translateY(-50%); }
+    main.task .title h1 {
+      width: 85%; }
+  main.task .btn-row {
+    border: 0;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center; }
+  main.task .btn {
+    margin: 0 2px; }
 
 /*# sourceMappingURL=style.css.map */

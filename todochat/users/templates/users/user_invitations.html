@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}<title>Invitations</title>{% endblock title %}
 {% block content %}
 {% include "app_base.html" %}
 
@@ -7,6 +8,7 @@
     <button  onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
    </button>
+   <h1 class="title--thin margin">Invitations</h1>
    {% if object_list.count == 0 %}
    <h2 class="title--thin">No invitations.</h2>
    {% endif %}
@@ -21,7 +23,8 @@
             {% csrf_token %}
             <input type="hidden" name="inviting" value="{{ invitation.inviting.username }}">
             <input type="hidden" name="invited" value="{{ invitation.invited.username }}">
-            <button name="button" type="submit" value="accept" class="invitation__button accept"><i class="fas fa-check"></i>Accept</button><button type="submit" name="button" value="reject" class="invitation__button reject">Reject</button>
+            <button name="button" type="submit" value="accept" class="invitation__button btn btn-primary"><i class="fas fa-check"></i>Accept</button>
+            <button type="submit" name="button" value="reject" class="invitation__button btn btn-danger">Reject</button>
         </form>
     </article>
     {% endfor %}

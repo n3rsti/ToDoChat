@@ -31,8 +31,8 @@
     <section class="nav__groups">
         
         {% if user.invited_user.count > 0 %}
-        <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations<span
-                class="li__span">{{ user.invited_user.count }}</span></a>
+        <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations
+                <span class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         {% endif %}
         <h2 class="groups__h2">Groups</h2>
         {% if user.server_set.count > 0 %}

@@ -828,7 +828,7 @@ a.groups__h2 {
     padding: 10px;
 
     &.invitation--first {
-        margin-top: 65px;
+        margin-top: 25px;
     }
 }
 .invitation__inviting {
@@ -843,13 +843,8 @@ a.groups__h2 {
     margin-bottom: 10px;
 }
 .invitation__button {
-    width: 50%;
+    width: 49%;
     padding: 10px;
-    outline: none;
-    border: 0;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
 }
 .invitation__button.accept {
     background: var(--primary);
@@ -1257,5 +1252,38 @@ main.task {
     }
     section {
         border-bottom: 1px solid #e8ecee;
+    }
+    .title {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        .fas {
+            color: #2ecc71;
+            padding: 10px;
+            border-radius: 9999px;
+            border: 3px solid #2ecc71;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: calc(50% - .2rem);
+            right: 10px;
+            transform: translateY(-50%);
+        }
+        h1 {
+            width:85%;
+        }
+    }
+    .btn-row {
+        border: 0;
+        padding: 10px 0;
+        display: flex;
+        justify-content: center;
+    }
+    .btn {
+        margin: 0 2px;
     }
 }

@@ -3,7 +3,7 @@
 {% endblock title %} {% block content %} {% include "server_base.html" %}
 <main class="content task">
   <section class="title">
-    <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1>
+    <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1><i class="fas fa-exclamation"></i>
   </section>
   <section class="author">
     <i class="fas fa-user"></i>
@@ -16,5 +16,10 @@
     {{ task.created|date:"d M, Y H:G" }}
   </section>
   <section class="description">{{ task.description|safe }}</section>
+  <section class="btn-row">
+    <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
+    <button type="button" class="btn btn-danger">Delete</button>
+  </section>
+ 
 </main>
 {% endblock content %}

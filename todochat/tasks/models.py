@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from app.models import Server
 from django.utils import timezone
+from django.urls import reverse
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 
@@ -24,4 +25,4 @@ class Task(models.Model):
         return super(Task, self).save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('task_detail', kwargs={'server_id': self.server.id, 'task_id': self.id})
+        return reverse('task_detail', kwargs={'server_id': self.server.id, 'id': self.id})
