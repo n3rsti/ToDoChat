@@ -31,11 +31,8 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
         description = request.POST.get('description')
         assignments = request.POST.getlist('assignments')
         server = Server.objects.get(id=server_id)
-        id = str(uuid.uuid4())
-        while Server.objects.filter(id=id).first() is not None:
-            id = str(uuid.uuid4())
         server_task_id = Task.objects.filter(server=server).count() + 1
-        task = Task.objects.create(id=id, task_id=server_task_id, title=title, description=description, created_by=request.user, server=server)
+        task = Task.objects.create(task_id=server_task_id, title=title, description=description, created_by=request.user, server=server)
         if len(assignments) == 0:
             task.assigned_for.add(request.user)
         else:
@@ -46,3 +43,23 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
         task.save()
         return redirect("server_tasks", server_id)
 
+
+class TaskDetailView(DetailView, LoginRequiredMixin):
+    model = Task
+    template_name = "task_detail.html"
+    slug_field = "id"
+    slug_url_kwarg = "id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = Task.objects.get(pk=self.kwargs['id'])
+        context['task'] = task
+        context['server'] = Server.objects.get(id=self.kwargs['server_id'])
+        context['heading'] = f'Task #{task.task_id}'
+        return context
+        
+    def test_func(self):
+        server = self.get_object().server
+        if self.request.user in server.users.all():
+            return True
+        return False

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block extra_head %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
 {{ block.super }}
 {% endblock %}
@@ -17,7 +20,7 @@
     <li class="task__li">
         <article class="task">
             <section class="task__top">
-                <strong>#{{ task.task_id }}</strong> {{ task.title }}
+                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.id }}</strong> {{ task.title }}</a> 
                 <div class="top__users">
                     <i class="fas fa-exclamation top__status"></i>
                 </div>

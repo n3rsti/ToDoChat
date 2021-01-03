@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 from app.models import Server
 from django.utils import timezone
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 class Task(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
     task_id = models.CharField(max_length=50)
     title = models.CharField(max_length=20)
-    description = RichTextField(blank=True, null=True)
+    description = RichTextUploadingField(blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_created_tasks')
     assigned_for = models.ManyToManyField(User, related_name='users_tasks')
     created     = models.DateTimeField(editable=False, default=timezone.now)
@@ -22,3 +22,6 @@ class Task(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Task, self).save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return reverse('task_detail', kwargs={'server_id': self.server.id, 'task_id': self.id})

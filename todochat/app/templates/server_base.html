@@ -8,10 +8,8 @@
         {% else %}
         <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="nav__server-logo">
         {% endif %}
-        {% if heading == server.name %}
+        {% if heading %}
         <h1 class="task__bar">{{ heading }}</h1>
-        {% else %}
-        <h1 class="task__bar">#{{ heading }}</h1>
         {% endif %}
     </a>
 

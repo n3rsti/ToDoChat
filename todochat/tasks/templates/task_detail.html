@@ -1,0 +1,20 @@
+{% extends 'base.html'%} {% block title %}
+<title>#{{task.task_id}} {{task.title}}</title>
+{% endblock title %} {% block content %} {% include "server_base.html" %}
+<main class="content task">
+  <section class="title">
+    <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1>
+  </section>
+  <section class="author">
+    <i class="fas fa-user"></i>
+    <a href="{% url 'user_detail' task.created_by %}">
+      {{ task.created_by }}
+    </a>
+  </section>
+  <section class="date">
+    <i class="far fa-calendar-alt"></i>
+    {{ task.created|date:"d M, Y H:G" }}
+  </section>
+  <section class="description">{{ task.description|safe }}</section>
+</main>
+{% endblock content %}
