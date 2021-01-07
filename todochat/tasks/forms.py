@@ -11,7 +11,13 @@ class TaskDescriptionForm(forms.Form):
         fields = ['description']
 
 class TaskUpdateForm(forms.ModelForm):
-    title = forms.CharField()
+    title = forms.CharField(widget=forms.TextInput(attrs={
+        'name': 'title',
+        'id': 'title',
+        'class': 'form-control',
+        'placeholder': 'For example: make an app',
+        'required': 'true'
+    }))
     assigned_for = forms.ModelMultipleChoiceField(queryset=None, 
     widget=forms.CheckboxSelectMultiple)
     description = forms.CharField(widget=CKEditorUploadingWidget())

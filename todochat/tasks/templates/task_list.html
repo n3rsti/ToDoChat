@@ -20,7 +20,7 @@
     <li class="task__li">
         <article class="task">
             <section class="task__top">
-                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.id }}</strong> {{ task.title }}</a> 
+                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.task_id }}</strong> {{ task.title }}</a> 
                 <div class="top__users">
                     <i class="fas fa-exclamation top__status"></i>
                 </div>

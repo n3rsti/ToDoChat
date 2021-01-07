@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task
-from app.models import Server
+from app.models import Server, Channel
 from .forms import TaskDescriptionForm, TaskUpdateForm
 import uuid
 import datetime
+from django.http import HttpResponseRedirect
 
 
 class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
@@ -30,21 +31,31 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
 
     def post(self, request, server_id):
         title = request.POST.get('title')
-        description = request.POST.get('description')
-        assignments = request.POST.getlist('assignments')
+        new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
-        server_task_id = Task.objects.filter(server=server).count() + 1
-        task = Task.objects.create(task_id=server_task_id, title=title,
-                                   description=description, created_by=request.user, server=server)
-        if len(assignments) == 0:
-            task.assigned_for.add(request.user)
+        if title is not None:
+            description = request.POST.get('description')
+            assignments = request.POST.getlist('assignments')
+            server = Server.objects.get(id=server_id)
+            server_task_id = Task.objects.filter(server=server).count() + 1
+            task = Task.objects.create(task_id=server_task_id, title=title,
+                                    description=description, created_by=request.user, server=server)
+            if len(assignments) == 0:
+                task.assigned_for.add(request.user)
+            else:
+                for i in range(server.users.count()):
+                    print(server.users.all()[i], assignments[i])
+                    if assignments[i] == "on":
+                        task.assigned_for.add(server.users.all()[i])
+            task.save()
+            return redirect("server_tasks", server_id)
+        elif new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+            if not server is None:
+                channel = Channel(name=new_channel, server=server)
+                channel.save()
+            return redirect("room", pk=server_id, room_name=new_channel)
         else:
-            for i in range(server.users.count()):
-                print(server.users.all()[i], assignments[i])
-                if assignments[i] == "on":
-                    task.assigned_for.add(server.users.all()[i])
-        task.save()
-        return redirect("server_tasks", server_id)
+            return HttpResponseRedirect(self.request.path_info)
 
 
 class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
@@ -66,6 +77,22 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         if self.request.user in server.users.all():
             return True
         return False
+    
+    def post(self, request, server_id, id):
+        new_channel = request.POST.get("name")
+        server = Server.objects.get(id=server_id)
+        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+            if not server is None:
+                channel = Channel(name=new_channel, server=server)
+                channel.save()
+            return redirect("room", pk=server_id, room_name=new_channel)
+        elif request.POST.get("delete_task"):
+            Task.objects.get(pk=id).delete()
+            return redirect("server_tasks", server_id)
+        else:
+            return HttpResponseRedirect(self.request.path_info)
+
+    
 
 
 class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
@@ -88,6 +115,6 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
         if self.request.user in server.users.all():
             return True
         return False
-    
+
     def form_valid(self, form):
         return super().form_valid(form)

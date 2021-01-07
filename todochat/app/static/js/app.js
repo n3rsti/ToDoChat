@@ -3,8 +3,17 @@ window.onload = function () {
     if(document.querySelector('.invite__button.friends')){
         document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
     }
-    if(document.querySelector('.nav__add-button')){
-        document.querySelector('.nav__add-button').addEventListener("click", openChannelCreation);
+    if($('.nav__add-button')){
+        $('.nav__add-button').on("click", () => {
+            $('.channelcreation').modal('show')
+        })
+    }
+    if($('main.content')){
+        $('main.content').on("click", ()=>{
+            if($('main.content').hasClass('content--open')){
+                openNav()
+            }
+        })
     }
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
@@ -27,7 +36,6 @@ function openFriendInfo(){
     document.querySelector('.invite__button.remove').classList.toggle('button--opened')
 }
 let opened = false
-const channelcreation = document.querySelector('.channelcreation')
 function openNav() {
     document.querySelector('.content').classList.toggle('content--open');
     document.querySelector('.header').classList.toggle('header--dark');
@@ -42,24 +50,6 @@ function openNav() {
         document.querySelector('.header__button').setAttribute('aria-label', 'Open navigation');
         document.querySelector('.header__button').setAttribute('aria-expanded', 'false');
         opened = false;
-    }
-}
-function openChannelCreation(){
-    openNav();
-    channelcreation.classList.toggle("opened")
-    if (opened === false) {
-        document.querySelector('.nav__add-button').setAttribute('aria-label', 'Close navigation');
-        document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'true');
-        document.querySelector('.content').classList.add('content--open');
-        document.querySelector('.header__button').removeEventListener("click", openNav);
-        opened = true;
-    }
-    else if (opened === true) {
-        document.querySelector('.nav__add-button').setAttribute('aria-label', 'Open navigation');
-        document.querySelector('.nav__add-button').setAttribute('aria-expanded', 'false');
-        document.querySelector('.content').classList.remove('content--open');
-        document.querySelector('.header__button').addEventListener("click", openNav);
-        opened = true;
     }
 }
 function loadGroups(){
