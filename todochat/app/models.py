@@ -43,5 +43,8 @@ class Channel(models.Model):
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return f'{self.name} channel'
+        return f'Server: {self.server}, Channel: {self.name}'
+
+    def get_absolute_url(self):
+        return reverse('room', kwargs={'pk': self.server.id, 'room_name': self.name})
 
