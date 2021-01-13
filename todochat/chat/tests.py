@@ -27,6 +27,12 @@ class ChatTests(ChannelsLiveServerTestCase):
         super().setUpClass()
         try:
             # NOTE: Requires "chromedriver" binary to be installed in $PATH
+            clsOptions = webdriver.ChromeOptions()
+            clsOptions.add_argument("--no-sandbox") 
+            clsOptions.add_argument("--disable-setuid-sandbox") 
+            clsOptions.add_argument("--disable-dev-shm-using") 
+            clsOptions.add_argument("--disable-extensions") 
+            clsOptions.add_argument("--disable-gpu") 
             cls.driver = webdriver.Chrome(ChromeDriverManager().install())
         except:
             super().tearDownClass()
@@ -123,7 +129,7 @@ class ChannelModelTest(TestCase):
         user2 = User.objects.create(username="test2", id=2)
         server = Server.objects.create(name="test_name", id=123, owner=user1)
         server.users.add(user2)
-        channel = Channel.objects.create(server=server, name="test_channel", pk=1)
+        channel = Channel.objects.create(server=server, name="test_channel", pk=2)
         message = ChannelMessage.objects.create(id="123", channel=channel, content="test message", author=user1)
         message2 = ChannelMessage.objects.create(id="1234", channel=channel, content="test message2", author=user2)
     
