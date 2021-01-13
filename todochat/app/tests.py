@@ -61,5 +61,5 @@ class ChannelModelTest(TestCase):
 
     def test_str(self):
         channel = Channel.objects.get(pk=1234)
-        expected_str = f'Server: {channel.server}, Channel: {channel.name}'
+        expected_str = f'Server: {channel.server.name}, Channel: {channel.name}'
         self.assertEqual(str(channel), expected_str)

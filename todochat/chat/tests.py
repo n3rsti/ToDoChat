@@ -1,5 +1,8 @@
 from channels.testing import ChannelsLiveServerTestCase
+from django.test import TestCase
 from selenium import webdriver
+from .models import ChannelMessage
+from app.models import Server, Channel
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
@@ -111,3 +114,21 @@ class ChatTests(ChannelsLiveServerTestCase):
     @property
     def _chat_log_value(self):
         return self.driver.find_element_by_css_selector('.chat-log__li:nth-last-child(1)').get_attribute('innerText')
+
+
+class ChannelModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user1 = User.objects.create(username="test1", id=1)
+        user2 = User.objects.create(username="test2", id=2)
+        server = Server.objects.create(name="test_name", id=123, owner=user1)
+        server.users.add(user2)
+        channel = Channel.objects.create(server=server, name="test_channel", pk=1)
+        message = ChannelMessage.objects.create(id="123", channel=channel, content="test message", author=user1)
+        message2 = ChannelMessage.objects.create(id="1234", channel=channel, content="test message2", author=user2)
+    
+
+    def test_content_max_length(self):
+        message = ChannelMessage.objects.get(pk="123")
+        max_length = message._meta.get_field('content').max_length
+        self.assertEqual(max_length, 200)
