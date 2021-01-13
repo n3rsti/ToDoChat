@@ -31,4 +31,9 @@ class TestTaskModel(TestCase):
     def test_absolute_url(self):
         task = Task.objects.get(pk=1)
         expected_str = f'/server/{task.server.id}/tasks/1/'
-        self.assertEqual(expected_str, task.get_absolute_url())
+        self.assertEqual(task.get_absolute_url(), expected_str)
+    
+    def test_str(self):
+        task = Task.objects.get(pk=1)
+        expected_str = f'{task.server.name} #{task.task_id}'
+        self.assertEqual(str(task), expected_str)

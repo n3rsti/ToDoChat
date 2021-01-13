@@ -23,6 +23,9 @@ class Task(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Task, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.server.name} #{self.task_id}'
     
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'server_id': self.server.id, 'id': self.id})
