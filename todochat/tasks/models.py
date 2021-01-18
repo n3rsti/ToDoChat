@@ -16,7 +16,7 @@ class Task(models.Model):
     created     = models.DateTimeField(editable=False, default=timezone.now)
     modified    = models.DateTimeField(default=timezone.now)
     server = models.ForeignKey(Server, related_name='server_tasks', on_delete=models.CASCADE)
-
+    status = models.CharField(max_length=20, default="open")
 
     def save(self, *args, **kwargs):
         if not self.task_id:
