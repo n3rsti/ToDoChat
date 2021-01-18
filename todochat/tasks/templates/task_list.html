@@ -31,7 +31,7 @@
                 Created on
                 {{ task.created|date:"d M, Y" }}
                 by 
-                <a href="{% url 'user_detail' task.created_by %}">{{ task.created_by }}</a>
+                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
             </section>
         <article>
     </li>

@@ -11,7 +11,7 @@ class Task(models.Model):
     task_id = models.CharField(max_length=50)
     title = models.CharField(max_length=20)
     description = RichTextUploadingField(blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_created_tasks')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_created_tasks')
     assigned_for = models.ManyToManyField(User, related_name='users_tasks')
     created     = models.DateTimeField(editable=False, default=timezone.now)
     modified    = models.DateTimeField(default=timezone.now)
@@ -29,3 +29,13 @@ class Task(models.Model):
     
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'server_id': self.server.id, 'id': self.id})
+
+
+
+class TaskComment(models.Model):
+    task_type = models.CharField(max_length=20, default="comment")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_task_comments')
+    created     = models.DateTimeField(editable=False, default=timezone.now)
+    modified    = models.DateTimeField(default=timezone.now)
+    content = RichTextUploadingField()
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_comments")

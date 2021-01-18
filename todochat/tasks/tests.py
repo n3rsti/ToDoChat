@@ -13,7 +13,7 @@ class TestTaskModel(TestCase):
         server.users.add(user2)
         task = Task.objects.create(task_id="123", pk=1, 
             description="this is test description",
-            created_by=user1,
+            author=user1,
             server=server
         )
         task.assigned_for.add(user2)

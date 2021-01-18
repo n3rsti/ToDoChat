@@ -2,13 +2,22 @@
 <title>#{{task.task_id}} {{task.title}}</title>
 {% endblock title %} {% block content %} {% include "server_base.html" %}
 <main class="content task">
+  <section class="btn-row">
+    {% if request.user == task.author %}
+    <button type="button" class="btn btn-success">Approve</button>
+    <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
+    <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">Delete</button>
+    {% else %}
+    <button type="button" class="btn btn-success">Submit for review</button>
+    {% endif %}
+  </section>
   <section class="title">
     <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1><i class="fas fa-exclamation"></i>
   </section>
   <section class="author">
     <i class="fas fa-user"></i>
-    <a href="{% url 'user_detail' task.created_by %}">
-      {{ task.created_by }}
+    <a href="{% url 'user_detail' task.author %}">
+      {{ task.author }}
     </a>
   </section>
   <section class="date">
@@ -16,10 +25,7 @@
     {{ task.created|date:"d M, Y H:G" }}
   </section>
   <section class="description">{{ task.description|safe }}</section>
-  <section class="btn-row">
-    <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
-    <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">Delete</button>
-  </section>
+  
 
 </main>
 <div class="modal task_delete" tabindex="-1" role="dialog">
