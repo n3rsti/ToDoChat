@@ -97,3 +97,12 @@ function collapseTaskForm(){
     taskForm = document.querySelector('.task_section');
     taskForm.classList.toggle('task_section--open');
 }
+function confirmTaskDelete(comment_id){
+    let confirmDeleteDiv = $(`[name='confirm#${comment_id}']`)
+    if(confirmDeleteDiv.css('z-index') == -1){
+        confirmDeleteDiv.css('z-index', 1)
+    }
+    else {
+        confirmDeleteDiv.css('z-index', -1)
+    }
+}

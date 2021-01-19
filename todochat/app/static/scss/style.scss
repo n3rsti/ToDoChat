@@ -1252,6 +1252,9 @@ main.task {
     width: calc(100% - 20px);
     margin: 10px;
     border: 1px solid #e8ecee;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
 
     .comment__top, .comment__bottom {
         width: 100%;
@@ -1270,6 +1273,37 @@ main.task {
         border-top: 1px solid #e8ecee;
         p:last-child{
             margin-bottom: 0;
+        }
+    }
+    .comment__top {
+        position: relative;
+    }
+    .top-left {
+        width: 90%;
+    }
+    .fa-trash {
+        color: #dc3545;
+    }
+    .delete_task-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 6px;
+    }
+    .confirm_delete {
+        background-color: #fff;
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .btn {
+            margin: 5px;
         }
     }
 }

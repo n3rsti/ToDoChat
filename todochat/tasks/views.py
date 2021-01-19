@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from tasks.models import Task
+from tasks.models import Task, TaskComment
 from app.models import Server, Channel
 from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
 import uuid
@@ -45,7 +45,6 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
                 task.assigned_for.add(request.user)
             else:
                 for i in range(server.users.count()):
-                    print(server.users.all()[i], assignments[i])
                     if assignments[i] == "on":
                         task.assigned_for.add(server.users.all()[i])
             task.save()
@@ -72,8 +71,6 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['server'] = Server.objects.get(id=self.kwargs['server_id'])
         context['heading'] = f'Task #{task.task_id}'
         context['comment_form'] = TaskCommentForm
-        context['date_now'] = datetime.datetime.now().date()
-        print(datetime.datetime.now().strftime("%b. %d, %Y, %-I:%-M p.m."))
         return context
 
 
@@ -92,8 +89,11 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
         elif request.POST.get("delete_task"):
-            Task.objects.get(pk=id).delete()
-            return redirect("server_tasks", server_id)
+            if request.user == Task.objects.get(id=id).author:
+                Task.objects.get(pk=id).delete()
+                return redirect("server_tasks", server_id)
+            else:
+                return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("comment_task"):
             form = TaskCommentForm(request.POST)
             form.instance.task_type = "comment"
@@ -107,6 +107,13 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
                 return HttpResponseRedirect(self.request.path_info)
             else:
                 return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("delete_message"):
+            print(1233)
+            comment_id = request.POST.get("comment_id")
+            comment = TaskComment.objects.get(id=comment_id)
+            if comment.author == request.user:
+                comment.delete()
+            return HttpResponseRedirect(self.request.path_info)
         else:
             return HttpResponseRedirect(self.request.path_info)
 

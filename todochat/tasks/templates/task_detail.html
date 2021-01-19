@@ -32,30 +32,52 @@
 <section class="task__comments">
   <ul class="comment__li">
     {% for comment in task.task_comments.all %}
+    <li>
     <div class="task__comment">
       <section class="comment__top">
-       <img src="{{ comment.author.profile.image.url }}" alt="" class="comment__profile_img"> <a href="{% url 'user_detail' comment.author">{{ comment.author }}</a>
-       <span class="bottom-all_date">
-       <span>
-         {{ comment.created|timesince}}</span> ago
-        </span>
+        <div class="top-left">
+          <img src="{{ comment.author.profile.image.url }}" alt="" class="comment__profile_img"> <a
+            href="{% url 'user_detail' comment.author">{{ comment.author }}</a>
+          <span class="bottom-all_date">
+            <span>
+              {{ comment.created|timesince}}</span> ago
+          </span>
+        </div>
+        {% if comment.author == request.user %}
+        <button class="btn delete_task-btn" onclick="confirmTaskDelete('{{comment.id}}')">
+          <i class="fas fa-trash"></i>
+        </button>
+        {% endif %}
       </section>
       <section class="comment__bottom">
         {{ comment.content|safe }}
       </section>
+      {% if comment.author == request.user %}
+      <section class="confirm_delete" name="confirm#{{comment.id}}">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="comment_id" value="{{comment.id}}">
+          <button class="btn btn-danger" type="submit" name="delete_message" value="Delete comment">Delete</button>
+        </form>
+        
+        <button class="btn btn-secondary" onclick="confirmTaskDelete('{{comment.id}}')">Cancel</button>
+      </section>
+      {% endif %}
     </div>
+  </li>
     {% endfor %}
   </ul>
+  
 </section>
 
 <form method="POST" class="task__form">
   {% csrf_token %}
   <div class="form_section" name="form_description">
-      <label for="form_description" hidden>Description</label>
-      {{ comment_form.media }}
-      {{ comment_form.as_p }}
-      <small class="form-text text-muted">Comments can be maximum 500 characters long.</small>
-      <button type="submit" value="comment" class="btn btn-primary ml-0" name="comment_task">Comment</button>
+    <label for="form_description" hidden>Description</label>
+    {{ comment_form.media }}
+    {{ comment_form.as_p }}
+    <small class="form-text text-muted">Comments can be maximum 500 characters long.</small>
+    <button type="submit" value="comment" class="btn btn-primary ml-0" name="comment_task">Comment</button>
   </div>
 </form>
 {% if request.user == task.author %}

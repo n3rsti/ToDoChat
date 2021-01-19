@@ -1157,7 +1157,10 @@ main.task {
 .task__comment {
   width: calc(100% - 20px);
   margin: 10px;
-  border: 1px solid #e8ecee; }
+  border: 1px solid #e8ecee;
+  position: relative;
+  background-color: #fff;
+  overflow: hidden; }
   .task__comment .comment__top, .task__comment .comment__bottom {
     width: 100%;
     padding: 10px 15px; }
@@ -1171,5 +1174,29 @@ main.task {
     border-top: 1px solid #e8ecee; }
     .task__comment .comment__bottom p:last-child {
       margin-bottom: 0; }
+  .task__comment .comment__top {
+    position: relative; }
+  .task__comment .top-left {
+    width: 90%; }
+  .task__comment .fa-trash {
+    color: #dc3545; }
+  .task__comment .delete_task-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 6px; }
+  .task__comment .confirm_delete {
+    background-color: #fff;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+    .task__comment .confirm_delete .btn {
+      margin: 5px; }
 
 /*# sourceMappingURL=style.css.map */
