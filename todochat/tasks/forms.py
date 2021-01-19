@@ -33,8 +33,8 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class TaskCommentForm(forms.ModelForm):
-    comment = forms.CharField(widget=CKEditorUploadingWidget(config_name="comment"))
+    content = forms.CharField(widget=CKEditorUploadingWidget(config_name="comment"), min_length=1)
 
     class Meta:
         model = TaskComment
-        fields = ['comment']
+        fields = ['content']

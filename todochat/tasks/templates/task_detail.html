@@ -29,6 +29,9 @@
   </section>
   <section class="description">{{ task.description|safe }}</section>
 </main>
+{% for comment in task.task_comments.all %}
+{{ comment }}
+{% endfor %}
 <form method="POST" class="task__form">
   {% csrf_token %}
   <div class="form_section" name="form_description">
@@ -36,7 +39,7 @@
       {{ comment_form.media }}
       {{ comment_form.as_p }}
       <small class="form-text text-muted">Comments can be maximum 500 characters long.</small>
-      <button type="submit" class="btn btn-primary ml-0">Comment</button>
+      <button type="submit" value="comment" class="btn btn-primary ml-0" name="comment_task">Comment</button>
   </div>
 </form>
 {% if request.user == task.author %}

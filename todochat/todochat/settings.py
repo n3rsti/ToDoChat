@@ -158,6 +158,8 @@ CKEDITOR_CONFIGS = {
             ['Link', 'Unlink'],
             ['Image']
         ],
+        'fillEmptyBlocks': False,
+        'tabSpaces': 0,
         'width': '100%',
         'height': 100,
         'resize_enabled': False,
@@ -191,6 +193,8 @@ CKEDITOR_CONFIGS = {
             ['Link', 'Unlink'],
             ['Image']
         ],
+        'fillEmptyBlocks': False,
+        'tabSpaces': 0,
         'width': '100%',
         'height': 100,
         'resize_enabled': False,

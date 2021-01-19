@@ -6,6 +6,7 @@ from app.models import Server, Channel
 from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
 import uuid
 import datetime
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 
 
@@ -73,6 +74,7 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['comment_form'] = TaskCommentForm
         return context
 
+
     def test_func(self):
         server = self.get_object().server
         if self.request.user in server.users.all():
@@ -90,6 +92,21 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         elif request.POST.get("delete_task"):
             Task.objects.get(pk=id).delete()
             return redirect("server_tasks", server_id)
+        elif request.POST.get("comment_task"):
+            form = TaskCommentForm(request.POST)
+            form.instance.task_type = "comment"
+            form.instance.author = request.user
+            form.instance.task = Task.objects.get(id=id)
+            if form.is_valid():
+                content = form.cleaned_data.get('content')
+                print(content)
+                if len(content.replace("&nbsp;", "").replace(" ", "").replace("<p>", "").replace("</p>", "")) == 0:
+                    return HttpResponseRedirect(self.request.path_info)
+                form.save()
+                return HttpResponseRedirect(self.request.path_info)
+            else:
+                messages.warning(request, 'Invalid message')
+                return HttpResponseRedirect(self.request.path_info)
         else:
             return HttpResponseRedirect(self.request.path_info)
 
