@@ -1244,3 +1244,32 @@ main.task {
             font-size: .8rem;
         }
 }}
+.task__comments .comment__li {
+    list-style-type: none;
+    padding: 0;
+}
+.task__comment {
+    width: calc(100% - 20px);
+    margin: 10px;
+    border: 1px solid #e8ecee;
+
+    .comment__top, .comment__bottom {
+        width: 100%;
+        padding: 10px 15px;
+
+        a {
+            font-weight: 500;
+        }
+    }
+    .comment__profile_img {
+        width: 30px;
+        height: 30px;
+        border-radius: 9999px;
+    }
+    .comment__bottom {
+        border-top: 1px solid #e8ecee;
+        p:last-child{
+            margin-bottom: 0;
+        }
+    }
+}

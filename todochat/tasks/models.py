@@ -39,3 +39,6 @@ class TaskComment(models.Model):
     modified    = models.DateTimeField(default=timezone.now)
     content = RichTextUploadingField()
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_comments")
+
+    def __str__(self):
+        return f'Task: {self.task} ID: {self.id}'

@@ -1150,4 +1150,26 @@ main.task {
       margin-right: 3px;
       font-size: .8rem; }
 
+.task__comments .comment__li {
+  list-style-type: none;
+  padding: 0; }
+
+.task__comment {
+  width: calc(100% - 20px);
+  margin: 10px;
+  border: 1px solid #e8ecee; }
+  .task__comment .comment__top, .task__comment .comment__bottom {
+    width: 100%;
+    padding: 10px 15px; }
+    .task__comment .comment__top a, .task__comment .comment__bottom a {
+      font-weight: 500; }
+  .task__comment .comment__profile_img {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px; }
+  .task__comment .comment__bottom {
+    border-top: 1px solid #e8ecee; }
+    .task__comment .comment__bottom p:last-child {
+      margin-bottom: 0; }
+
 /*# sourceMappingURL=style.css.map */

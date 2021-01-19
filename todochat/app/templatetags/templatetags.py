@@ -22,3 +22,4 @@ def get_invitation_status(user, me):
         return "invited" # I got invited
     else:
         return "no_invitation"
+

@@ -72,6 +72,8 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['server'] = Server.objects.get(id=self.kwargs['server_id'])
         context['heading'] = f'Task #{task.task_id}'
         context['comment_form'] = TaskCommentForm
+        context['date_now'] = datetime.datetime.now().date()
+        print(datetime.datetime.now().strftime("%b. %d, %Y, %-I:%-M p.m."))
         return context
 
 
@@ -99,13 +101,11 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
             form.instance.task = Task.objects.get(id=id)
             if form.is_valid():
                 content = form.cleaned_data.get('content')
-                print(content)
                 if len(content.replace("&nbsp;", "").replace(" ", "").replace("<p>", "").replace("</p>", "")) == 0:
                     return HttpResponseRedirect(self.request.path_info)
                 form.save()
                 return HttpResponseRedirect(self.request.path_info)
             else:
-                messages.warning(request, 'Invalid message')
                 return HttpResponseRedirect(self.request.path_info)
         else:
             return HttpResponseRedirect(self.request.path_info)

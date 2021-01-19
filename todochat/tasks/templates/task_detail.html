@@ -29,9 +29,25 @@
   </section>
   <section class="description">{{ task.description|safe }}</section>
 </main>
-{% for comment in task.task_comments.all %}
-{{ comment }}
-{% endfor %}
+<section class="task__comments">
+  <ul class="comment__li">
+    {% for comment in task.task_comments.all %}
+    <div class="task__comment">
+      <section class="comment__top">
+       <img src="{{ comment.author.profile.image.url }}" alt="" class="comment__profile_img"> <a href="{% url 'user_detail' comment.author">{{ comment.author }}</a>
+       <span class="bottom-all_date">
+       <span>
+         {{ comment.created|timesince}}</span> ago
+        </span>
+      </section>
+      <section class="comment__bottom">
+        {{ comment.content|safe }}
+      </section>
+    </div>
+    {% endfor %}
+  </ul>
+</section>
+
 <form method="POST" class="task__form">
   {% csrf_token %}
   <div class="form_section" name="form_description">
