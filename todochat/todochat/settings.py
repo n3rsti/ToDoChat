@@ -160,6 +160,7 @@ CKEDITOR_CONFIGS = {
         ],
         'width': '100%',
         'height': 100,
+        'resize_enabled': False,
         'extraPlugins': ','.join(
             [
                 #'easyimage',
@@ -179,6 +180,41 @@ CKEDITOR_CONFIGS = {
                 'dialogui',
                 'elementspath'
             ]),
+        'removePlugins': 'autogrow'
+
+    },
+    'comment': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image']
+        ],
+        'width': '100%',
+        'height': 100,
+        'resize_enabled': False,
+        'extraPlugins': ','.join(
+            [
+                #'easyimage',
+                #'balloontoolbar',
+                #'cloudservices',
+                'button',
+                'div',
+                'autolink',
+                'autoembed',
+                'embedsemantic',
+                'autogrow',
+                # 'devtools',
+                'widget',
+                'lineutils',
+                'clipboard',
+                'dialog',
+                'dialogui',
+                'elementspath'
+            ]),
+        'removePlugins': 'autogrow'
+
 
     },
     

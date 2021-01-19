@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task
 from app.models import Server, Channel
-from .forms import TaskDescriptionForm, TaskUpdateForm
+from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
 import uuid
 import datetime
 from django.http import HttpResponseRedirect
@@ -70,6 +70,7 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['task'] = task
         context['server'] = Server.objects.get(id=self.kwargs['server_id'])
         context['heading'] = f'Task #{task.task_id}'
+        context['comment_form'] = TaskCommentForm
         return context
 
     def test_func(self):

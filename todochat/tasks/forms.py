@@ -1,7 +1,7 @@
 from django import forms
 from ckeditor.widgets import CKEditorWidget
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from tasks.models import Task
+from tasks.models import Task, TaskComment
 from django.contrib.auth.models import User
 
 class TaskDescriptionForm(forms.Form):
@@ -30,3 +30,11 @@ class TaskUpdateForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['title', 'assigned_for', 'description']
+
+
+class TaskCommentForm(forms.ModelForm):
+    comment = forms.CharField(widget=CKEditorUploadingWidget(config_name="comment"))
+
+    class Meta:
+        model = TaskComment
+        fields = ['comment']
