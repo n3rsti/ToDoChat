@@ -5,7 +5,7 @@ from tasks.models import Task, TaskComment
 from django.contrib.auth.models import User
 
 class TaskDescriptionForm(forms.Form):
-    description = forms.CharField(widget=CKEditorUploadingWidget())
+    description = forms.CharField(widget=CKEditorUploadingWidget(), label="")
 
     class Meta:
         fields = ['description']
