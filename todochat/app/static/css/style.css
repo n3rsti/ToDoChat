@@ -1149,21 +1149,27 @@ main.task {
     main.task .btn-row .btn {
       margin-right: 3px;
       font-size: .8rem; }
+  main.task .form_section {
+    margin: 0; }
+
+.task__comments {
+  margin-top: 10px; }
 
 .task__comments .comment__li {
   list-style-type: none;
   padding: 0; }
 
 .task__comment {
-  width: calc(100% - 20px);
-  margin: 10px;
+  width: calc(100%);
+  margin: 10px 0;
   border: 1px solid #e8ecee;
   position: relative;
   background-color: #fff;
   overflow: hidden; }
   .task__comment .comment__top, .task__comment .comment__bottom {
     width: 100%;
-    padding: 10px 15px; }
+    padding: 10px 15px;
+    border: 0; }
     .task__comment .comment__top a, .task__comment .comment__bottom a {
       font-weight: 500; }
   .task__comment .comment__profile_img {

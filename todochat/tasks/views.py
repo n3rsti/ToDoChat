@@ -40,7 +40,7 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
             server = Server.objects.get(id=server_id)
             server_task_id = Task.objects.filter(server=server).count() + 1
             task = Task.objects.create(task_id=server_task_id, title=title,
-                                    description=description, created_by=request.user, server=server)
+                                    description=description, author=request.user, server=server)
             if len(assignments) == 0:
                 task.assigned_for.add(request.user)
             else:
@@ -83,14 +83,15 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
     def post(self, request, server_id, id):
         new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
+        task = Task.objects.get(id=id)
         if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
             if not server is None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
         elif request.POST.get("delete_task"):
-            if request.user == Task.objects.get(id=id).author:
-                Task.objects.get(pk=id).delete()
+            if request.user == task.author:
+                task.delete()
                 return redirect("server_tasks", server_id)
             else:
                 return HttpResponseRedirect(self.request.path_info)
@@ -98,7 +99,7 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
             form = TaskCommentForm(request.POST)
             form.instance.task_type = "comment"
             form.instance.author = request.user
-            form.instance.task = Task.objects.get(id=id)
+            form.instance.task = task
             if form.is_valid():
                 content = form.cleaned_data.get('content')
                 if len(content.replace("&nbsp;", "").replace(" ", "").replace("<p>", "").replace("</p>", "")) == 0:
@@ -108,11 +109,35 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
             else:
                 return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("delete_message"):
-            print(1233)
             comment_id = request.POST.get("comment_id")
             comment = TaskComment.objects.get(id=comment_id)
             if comment.author == request.user:
                 comment.delete()
+            return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("submit_for_review"):
+            if request.user in task.assigned_for.all():
+                task.status = "submitted_for_review"
+                task.save()
+            return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("approve_task"):
+            if request.user == task.author:
+                task.status = "approved"
+                task.save()
+                return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("cancel_submit"):
+            if request.user in task.assigned_for.all() and task.status == "submitted_for_review":
+                task.status = "open"
+                task.save()
+            return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("reopen_task"):
+            if request.user == task.author and task.status == "approved":
+                task.status="open"
+                task.save()
+            return HttpResponseRedirect(self.request.path_info)
+        elif request.POST.get("request_more_work"):
+            if request.user == task.author and task.status == "submitted_for_review":
+                task.status = "need_more_work"
+                task.save()
             return HttpResponseRedirect(self.request.path_info)
         else:
             return HttpResponseRedirect(self.request.path_info)
