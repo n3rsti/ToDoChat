@@ -1109,7 +1109,8 @@ main.task {
     color: #6f7782;
     font-size: 90%; }
   main.task .description {
-    width: 100%; }
+    width: 100%;
+    word-break: break-all; }
     main.task .description p {
       margin: 0;
       padding: 20px 0; }
@@ -1122,14 +1123,16 @@ main.task {
   main.task section {
     border-bottom: 1px solid #e8ecee; }
   main.task .title {
-    display: flex;
-    align-items: center;
     position: relative; }
+    main.task .title .badge.open {
+      background: #2ecc71; }
+    main.task .title h1 {
+      margin: 0; }
+    main.task .title .badge {
+      margin: 5px 0; }
     main.task .title .fas {
-      color: #2ecc71;
       padding: 10px;
       border-radius: 9999px;
-      border: 3px solid #2ecc71;
       width: 20px;
       height: 20px;
       display: flex;
@@ -1139,6 +1142,17 @@ main.task {
       top: calc(50% - .2rem);
       right: 10px;
       transform: translateY(-50%); }
+      main.task .title .fas.open {
+        color: #2ecc71;
+        border: 3px solid #2ecc71; }
+      main.task .title .fas.approved {
+        color: #198754;
+        border: 3px solid #198754; }
+      main.task .title .fas.submitted {
+        font-size: 70%; }
+      main.task .title .fas.nmw {
+        color: #ffc107;
+        border: 3px solid #ffc107; }
     main.task .title h1 {
       width: 85%; }
   main.task .btn-row {
@@ -1153,14 +1167,65 @@ main.task {
     margin: 0; }
 
 .task__comments {
-  margin-top: 10px; }
+  margin-top: 10px;
+  width: 100%; }
+  .task__comments .comment__profile_img {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px; }
+  .task__comments .task__status_change {
+    width: 100%;
+    padding: 10px 5px;
+    margin: 5px 0;
+    display: flex;
+    border: 1px solid #e8ecee;
+    position: relative; }
+    .task__comments .task__status_change .status__task {
+      font-weight: 500; }
+    .task__comments .task__status_change .status__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      margin: 0 10px;
+      margin-left: 5px;
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%); }
+    .task__comments .task__status_change .status__content {
+      border: 0;
+      padding: 0 5px;
+      width: 90%; }
+  .task__comments .status__icon .fas {
+    padding: 10px;
+    border-radius: 9999px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+    .task__comments .status__icon .fas.open {
+      color: #2ecc71;
+      border: 3px solid #2ecc71; }
+    .task__comments .status__icon .fas.approved {
+      color: #198754;
+      border: 3px solid #198754; }
+    .task__comments .status__icon .fas.submitted {
+      font-size: 70%; }
+    .task__comments .status__icon .fas.nmw {
+      color: #ffc107;
+      border: 3px solid #ffc107; }
 
-.task__comments .comment__li {
+.task__comments .comment__ul {
   list-style-type: none;
-  padding: 0; }
+  padding: 0;
+  width: 100%; }
+  .task__comments .comment__ul .comment__li {
+    width: 100%; }
 
 .task__comment {
-  width: calc(100%);
+  width: 100%;
   margin: 10px 0;
   border: 1px solid #e8ecee;
   position: relative;
@@ -1172,10 +1237,6 @@ main.task {
     border: 0; }
     .task__comment .comment__top a, .task__comment .comment__bottom a {
       font-weight: 500; }
-  .task__comment .comment__profile_img {
-    width: 30px;
-    height: 30px;
-    border-radius: 9999px; }
   .task__comment .comment__bottom {
     border-top: 1px solid #e8ecee; }
     .task__comment .comment__bottom p:last-child {

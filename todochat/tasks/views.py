@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from tasks.models import Task, TaskComment
+from tasks.models import Task, TaskComment, TaskStatusChange
 from app.models import Server, Channel
 from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
 import uuid
 import datetime
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from operator import attrgetter
+from itertools import chain
 
 
 class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
@@ -71,6 +73,9 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['server'] = Server.objects.get(id=self.kwargs['server_id'])
         context['heading'] = f'Task #{task.task_id}'
         context['comment_form'] = TaskCommentForm
+        context['comment_list'] = sorted(
+    chain(task.task_comments.all(), task.task_status_changes.all()),
+    key=attrgetter('created'))
         return context
 
 
@@ -117,26 +122,31 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         elif request.POST.get("submit_for_review"):
             if request.user in task.assigned_for.all():
                 task.status = "submitted_for_review"
+                task.change_status("submitted_for_review", request.user)
                 task.save()
             return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("approve_task"):
             if request.user == task.author:
                 task.status = "approved"
+                task.change_status("approved", request.user)
                 task.save()
                 return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("cancel_submit"):
             if request.user in task.assigned_for.all() and task.status == "submitted_for_review":
                 task.status = "open"
+                task.change_status("open", request.user)
                 task.save()
             return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("reopen_task"):
             if request.user == task.author and task.status == "approved":
                 task.status="open"
+                task.change_status("open", request.user)
                 task.save()
             return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("request_more_work"):
             if request.user == task.author and task.status == "submitted_for_review":
                 task.status = "need_more_work"
+                task.change_status("need_more_work", request.user)
                 task.save()
             return HttpResponseRedirect(self.request.path_info)
         else:
