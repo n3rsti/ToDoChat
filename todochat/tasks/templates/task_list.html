@@ -11,7 +11,7 @@
 {% endblock title %}
 {% block content %}
 {% include "server_base.html" %}
-<main class="content chat">
+<main class="content chat tasks">
     {% if task_list.count is 0 %}
     No tasks
     {% else %}
@@ -21,8 +21,16 @@
         <article class="task">
             <section class="task__top">
                 <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.task_id }}</strong> {{ task.title }}</a> 
-                <div class="top__users">
-                    <i class="fas fa-exclamation top__status"></i>
+                <div class="top__users task_status_section task_status_section--center">
+                    {% if task.status == "open" %}
+                    <span class="badge open">Open</span>
+                    {% elif task.status == "approved" %}
+                    <span class="badge bg-success">Approved</span>
+                    {% elif task.status == "need_more_work" %}
+                    <span class="badge bg-warning">Need more work</span>
+                    {% elif task.status == "submitted_for_review" %}
+                    <span class="badge bg-success">Submitted</span>
+                    {% endif %}
                 </div>
             </section>
             {% if task.description %}

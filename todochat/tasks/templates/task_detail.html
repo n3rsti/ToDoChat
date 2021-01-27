@@ -38,21 +38,17 @@
       {% endif %}
     </form>
   </section>
-  <section class="title">
+  <section class="title task_status_section">
     <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1>
     
     {% if task.status == "open" %}
     <span class="badge open">Open</span>
-    <i class="fas fa-exclamation open"></i>
     {% elif task.status == "approved" %}
     <span class="badge bg-success">Approved</span>
-    <i class="fas fa-check approved"></i>
     {% elif task.status == "need_more_work" %}
     <span class="badge bg-warning">Need more work</span>
-    <i class="fas fa-exclamation nmw"></i>
     {% elif task.status == "submitted_for_review" %}
     <span class="badge bg-success">Submitted</span>
-    <i class="fas fa-pause open submitted"></i>
     {% endif %}
   </section>
   <section class="author">
@@ -71,17 +67,6 @@
       {% if comment.status %}
       <li class="status__li">
         <div class="task__status_change">
-          <section class="status__icon">
-            {% if comment.status == "open" %}
-            <i class="fas fa-exclamation open"></i>
-            {% elif comment.status == "approved" %}
-            <i class="fas fa-check approved"></i>
-            {% elif comment.status == "need_more_work" %}
-            <i class="fas fa-exclamation nmw"></i>
-            {% elif comment.status == "submitted_for_review" %}
-            <i class="fas fa-pause open submitted"></i>
-            {% endif %}
-          </section>
           <section class="status__content">
             <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }} profile photo" class="comment__profile_img">
             <a href="{% url 'user_detail' task.author %}">{{ comment.author }}</a> {{ comment.user_friendly_status }} 

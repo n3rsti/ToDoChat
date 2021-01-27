@@ -3,8 +3,10 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task, TaskComment, TaskStatusChange
 from app.models import Server, Channel
+from django.contrib.auth.models import User
 from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
 import uuid
+import json
 import datetime
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -176,5 +178,23 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
             return True
         return False
 
-    def form_valid(self, form):
-        return super().form_valid(form)
+
+    def post(self, request, server_id, id):
+        server = Server.objects.get(id=server_id)
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        task = Task.objects.get(id=id)
+        task.assigned_for.clear()
+        assigned_list = request.POST.get("assigned_users_list")
+        print(json.loads(assigned_list))
+        for user in json.loads(assigned_list):
+            if User.objects.filter(username=user).first() in server.users.all():
+                task.assigned_for.add(User.objects.get(username=user))
+        if task.assigned_for.count() == 0:
+            task.assigned_for.add(task.author)
+        if len(title) <= 20:
+            task.title = title
+        if len(description) <= 4000:
+            task.description = description
+        task.save()
+        return redirect("task_detail", server_id, id)

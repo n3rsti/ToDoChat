@@ -3,9 +3,10 @@ from ckeditor.widgets import CKEditorWidget
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from tasks.models import Task, TaskComment
 from django.contrib.auth.models import User
+from app.models import Server
 
 class TaskDescriptionForm(forms.Form):
-    description = forms.CharField(widget=CKEditorUploadingWidget(), label="")
+    description = forms.CharField(widget=CKEditorUploadingWidget())
 
     class Meta:
         fields = ['description']
@@ -18,18 +19,12 @@ class TaskUpdateForm(forms.ModelForm):
         'placeholder': 'For example: make an app',
         'required': 'true'
     }))
-    assigned_for = forms.ModelMultipleChoiceField(queryset=None, 
-    widget=forms.CheckboxSelectMultiple)
     description = forms.CharField(widget=CKEditorUploadingWidget())
 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['assigned_for'].queryset = User.objects.filter(server = self.instance.server)
-
     class Meta:
         model = Task
-        fields = ['title', 'assigned_for', 'description']
+        fields = ['title', 'description']
 
 
 class TaskCommentForm(forms.ModelForm):

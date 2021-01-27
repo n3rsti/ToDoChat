@@ -876,6 +876,8 @@ a.groups__h2 {
 main.chat {
     width: 100%;
     height: calc(var(--vh, 1vh) * 100 - 65px);
+    display: flex;
+    flex-direction: column;
 }
 .chat__form {
     width: 100%;
@@ -1121,10 +1123,11 @@ main.chat {
     margin: 5px;
 }
 .create_task {
-    align-self: center;
-    margin-left: 50%;
-    transform: translateX(-50%);
     margin-bottom: 20px;
+    width: 50%;
+}
+main.tasks {
+    align-items: center;
 }
 article.task {
     width: 100%;
@@ -1172,6 +1175,7 @@ article.task {
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
+    width: 100%;
 
     .task__li {
         width: 100%;
@@ -1183,6 +1187,8 @@ article.task {
     width: 100%;
 }
 main.task {
+    margin-top: 65px;
+
     padding: 10px;
     .task__id {
         font-weight: 400;
@@ -1213,45 +1219,7 @@ main.task {
     .title {
         position: relative;
 
-        .badge.open {
-            background: #2ecc71;
-        }
-        h1 {
-            margin: 0;
-        }
-        .badge {
-            margin: 5px 0;
-        }
-
-        .fas {
-            padding: 10px;
-            border-radius: 9999px;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: calc(50% - .2rem);
-            right: 10px;
-            transform: translateY(-50%);
-
-            &.open {
-                color: #2ecc71;
-                border: 3px solid #2ecc71;
-            }
-            &.approved {
-                color: #198754;
-                border: 3px solid #198754;
-            }
-            &.submitted {
-                font-size: 70%;
-            }
-            &.nmw {
-                color: #ffc107;
-                border: 3px solid #ffc107;
-            }
-        }
+        
         h1 {
             width:85%;
         }
@@ -1269,6 +1237,53 @@ main.task {
     }
     .form_section {
         margin: 0;
+    }
+}
+.task_status_section {
+    .badge.open {
+        background: #2ecc71;
+    }
+    h1 {
+        margin: 0;
+    }
+    .badge {
+        margin: 5px 0;
+    }
+
+    .fas {
+        padding: 10px;
+        border-radius: 9999px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: calc(50% - .2rem);
+        right: 10px;
+        transform: translateY(-50%);
+
+        &.open {
+            color: #2ecc71;
+            border: 3px solid #2ecc71;
+        }
+        &.approved {
+            color: #198754;
+            border: 3px solid #198754;
+        }
+        &.submitted {
+            font-size: 70%;
+        }
+        &.nmw {
+            color: #ffc107;
+            border: 3px solid #ffc107;
+        }
+    }
+    &.task_status_section--center {
+        .fas {
+            top: 50%;
+            transform: translateY(-50%);
+        }
     }
 }
 .task__comments {

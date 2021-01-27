@@ -1,15 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
+<title>Edit task #{{ object.task_id }}</title>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
 <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
 {{ block.super }}
 {% endblock %}
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+{% include "server_base.html" %}
+<main class="main task chat content">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="">Title: </label>
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            <label for="assigned_users form-label">Users:</label>
+            <ul class="assigned_users">
+                {% for user in object.assigned_for.all %}
+                <span>{{ user }}<button onclick="removeFromAssignedList('{{ user }}')">&times;</button></span>
+                {% endfor %}
+            </ul>
+            <input id="assigned_users" class="form-control" minlength="1" placeholder="Type username">
+        </div>
+        <input type="hidden" name="assigned_users_list" id="assigned_users_list">
+        <button class="btn btn-primary add_user_button" type="button">Add user</button>
+        <p class="users_error"></p>
+        {{ form.description }}
+        <button type="submit" class="btn btn-primary" name="update_task" value="submit">Submit</button>
+    </form>
+</main>
+<script>
+let assignedUsers = [
+    {% for user in object.assigned_for.all %}"{{ user }}",{% endfor %}
+]
+document.querySelector(".add_user_button").addEventListener("click", addToAssignedList);
+document.querySelector("#assigned_users_list").value = JSON.stringify(assignedUsers);
+
+let serverUsers = [
+{% for user in object.server.users.all %}"{{ user }}",{% endfor %}
+];
+$( function() {
+$( "#assigned_users" ).autocomplete({
+    source: serverUsers,
+});
+} );
+function removeFromAssignedList(user){
+    event.srcElement.parentElement.remove()
+    let index = assignedUsers.indexOf(user);
+    if (index !== -1) {
+        assignedUsers.splice(index, 1);
+        document.querySelector("#assigned_users_list").value = JSON.stringify(assignedUsers);
+    }
+}
+function addToAssignedList(){
+    let userInpVal = document.querySelector("#assigned_users").value
+    if (serverUsers.indexOf(userInpVal) !== -1){
+        if (assignedUsers.indexOf(userInpVal) === -1){
+            assignedUsers.push(userInpVal);
+            let assignedListTag = document.querySelector(".assigned_users");
+            let span = document.createElement("span");
+            span.classList.add("assigned_users__span");
+            let spanBtn = document.createElement("button");
+            spanBtn.classList.add("assigned_users__btn");
+            spanBtn.innerHTML = "&times;"
+            spanBtn.addEventListener("click", () => {
+                removeFromAssignedList(userInpVal);
+            })
+            span.innerText = userInpVal;
+            span.appendChild(spanBtn);
+            assignedListTag.appendChild(span);
+            document.querySelector("#assigned_users_list").value = JSON.stringify(assignedUsers);
+        }
+        else {
+            document.querySelector(".users_error").innerText = `${userInpVal} is already on the list`
+        }
+    }
+}
+
+
+</script>
 {% endblock content %}

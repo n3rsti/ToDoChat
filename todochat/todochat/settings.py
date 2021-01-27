@@ -182,7 +182,7 @@ CKEDITOR_CONFIGS = {
                 'dialogui',
                 'elementspath'
             ]),
-        'removePlugins': 'autogrow'
+            'autoGrow_maxHeight': 600
 
     },
     'comment': {
@@ -217,7 +217,8 @@ CKEDITOR_CONFIGS = {
                 'dialogui',
                 'elementspath'
             ]),
-        'removePlugins': 'autogrow'
+        'autoGrow_maxHeight': 600,
+        'autoGrow_minHeight': 100
 
 
     },
