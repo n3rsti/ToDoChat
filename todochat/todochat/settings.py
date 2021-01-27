@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'channels',
-    'chat'
+    'chat.apps.ChatConfig',
+    'tasks',
+    'ckeditor',
+    'ckeditor_uploader'
 ]
 
 MIDDLEWARE = [
@@ -143,3 +146,82 @@ LOGIN_URL = 'login'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image']
+        ],
+        'fillEmptyBlocks': False,
+        'tabSpaces': 0,
+        'width': '100%',
+        'height': 100,
+        'resize_enabled': False,
+        'extraPlugins': ','.join(
+            [
+                #'easyimage',
+                #'balloontoolbar',
+                #'cloudservices',
+                'button',
+                'div',
+                'autolink',
+                'autoembed',
+                'embedsemantic',
+                'autogrow',
+                # 'devtools',
+                'widget',
+                'lineutils',
+                'clipboard',
+                'dialog',
+                'dialogui',
+                'elementspath'
+            ]),
+            'autoGrow_maxHeight': 600,
+            'autoGrow_minHeight': 100
+
+    },
+    'comment': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image']
+        ],
+        'fillEmptyBlocks': False,
+        'tabSpaces': 0,
+        'width': '100%',
+        'height': 100,
+        'resize_enabled': False,
+        'extraPlugins': ','.join(
+            [
+                #'easyimage',
+                #'balloontoolbar',
+                #'cloudservices',
+                'button',
+                'div',
+                'autolink',
+                'autoembed',
+                'embedsemantic',
+                'autogrow',
+                # 'devtools',
+                'widget',
+                'lineutils',
+                'clipboard',
+                'dialog',
+                'dialogui',
+                'elementspath'
+            ]),
+        'autoGrow_maxHeight': 600,
+        'autoGrow_minHeight': 100
+
+
+    },
+    
+}

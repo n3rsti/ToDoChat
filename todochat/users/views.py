@@ -182,3 +182,50 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         chat.save()
         context["messages"] = chat.usersmessage_set.all()
         return context
+
+class UserSearchView(LoginRequiredMixin, ListView):
+    template_name = "user_search.html"
+    model = User
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_name = self.request.GET.get('user', '')
+        if not user_name == '':
+            context['all_search_results'] = User.objects.filter(username__icontains=user_name )
+            if context['all_search_results'].count() == 0:
+                context['search_msg'] = 'Not found'
+            context['prev_placeholder'] = user_name
+        return context
+
+    def post(self, request):
+        prev_search = request.GET['user']
+        if request.POST.get('invite_button') == 'invite':
+            invited_user = User.objects.filter(username=request.POST.get('invited')).first()
+            user = request.user
+            if not invited_user == None:
+                if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
+                    if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
+                        invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
+                        user.profile.friends.add(invited_user)
+                        invited_user.profile.friends.add(user)
+                        invitation.delete()
+                        return redirect(f'/search?user={prev_search}')
+        
+                invitation = UserInvitation(inviting=user, invited=invited_user)
+                invitation.save()
+                return redirect(f'/search?user={prev_search}')
+        
+        elif request.POST.get('invite_button') == 'reject':
+            inviting_user = User.objects.get(username=self.request.POST.get('inviting'))
+            invitation = UserInvitation.objects.get(invited=self.request.user, inviting=inviting_user)
+            invitation.delete()
+            return redirect(f'/search?user={prev_search}')
+        
+        elif request.POST.get('invite_button') == 'cancel':
+            inviting_user = self.request.user
+            invited_user = User.objects.get(username=self.request.POST.get('invited'))
+            invitation = UserInvitation.objects.get(inviting=inviting_user, invited=invited_user)
+            invitation.delete()
+            return redirect(f'/search?user={prev_search}')
+        
+        return redirect('user_search')

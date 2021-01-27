@@ -6,50 +6,45 @@
         {% if server.image == 'default.png' %}
         <div class="nav__server-logo">{{ server.name.0 }}</div>
         {% else %}
-        <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="nav__server-logo">
-        {% endif %}
-        {% if heading == server.name %}
+        <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="nav__server-logo" />
+        {% endif %} {% if heading %}
         <h1 class="task__bar">{{ heading }}</h1>
-        {% else %}
-        <h1 class="task__bar">#{{ heading }}</h1>
         {% endif %}
     </a>
 
     <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
         aria-controls="side-nav" tabindex="0">
-        <hr class="button__hr">
-        <hr class="button__hr">
-        <hr class="button__hr">
+        <hr class="button__hr" />
+        <hr class="button__hr" />
+        <hr class="button__hr" />
     </button>
 </header>
 <nav class="side__nav" name="side-nav">
     <div class="hello__div">
         <a href="{% url 'profile' %}" title="Profile">
-            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo" />
         </a>
 
-        <h2 class="hello">
-
-            {{ user.username }}
-        </h2>
+        <h2 class="hello">{{ user.username }}</h2>
     </div>
     <section class="nav__groups">
         <h2 class="groups__h2">Server</h2>
         <section class="groups__li groups__li--server">
-
             {% if server.image == 'default.png' %}
             <div class="groups__img">{{ server.name.0 }}</div>
             {% else %}
-            <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
+            <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img" />
             {% endif %}
-            <a href="{% url 'server_detail' server.id %}" class="groups__li"
-                title="{{server.name}} group">{{ server.name }}</a>
+            <a href="{% url 'server_detail' server.id %}" class="groups__li" title="{{server.name}} group">
+                {{ server.name }}</a>
         </section>
+        <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
+        <a href="{% url 'server_tasks' server.id %}" class="groups__li">All tasks</a>
+        <a href="" class="groups__li">My tasks</a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
-            <a href="{% url 'room' server.id channel.name %}" class="groups__li"
-                title="{{channel.name}} channel">#{{ channel.name }}</a>
+            <a href="{% url 'room' server.id channel.name %}" class="groups__li" title="{{channel.name}} channel">#{{ channel.name }}</a>
             {% endfor %}
             <div class="add__li">
                 <button class="nav__add-button" aria-label="Open channel creation" aria-expanded="false">
@@ -59,7 +54,6 @@
                     </span>
                 </button>
             </div>
-
         </ul>
     </section>
     <div class="bottom__side">
@@ -72,20 +66,36 @@
         <a class="bottom__button bottom__button-settings" href="{% url 'profile_edit' %}" title="Settings">
             <i class="fas fa-cog"></i>
         </a>
-
-
-
     </div>
-
 </nav>
-<div class="channelcreation">
-    <form action="" method="POST" class="channelcreation-form">
-        {% csrf_token %}
-        <label for="name" class="channel-creation-form__label">Name: </label>
-        <input type="text" name="name" class="channelcreation-form__input">
-        <button type="submit">Create channel</button>
-    </form>
+<div class="modal channelcreation" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create channel</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('.channelcreation').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Name: </label>
+                        <input type="text" name="name" id="name" class="form-control" minlength="1" maxlength="20" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        onclick="$('.channelcreation').modal('hide')">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-
 
 <script src="{% static 'js/app.js' %}"></script>

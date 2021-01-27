@@ -8,7 +8,8 @@ class ChannelMessage(models.Model):
     id = models.CharField(primary_key=True, default="error", max_length=100)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, 
+    on_delete=models.CASCADE)
     created     = models.DateTimeField(editable=False, default=timezone.now)
     modified    = models.DateTimeField(default=timezone.now)
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server
 from datetime import datetime
@@ -17,10 +17,12 @@ def create_id(name, max):
     for letter in name:
         id += str(ord(letter))
     id = current_time + id[:6]
-    id += str(random.randint(1000, max))
+    id = str(random.randint(1000, max)) + id
     id = id[::-1]
+    if id[0] == "0":
+        # Id can't start with 0 in Django
+        id = '1' + id[1::]
     return id
-
 
 @login_required
 def main_view(request):
@@ -37,7 +39,7 @@ class CreateServerView(LoginRequiredMixin, CreateView):
         form_name = form.cleaned_data.get('name')
         form_id = create_id(form_name, 9999)
         # Check if there is existing Server with created id
-        while len(Server.objects.filter(id=form_id)) > 0:
+        while Server.objects.filter(id=form_id).count() > 0:
             form_id = create_id(form_name, 9999)
         form.instance.id = create_id(form_name, 9999)
         return super().form_valid(form)
@@ -65,7 +67,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['server'] = server
-        context['heading'] = server.name #h1 in server_base.html
+        context['heading'] = f'#{server.name}' #h1 in server_base.html
         return context
     
 

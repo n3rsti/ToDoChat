@@ -7,9 +7,9 @@ from django.utils import timezone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.png', upload_to='profile_pics', blank=True)
-    background = models.ImageField(default='default_background.jpg', upload_to='background_images')
-    description = models.CharField(max_length=100, default='')
-    friends = models.ManyToManyField(User, related_name='friends_set')
+    background = models.ImageField(default='default_background.jpg', upload_to='background_images', blank=True)
+    description = models.CharField(max_length=100, default='', blank=True)
+    friends = models.ManyToManyField(User, related_name='friends_set', blank=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
