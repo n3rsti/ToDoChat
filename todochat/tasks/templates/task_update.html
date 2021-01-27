@@ -23,7 +23,9 @@
             <label for="assigned_users form-label">Users:</label>
             <ul class="assigned_users">
                 {% for user in object.assigned_for.all %}
-                <span>{{ user }}<button onclick="removeFromAssignedList('{{ user }}')">&times;</button></span>
+                <li class="assigned_user__li">
+                    <span class="assigned_user__span">{{ user }}<button class="assigned_user__button" onclick="removeFromAssignedList('{{ user }}')">&times;</button></span>
+                </li>
                 {% endfor %}
             </ul>
             <input id="assigned_users" class="form-control" minlength="1" placeholder="Type username">
@@ -64,17 +66,20 @@ function addToAssignedList(){
         if (assignedUsers.indexOf(userInpVal) === -1){
             assignedUsers.push(userInpVal);
             let assignedListTag = document.querySelector(".assigned_users");
+            let li = document.createElement("li")
+            li.classList.add("assigned_user__li")
             let span = document.createElement("span");
-            span.classList.add("assigned_users__span");
+            span.classList.add("assigned_user__span");
             let spanBtn = document.createElement("button");
-            spanBtn.classList.add("assigned_users__btn");
+            spanBtn.classList.add("assigned_user__button");
             spanBtn.innerHTML = "&times;"
             spanBtn.addEventListener("click", () => {
                 removeFromAssignedList(userInpVal);
             })
             span.innerText = userInpVal;
             span.appendChild(spanBtn);
-            assignedListTag.appendChild(span);
+            li.appendChild(span);
+            assignedListTag.appendChild(li);
             document.querySelector("#assigned_users_list").value = JSON.stringify(assignedUsers);
         }
         else {

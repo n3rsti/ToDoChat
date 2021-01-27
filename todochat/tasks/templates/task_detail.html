@@ -61,7 +61,6 @@
   </section>
   <section class="description">{{ task.description|safe }}</section>
   <section class="task__comments">
-    <h2>Comments</h2>
     <ul class="comment__ul">
       {% for comment in comment_list %}
       {% if comment.status %}
@@ -113,7 +112,7 @@
     </ul>
     
   </section>
-  
+  <h2>Comment</h2>
   <form method="POST" class="task__form">
     {% csrf_token %}
     <div class="form_section" name="form_description">

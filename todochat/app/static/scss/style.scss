@@ -1189,6 +1189,37 @@ article.task {
 main.task {
     margin-top: 65px;
 
+    ul.assigned_users {
+        padding: 0;
+        display: flex;
+    }
+
+    .assigned_user__li {
+        list-style-type: none;
+    }
+    .assigned_user__span {
+        padding: 5px 10px;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 10px;
+        height: 30px;
+        line-height: 30px;
+        margin: 2px;
+    }
+    .assigned_user__button {
+        color: var(--primary);
+        outline: none;
+        border: 0;
+        border-radius: 9999px;
+        background: #fff;
+        text-align: center;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        margin-left: 5px;
+    }
+
     padding: 10px;
     .task__id {
         font-weight: 400;

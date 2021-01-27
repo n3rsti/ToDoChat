@@ -182,7 +182,8 @@ CKEDITOR_CONFIGS = {
                 'dialogui',
                 'elementspath'
             ]),
-            'autoGrow_maxHeight': 600
+            'autoGrow_maxHeight': 600,
+            'autoGrow_minHeight': 100
 
     },
     'comment': {
