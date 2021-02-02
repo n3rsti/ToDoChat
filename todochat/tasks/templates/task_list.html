@@ -68,6 +68,17 @@
                         <small class="form-text text-muted">Description can be maximum 20 characters long.</small>
                     </div>
                     <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
+                        data-controls="form_deadline">
+
+                        <i class="fas fa-plus"></i>Deadline (optional)
+                    </button>
+                    <div class="form_section collapse" name="form_deadline">
+                        <label for="deadline" hidden>Deadline</label>
+                        <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
+                    </div>
+                       
+                    <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         data-controls="form_asigned">
                         <i class="fas fa-plus"></i>Assigned for

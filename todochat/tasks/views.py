@@ -41,10 +41,13 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
         if title is not None:
             description = request.POST.get('description')
             assignments = request.POST.getlist('assignments')
+            deadline = request.POST.get('deadline')
             server = Server.objects.get(id=server_id)
             server_task_id = Task.objects.filter(server=server).count() + 1
             task = Task.objects.create(task_id=server_task_id, title=title,
                                     description=description, author=request.user, server=server)
+            if deadline != "":
+                task.deadline = deadline
             if len(assignments) == 0:
                 task.assigned_for.add(request.user)
             else:
@@ -99,9 +102,7 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         elif request.POST.get("delete_task"):
             if request.user == task.author:
                 task.delete()
-                return redirect("server_tasks", server_id)
-            else:
-                return HttpResponseRedirect(self.request.path_info)
+            return redirect("server_tasks", server_id)
         elif request.POST.get("comment_task"):
             form = TaskCommentForm(request.POST)
             form.instance.task_type = "comment"
@@ -112,50 +113,23 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
                 if len(content.replace("&nbsp;", "").replace(" ", "").replace("<p>", "").replace("</p>", "")) == 0:
                     return HttpResponseRedirect(self.request.path_info)
                 form.save()
-                return HttpResponseRedirect(self.request.path_info)
-            else:
-                return HttpResponseRedirect(self.request.path_info)
         elif request.POST.get("delete_message"):
             comment_id = request.POST.get("comment_id")
             comment = TaskComment.objects.get(id=comment_id)
             if comment.author == request.user:
                 comment.delete()
-            return HttpResponseRedirect(self.request.path_info)
-        elif request.POST.get("submit_for_review"):
-            if request.user in task.assigned_for.all():
-                task.status = "submitted_for_review"
-                task.change_status("submitted_for_review", request.user)
-                task.save()
-            return HttpResponseRedirect(self.request.path_info)
-        elif request.POST.get("approve_task"):
-            if request.user == task.author:
-                task.status = "approved"
-                task.change_status("approved", request.user)
-                task.save()
-                return HttpResponseRedirect(self.request.path_info)
-        elif request.POST.get("cancel_submit"):
-            if request.user in task.assigned_for.all() and task.status == "submitted_for_review":
-                task.status = "open"
-                task.change_status("open", request.user)
-                task.save()
-            return HttpResponseRedirect(self.request.path_info)
-        elif request.POST.get("reopen_task"):
-            if request.user == task.author and task.status == "approved":
-                task.status="open"
-                task.change_status("open", request.user)
-                task.save()
-            return HttpResponseRedirect(self.request.path_info)
-        elif request.POST.get("request_more_work"):
-            if request.user == task.author and task.status == "submitted_for_review":
-                task.status = "need_more_work"
-                task.change_status("need_more_work", request.user)
-                task.save()
-            return HttpResponseRedirect(self.request.path_info)
-        else:
-            return HttpResponseRedirect(self.request.path_info)
+        return HttpResponseRedirect(self.request.path_info)
 
     
 
+def change_status_view(request, server_id, id):
+    if request.method == "GET":
+        if request.GET["status"]:
+            task = Task.objects.get(id=id)
+            status_list = ["approved", "open", "need_more_work", "submitted_for_review"]
+            if request.GET["status"] in status_list:
+                task.change_status(request.GET["status"], request.user)
+    return redirect("task_detail", server_id, id)
 
 class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
     model = Task
@@ -180,7 +154,13 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
 
 
     def post(self, request, server_id, id):
+        new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
+        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+            if not server is None:
+                channel = Channel(name=new_channel, server=server)
+                channel.save()
+            return redirect("room", pk=server_id, room_name=new_channel)
         title = request.POST.get("title")
         description = request.POST.get("description")
         task = Task.objects.get(id=id)

@@ -17,6 +17,7 @@ class Task(models.Model):
     modified    = models.DateTimeField(default=timezone.now)
     server = models.ForeignKey(Server, related_name='server_tasks', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, default="open")
+    deadline = models.DateTimeField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.task_id:
@@ -28,8 +29,22 @@ class Task(models.Model):
         return f'{self.server.name} #{self.task_id}'
     
     def change_status(self, status, user, *args, **kwargs):
-        self.status = status
-        TaskStatusChange.objects.create(task=self, status=status, author=user)
+        is_author = user == self.author
+        is_assigned = user in self.assigned_for.all()
+        if is_assigned or is_author:
+            if status == "open":
+                if (self.status == "submitted_for_review" and is_assigned) or (self.status == "approved" and is_author):        
+                    self.status = status
+                    TaskStatusChange.objects.create(task=self, status=status, author=user)
+            elif status == "submitted_for_review" and self.status == "open" and is_assigned:
+                self.status = status
+                TaskStatusChange.objects.create(task=self, status=status, author=user)
+            elif status == "need_more_work" and self.status == "submitted_for_review" and is_author:
+                self.status = status
+                TaskStatusChange.objects.create(task=self, status=status, author=user)
+            if status == "approved" and is_author:
+                self.status = status
+                TaskStatusChange.objects.create(task=self, status=status, author=user)
         return super(Task, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

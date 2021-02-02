@@ -59,7 +59,10 @@
     <i class="far fa-calendar-alt"></i>
     {{ task.created|date:"d M, Y H:G" }}
   </section>
+  {% if task.description %}
   <section class="description">{{ task.description|safe }}</section>
+  {% endif %}
+  {% if task.comments %}
   <section class="task__comments">
     <ul class="comment__ul">
       {% for comment in comment_list %}
@@ -112,6 +115,7 @@
     </ul>
     
   </section>
+  {% endif %}
   <h2>Comment</h2>
   <form method="POST" class="task__form">
     {% csrf_token %}
@@ -145,9 +149,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-success" name="approve_task" value="delete">
-                  Approve
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved" class="btn btn-success">Approve</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_approve').modal('hide')">
                   Close
@@ -206,9 +208,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-success" name="submit_for_review" value="delete">
-                  Submit
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=submitted_for_review" class="btn btn-success">Submit</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_submit').modal('hide')">
                   Close
@@ -239,9 +239,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-success" name="approve_task" value="delete">
-                  Approve
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved" class="btn btn-success">Approve</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_approve').modal('hide')">
                   Close
@@ -299,9 +297,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-warning" name="request_more_work" value="request more work">
-                  Request
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=need_more_work" class="btn btn-warning">Request</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_need_more_work').modal('hide')">
                   Close
@@ -330,9 +326,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-danger" name="cancel_submit" value="cancel">
-                  Cancel
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=open" class="btn btn-danger">Cancel</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_cancel_submit').modal('hide')">
                   Close
@@ -393,9 +387,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-info text-light" name="reopen_task" value="reopen">
-                  Reopen
-                </button>
+                <a href="{% url 'task_change_status' task.server.id task.id %}?status=open" class="btn btn-info text-light">Reopen</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   onclick="$('.task_reopen').modal('hide')">
                   Close

@@ -1040,7 +1040,7 @@ main.chat {
       width: 100px;
       align-self: center; }
   .task__form .btn[type=submit] {
-    margin-bottom: 30px; }
+    margin-bottom: 5px; }
 
 .task__form .fas {
   margin-right: 5px; }
@@ -1108,7 +1108,7 @@ article.task {
 
 main.task {
   margin-top: 65px;
-  padding: 10px; }
+  padding: 0 10px; }
   main.task ul.assigned_users {
     padding: 0;
     display: flex; }
@@ -1161,6 +1161,8 @@ main.task {
     display: flex;
     flex-wrap: wrap;
     margin: 10px 0; }
+    main.task .btn-row form {
+      margin-top: 20px; }
     main.task .btn-row .btn {
       margin-right: 3px;
       font-size: .8rem; }
