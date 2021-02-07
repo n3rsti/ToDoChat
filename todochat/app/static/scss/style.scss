@@ -1450,3 +1450,13 @@ main.task {
     }
     
 }
+.calendar {
+    .calendar__a {
+        color: #000;
+    }
+    .task__td {
+        .calendar__a {
+            color: red;
+        }
+    }
+}

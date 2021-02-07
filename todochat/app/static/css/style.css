@@ -1302,4 +1302,9 @@ main.task {
     .task__comment .confirm_delete .btn {
       margin: 5px; }
 
+.calendar .calendar__a {
+  color: #000; }
+.calendar .task__td .calendar__a {
+  color: red; }
+
 /*# sourceMappingURL=style.css.map */

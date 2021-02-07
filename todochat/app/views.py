@@ -5,9 +5,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server
 from datetime import datetime
 import random
+from django.core import serializers
 from chat.models import Channel
 from django.http import HttpResponse
 from app.forms import ServerUpdateForm, ServerCreateForm
+import json
+from tasks.models import Task
 
 def create_id(name, max):
     name = str(name)
@@ -26,7 +29,11 @@ def create_id(name, max):
 
 @login_required
 def main_view(request):
-    return render(request, 'index.html')
+    tasks = request.user.users_tasks.all().order_by('created')
+    context = {
+        "tasks_json": serializers.serialize('json', tasks)
+    }
+    return render(request, 'index.html', context)
 
 
 class CreateServerView(LoginRequiredMixin, CreateView):
