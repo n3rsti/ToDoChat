@@ -1307,4 +1307,13 @@ main.task {
 .calendar .task__td .calendar__a {
   color: red; }
 
+.server_invite__ul {
+  list-style: none;
+  padding: 0; }
+  .server_invite__ul .server_invite__li {
+    display: flex;
+    align-items: center; }
+    .server_invite__ul .server_invite__li .btn {
+      margin-left: auto; }
+
 /*# sourceMappingURL=style.css.map */

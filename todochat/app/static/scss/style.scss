@@ -1460,3 +1460,15 @@ main.task {
         }
     }
 }
+.server_invite__ul {
+    list-style: none;
+    padding: 0;
+
+    .server_invite__li {
+        display: flex;
+        align-items: center;
+        .btn {
+            margin-left: auto;
+        }
+    }
+}

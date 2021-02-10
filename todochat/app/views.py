@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from app.forms import ServerUpdateForm, ServerCreateForm
 import json
 from tasks.models import Task
+from django.contrib.auth.models import User
 
 def create_id(name, max):
     name = str(name)
@@ -63,11 +64,18 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return False
     
     def post(self, request, pk):
-        name = request.POST.get("name", "")
-        server = Server.objects.get(id=pk)
-        if not server is None:
-            channel = Channel(name=name, server=server)
-            channel.save()
+        new_channel = request.POST.get("name")
+        server = Server.objects.get(id=self.kwargs['pk'])
+        if request.POST.get("add_user"):
+            user = User.objects.get(username=request.POST.get("add_user"))
+            if user.profile in request.user.friends_set.all():
+                server.users.add(user)
+                server.save()
+        elif new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+            if not server is None:
+                channel = Channel(name=new_channel, server=server)
+                channel.save()
+            return redirect("room", pk=server_id, room_name=new_channel)
         return redirect("server_detail", pk)
     
     def get_context_data(self, **kwargs):
