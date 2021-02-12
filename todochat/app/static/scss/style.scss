@@ -713,6 +713,16 @@ p.profile__description {
 }
 .user__li {
     margin: 10px 0;
+    display: flex;
+    align-items: center;
+
+    .close {
+        color: red;
+        margin-left: auto;
+        margin-right: 10%;
+        opacity: 1;
+        font-size: 30px;
+    }
 }
 .users__link {
     display: flex;
@@ -1467,8 +1477,12 @@ main.task {
     .server_invite__li {
         display: flex;
         align-items: center;
+        margin-bottom: 3px;
         .btn {
             margin-left: auto;
         }
     }
+}
+.server_remove_user_modal .removed_user_span {
+    font-weight: 600;
 }

@@ -686,7 +686,15 @@ p.profile__description {
   list-style: none; }
 
 .user__li {
-  margin: 10px 0; }
+  margin: 10px 0;
+  display: flex;
+  align-items: center; }
+  .user__li .close {
+    color: red;
+    margin-left: auto;
+    margin-right: 10%;
+    opacity: 1;
+    font-size: 30px; }
 
 .users__link {
   display: flex;
@@ -1312,8 +1320,12 @@ main.task {
   padding: 0; }
   .server_invite__ul .server_invite__li {
     display: flex;
-    align-items: center; }
+    align-items: center;
+    margin-bottom: 3px; }
     .server_invite__ul .server_invite__li .btn {
       margin-left: auto; }
+
+.server_remove_user_modal .removed_user_span {
+  font-weight: 600; }
 
 /*# sourceMappingURL=style.css.map */

@@ -106,3 +106,8 @@ function confirmTaskDelete(comment_id){
         confirmDeleteDiv.css('z-index', -1)
     }
 }
+function removeServerUserModal(user){
+    $('.server_remove_user_modal').modal('show');
+    $('.removed_user_span').text(user);
+    $('input[name ="removed_user"]').val(user);
+}

@@ -6,64 +6,100 @@
 {% include "server_base.html" %}
 
 <main class="content content--profile">
-    <button  onClick="window.history.back();return false;" class="back__button">
-        <i class="fas fa-angle-left"></i>
-    </button>
-    {% if server.image == 'default.png' %}
-    <div class="profile__img no-img server ">{{ server.name.0 }}</div>
-    {% else %}
-    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img server">
-    {% endif %}
-    <h1 class="title--thin">{{ object.name }}</h1>
-    {{ object.owner.name }}
-    <ul class="users__list">
+  <button onClick="window.history.back();return false;" class="back__button">
+    <i class="fas fa-angle-left"></i>
+  </button>
+  {% if server.image == 'default.png' %}
+  <div class="profile__img no-img server ">{{ server.name.0 }}</div>
+  {% else %}
+  <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img server">
+  {% endif %}
+  <h1 class="title--thin">{{ object.name }}</h1>
+  {{ object.owner.name }}
+  <ul class="users__list">
     {% for user in object.users.all %}
     <li class="user__li">
-        <a href="{% url 'user_detail' user.username %}" class="users__link" title="{{user.username}} profile">
-            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="users__img"> {{ user.username }}
-        </a>
+      <a href="{% url 'user_detail' user.username %}" class="users__link" title="{{user.username}} profile">
+        <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="users__img"> {{ user.username }}
+      </a>
+      {% if request.user == server.owner and user != request.user %}
+      <button type="button" class="close" onclick="removeServerUserModal('{{ user.username }}')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {% endif %}
     </li>
     {% endfor %}
-    </ul>
-    {% if request.user == server.owner %}
-    <button class="btn btn-primary w-25 align-self-center" onclick="$('.server_invite_modal').modal('show')">Invite</button>
-    {% endif %}
-    {% if user == object.owner %}
-    <a href="{% url 'server_update' server.id %}" class="edit__button edit__button--top" title="Update server">
-        <i class="fas fa-cog"></i>
-    </a>
-    {% endif %}
+  </ul>
+  {% if request.user == server.owner %}
+  <button class="btn btn-primary w-25 align-self-center"
+    onclick="$('.server_invite_modal').modal('show')">Invite</button>
+  {% endif %}
+  {% if user == object.owner %}
+  <a href="{% url 'server_update' server.id %}" class="edit__button edit__button--top" title="Update server">
+    <i class="fas fa-cog"></i>
+  </a>
+  {% endif %}
 </main>
 {% if request.user == server.owner %}
 <div class="modal server_invite_modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <form method="POST">
-          {% csrf_token %}
-          <div class="modal-header">
-            <h5 class="modal-title">Invite friends</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-              onclick="$('.server_invite_modal').modal('hide')">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body d-flex flex-column">
-            <ul class="server_invite__ul">
-                {% for friend in request.user.friends_set.all %}
-                <li class="server_invite__li">
-                    {% if not friend.user in server.users.all %}
-                    <img src="{{ friend.image.url }}" class="users__img" alt="{{ friend.user }} profile image">
-                    {{ friend.user.username }}
-                    <button class="btn btn-success" name="add_user" value="{{ friend.user }}">Invite</button>
-                    {% endif %}
-                </li>
-                {% endfor %}
-            </ul>
-            <a href="{% url 'user_search' %}" class="btn btn-primary align-self-center">Add friends</a>
-          </div>
-        </form>
-      </div>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Invite friends</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            onclick="$('.server_invite_modal').modal('hide')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body d-flex flex-column">
+          <ul class="server_invite__ul">
+            {% for friend in request.user.friends_set.all %}
+            <li class="server_invite__li">
+              {% if not friend.user in server.users.all %}
+              <img src="{{ friend.image.url }}" class="users__img" alt="{{ friend.user }} profile image">
+              {{ friend.user.username }}
+              <button class="btn btn-success" name="add_user" value="{{ friend.user }}">Invite</button>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'user_search' %}" class="btn btn-primary align-self-center">Add friends</a>
+        </div>
+      </form>
     </div>
   </div>
-  {% endif %}
+</div>
+<div class="modal server_remove_user_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Invite friends</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            onclick="$('.server_remove_user_modal').modal('hide')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="removed_user">
+          Do you want to remove user <span class="removed_user_span"></span>?
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger" name="remove_user" value="remove">
+            Remove
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+            onclick="$('.server_remove_user_modal').modal('hide')">
+            Close
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock content %}

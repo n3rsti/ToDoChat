@@ -65,7 +65,10 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     
     def post(self, request, pk):
         new_channel = request.POST.get("name")
+        removed_user = request.POST.get("removed_user")
+        print(removed_user)
         server = Server.objects.get(id=self.kwargs['pk'])
+        
         if request.POST.get("add_user"):
             user = User.objects.get(username=request.POST.get("add_user"))
             if user.profile in request.user.friends_set.all():
@@ -76,6 +79,10 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
+        elif removed_user and request.user == server.owner:
+           
+            user = User.objects.get(username=removed_user)
+            server.users.remove(user)
         return redirect("server_detail", pk)
     
     def get_context_data(self, **kwargs):
