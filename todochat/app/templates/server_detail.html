@@ -60,7 +60,7 @@
               {% if not friend.user in server.users.all %}
               <img src="{{ friend.image.url }}" class="users__img" alt="{{ friend.user }} profile image">
               {{ friend.user.username }}
-              <button class="btn btn-success" name="add_user" value="{{ friend.user }}">Invite</button>
+              <a href="{% url 'invite_server_user' server.id friend.user %}" class="btn btn-success" name="add_user" value="{{ friend.user }}">Invite</a>
               {% endif %}
             </li>
             {% endfor %}

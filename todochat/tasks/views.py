@@ -120,7 +120,7 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
                 comment.delete()
         return HttpResponseRedirect(self.request.path_info)
 
-    
+
 
 def change_status_view(request, server_id, id):
     if request.method == "GET":

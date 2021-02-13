@@ -37,6 +37,10 @@ class Server(models.Model):
     def get_absolute_url(self):
         return reverse('server_detail', kwargs={'pk': self.id})
 
+class ServerInvitation(models.Model):
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name="server_invitations")
+    id = models.CharField(primary_key=True, max_length=10)
+    invited_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_server_invitations", blank=True, null=True)
 
 class Channel(models.Model):
     server = models.ForeignKey(Server, on_delete=models.CASCADE)

@@ -2,30 +2,27 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, DetailView, UpdateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Server
+from .models import Server, ServerInvitation
+from tasks.models import Task
+from users.models import UsersMessage, UsersChat
 from datetime import datetime
 import random
+import string
 from django.core import serializers
 from chat.models import Channel
 from django.http import HttpResponse
 from app.forms import ServerUpdateForm, ServerCreateForm
 import json
-from tasks.models import Task
 from django.contrib.auth.models import User
 
-def create_id(name, max):
-    name = str(name)
-    id = ''
-    now = datetime.now()
-    current_time = now.strftime("%S%d%m%y")
-    for letter in name:
-        id += str(ord(letter))
-    id = current_time + id[:6]
-    id = str(random.randint(1000, max)) + id
-    id = id[::-1]
-    if id[0] == "0":
-        # Id can't start with 0 in Django
-        id = '1' + id[1::]
+def create_num_id(length):
+    letters = string.digits
+    id = ''.join(random.choice(letters) for i in range(length))
+    return id
+
+def create_random_id(length):
+    letters = string.ascii_letters
+    id = ''.join(random.choice(letters) for i in range(length))
     return id
 
 @login_required
@@ -45,11 +42,11 @@ class CreateServerView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         form_name = form.cleaned_data.get('name')
-        form_id = create_id(form_name, 9999)
+        form_id = create_num_id(18)
         # Check if there is existing Server with created id
         while Server.objects.filter(id=form_id).count() > 0:
-            form_id = create_id(form_name, 9999)
-        form.instance.id = create_id(form_name, 9999)
+            form_id = create_num_id(18)
+        form.instance.id = form_id
         return super().form_valid(form)
 
 
@@ -69,18 +66,12 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         print(removed_user)
         server = Server.objects.get(id=self.kwargs['pk'])
         
-        if request.POST.get("add_user"):
-            user = User.objects.get(username=request.POST.get("add_user"))
-            if user.profile in request.user.friends_set.all():
-                server.users.add(user)
-                server.save()
-        elif new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
             if not server is None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
         elif removed_user and request.user == server.owner:
-           
             user = User.objects.get(username=removed_user)
             server.users.remove(user)
         return redirect("server_detail", pk)
@@ -91,7 +82,29 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['server'] = server
         context['heading'] = f'#{server.name}' #h1 in server_base.html
         return context
-    
+
+
+def invite_server_user(request, pk, username):
+    server = Server.objects.get(pk=pk)
+    invited_user = User.objects.get(username=username)
+    if invited_user in request.user.profile.friends.all():
+        if not invited_user in server.users.all():
+            invitation_id = create_random_id(10)
+            invitation = ServerInvitation.objects.create(server=server, id=invitation_id, invited_user=invited_user)
+            message_id = create_num_id(20)
+            print(message_id)
+            chat=UsersChat.objects.filter(users=request.user).get(users=invited_user)
+            if not chat:
+                chat = UsersChat.objects.create(id=f'{invited_user}_{request.user}')
+                chat.users.add(request.user)
+                chat.users.add(invited_user)
+                chat.save()
+            invitation_message = UsersMessage.objects.create(id=message_id,chat=chat,content=f'todochat.com/{invitation_id}',author=request.user)
+            invitation.save()
+            invitation_message.save()
+
+    return redirect("server_detail", pk)
+
 
 class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'server_update.html'

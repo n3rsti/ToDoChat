@@ -38,7 +38,7 @@ class UsersChat(models.Model):
     users = models.ManyToManyField(User, related_name="users_chat")
 
 class UsersMessage(models.Model):
-    id = models.CharField(primary_key=True, default="error", max_length=100)
+    id = models.CharField(primary_key=True, default="error", max_length=20)
     chat = models.ForeignKey(UsersChat, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

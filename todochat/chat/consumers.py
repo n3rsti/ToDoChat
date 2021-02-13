@@ -4,7 +4,7 @@ from channels.generic.websocket import WebsocketConsumer
 from app.models import Channel, Server
 from channels.db import database_sync_to_async
 from chat.models import ChannelMessage
-from app.views import create_id
+from app.views import create_num_id
 from django.contrib.auth.models import User
 
 class ChatConsumer(WebsocketConsumer):
@@ -65,8 +65,8 @@ class ChatConsumer(WebsocketConsumer):
         
     def create_chat_message(self, message, author):
             channel = self.channel
-            id = create_id(message, 99999)
+            id = create_num_id(20)
             author_obj = User.objects.get(username=author)
             while not ChannelMessage.objects.filter(id=id).first() is None:
-                id = create_id(message, 99999)
+                id = create_num_id(20)
             return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)

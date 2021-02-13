@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from app.models import Server
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from app.views import Channel, create_id
+from app.views import Channel, create_num_id
 from chat.models import ChannelMessage
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -34,7 +34,7 @@ class ChannelDetailView(LoginRequiredMixin, DetailView):
                 return redirect("room", pk=pk, room_name=room_name)
             else:
                 channel = Channel.objects.get(server=Server.objects.get(id=pk), name=room_name)
-                id = create_id(message, 99999)
+                id = create_num_id(20)
                 author = User.objects.get(username=request.POST.get("author"))
                 ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author)
                 return redirect("room", pk=pk, room_name=room_name)

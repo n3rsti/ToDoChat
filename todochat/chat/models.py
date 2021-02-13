@@ -5,7 +5,7 @@ from django.utils import timezone
 
 # Create your models here.
 class ChannelMessage(models.Model):
-    id = models.CharField(primary_key=True, default="error", max_length=100)
+    id = models.CharField(primary_key=True, default="error", max_length=20)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
     author = models.ForeignKey(User, 
