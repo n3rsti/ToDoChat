@@ -178,3 +178,21 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
             task.description = description
         task.save()
         return redirect("task_detail", server_id, id)
+
+
+    
+class FilterTaskView(ListView):
+    model = Task
+    template_name = "user_task_list.html"
+
+    def get_object(self):
+        return self.request.user.users_tasks.all()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        field_names = []
+        for field_name in self.model._meta.get_fields():
+            field_names.append(field_name.name)
+        parameters = {field_name: value for field_name, value in self.request.GET.items() if field_name in field_names}
+        context['tasks'] = self.request.user.users_tasks.filter(**parameters)
+        return context
