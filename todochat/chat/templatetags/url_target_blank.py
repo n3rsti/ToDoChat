@@ -1,7 +1,7 @@
 from django import template
 register = template.Library()
 from chat.models import Channel, ChannelMessage
-from app.models import Server
+from app.models import Server, ServerInvitation
 from users.models import UsersChat, UsersMessage
 from django.urls import reverse
 import re
@@ -11,7 +11,11 @@ def url_target_blank(text):
     reg = "^(.*(http://todochat.com\/)([a-zA-Z0-9]{10}).*)$"
     reg_match = re.findall(reg, text)
     if len(reg_match) > 0:
-        text = text.replace(reg_match[0][1], "")
+        inv_id = reg_match[0][2]
+        invitation = ServerInvitation.objects.filter(id=inv_id).first()
+        if invitation:
+            text = text.replace(reg_match[0][1]+reg_match[0][2], invitation.get_absolute_url())
+            return text
     return text.replace('<a ', '<a target="_blank" ')
 
 url_target_blank = register.filter(url_target_blank, is_safe=True)

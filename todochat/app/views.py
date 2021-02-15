@@ -63,7 +63,6 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def post(self, request, pk):
         new_channel = request.POST.get("name")
         removed_user = request.POST.get("removed_user")
-        print(removed_user)
         server = Server.objects.get(id=self.kwargs['pk'])
         
         if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
@@ -74,6 +73,9 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         elif removed_user and request.user == server.owner:
             user = User.objects.get(username=removed_user)
             server.users.remove(user)
+        elif request.POST.get("leave_server") and request.user != server.owner:
+            server.users.remove(request.user)
+            return ("index")
         return redirect("server_detail", pk)
     
     def get_context_data(self, **kwargs):
@@ -123,3 +125,21 @@ class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context['server'] = server
         context['heading'] = server.name
         return context
+
+
+class InvitationView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = ServerInvitation
+
+    def test_func(self):
+        invitation = self.get_object()
+        if self.request.user == invitation.invited_user:
+            return True
+        return False
+
+    def get(self, request, pk):
+        if self.test_func():
+            invitation = ServerInvitation.objects.get(id=pk)
+            server = invitation.server
+            server.users.add(request.user)
+            invitation.delete()
+        return redirect("server_detail", server.id)

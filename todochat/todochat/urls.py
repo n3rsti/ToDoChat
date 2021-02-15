@@ -15,7 +15,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
-from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user
+from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, InvitationView
 from users.views import register, profile, profile_edit, UserDetailView, UserInvitations, UserSearchView
 from tasks.views import TaskListView, TaskDetailView, TaskUpdateView
 from django.conf import settings
@@ -39,6 +39,7 @@ urlpatterns = [
     path('server/<int:pk>/<str:room_name>/', ChannelDetailView.as_view(), name='room'),
     path('server/<int:pk>/invite/<str:username>/', invite_server_user, name='invite_server_user'),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
+    path('<slug:pk>/', InvitationView.as_view(), name="server_invitation"),
     path('profile/', include('users.urls')),
     path('search/', UserSearchView.as_view(), name="user_search")
     

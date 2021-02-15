@@ -33,6 +33,8 @@
   {% if request.user == server.owner %}
   <button class="btn btn-primary w-25 align-self-center"
     onclick="$('.server_invite_modal').modal('show')">Invite</button>
+  {% else %}
+  <button class="btn btn-danger w-25 align-self-center" onclick="$('.leave_server_modal').modal('show')">Leave</button>
   {% endif %}
   {% if user == object.owner %}
   <a href="{% url 'server_update' server.id %}" class="edit__button edit__button--top" title="Update server">
@@ -93,6 +95,37 @@
           </button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal"
             onclick="$('.server_remove_user_modal').modal('hide')">
+            Close
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="modal leave_server_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Leave server</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            onclick="$('.leave_server_modal').modal('hide')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="removed_user">
+          Do you want to leave <strong>{{ server.name }}</strong> server?
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger" name="leave_server" value="remove">
+            Leave
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+            onclick="$('.leave_server_modal').modal('hide')">
             Close
           </button>
         </div>
