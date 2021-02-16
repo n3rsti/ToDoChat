@@ -39,8 +39,8 @@ urlpatterns = [
     path('server/<int:pk>/<str:room_name>/', ChannelDetailView.as_view(), name='room'),
     path('server/<int:pk>/invite/<str:username>/', invite_server_user, name='invite_server_user'),
     path('profile/invitations/', UserInvitations.as_view(), name='user_invitations'),
-    path('<slug:pk>/', InvitationView.as_view(), name="server_invitation"),
-    path('user/tasks/', FilterTaskView.as_view(), name="user_tasks"),
+    path('i/<slug:pk>/', InvitationView.as_view(), name="server_invitation"),
+    path('tasks/', FilterTaskView.as_view(), name="user_tasks"),
     path('profile/', include('users.urls')),
     path('search/', UserSearchView.as_view(), name="user_search")
     

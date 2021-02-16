@@ -8,10 +8,11 @@ import re
 
 
 def url_target_blank(text):
-    reg = "^(.*(http://todochat.com\/)([a-zA-Z0-9]{10}).*)$"
+    reg = "^(.*(http:\/\/todochat.com\/i\/)([a-zA-Z0-9]{10}).*)$"
     reg_match = re.findall(reg, text)
     if len(reg_match) > 0:
         inv_id = reg_match[0][2]
+        print(inv_id)
         invitation = ServerInvitation.objects.filter(id=inv_id).first()
         if invitation:
             text = text.replace(reg_match[0][1]+reg_match[0][2], invitation.get_absolute_url())

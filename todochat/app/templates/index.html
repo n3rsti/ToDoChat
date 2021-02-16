@@ -38,9 +38,9 @@ function renderCalendar(startDay, totalDays, currentDate) {
     let a = $('<a>');
     a.text(i);
     a.addClass('calendar__a');
-    a.attr("href", `{% url 'user_tasks' %}?deadline=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${i}`)
+    a.attr("href", `{% url 'user_tasks' %}?deadline=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${i}`) // YYYY-M-D - for creating links
     $day.append(a);
-    let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString()
+    let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString() // MM/DD/YYYY - for checking if there are tasks for each day
     for(let z = tasks_counter; z < tasks.length; z++){
       
       task_date = new Date(tasks[z].fields.deadline).toLocaleDateString()
@@ -69,7 +69,7 @@ function renderCalendar(startDay, totalDays, currentDate) {
 function clearCalendar() {
   let $trs = $('tr').not(':eq(0)');
   $trs.remove();
-  $('.month-year').empty();
+  $('.calendar_month').empty();
 }
 
 // Generates table row used when rendering Calendar
@@ -90,10 +90,9 @@ function myCalendar() {
   let date = d.getUTCDate();
   let totalDaysOfMonth = daysOfMonth[month];
   let counter = 1;
-  let $h3 = $('<h3>');
+  let $h3 = $('.calendar_month');
 
   $h3.text(content[month] + ' ' + year);
-  $h3.appendTo('.month-year');
 
   let dateToHighlight = 0;
 
@@ -136,11 +135,11 @@ $(document).ready(function() {
 {% block content %}
     {% include "app_base.html" %}
     <main class="content">
-      <div class="container">
-        <i class="prev-month fa fa-chevron-left fa-3x"></i> <i class="next-month fa fa-chevron-right fa-3x"></i>
+      <div class="container calendar_div">
+        
         <br>
-        <div class="month-year text-center">
-          <h3></h3></div>
+        <div class="month-year text-center flex justify-content-center">
+          <i class="prev-month fa fa-chevron-left fa-3x"></i><h3 class="calendar_month"></h3> <i class="next-month fa fa-chevron-right fa-3x"></i></div>
         <table class="table table-bordered">
           <tr>
             <th>S</th>

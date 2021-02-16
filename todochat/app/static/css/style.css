@@ -897,8 +897,8 @@ main.chat {
   .chat-log__message.author {
     background: var(--primary); }
   .chat-log__message a {
-    font-weight: 600;
-    color: #000; }
+    font-weight: 500;
+    text-decoration: none; }
   .chat-log__message.same-author {
     margin: 0 0 0 50px;
     padding: 0; }
@@ -1314,9 +1314,28 @@ main.task {
       margin: 5px; }
 
 .calendar .calendar__a {
-  color: #000; }
+  color: #000;
+  text-decoration: none;
+  display: flex;
+  justify-content: center; }
 .calendar .task__td .calendar__a {
-  color: red; }
+  color: red;
+  font-weight: 600; }
+.calendar .today, .calendar .today a {
+  color: var(--primary);
+  font-weight: 600; }
+
+.month-year .fa {
+  font-size: 25px;
+  padding: 10px; }
+.month-year .calendar_month {
+  margin: 0; }
+.month-year .prev-month {
+  margin-right: auto;
+  margin-left: 5px; }
+.month-year .next-month {
+  margin-left: auto;
+  margin-right: 5px; }
 
 .server_invite__ul {
   list-style: none;

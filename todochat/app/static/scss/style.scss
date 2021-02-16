@@ -950,8 +950,8 @@ main.chat {
         background: var(--primary);
     }
     a {
-        font-weight: 600;
-        color: #000;
+        font-weight: 500;
+        text-decoration: none;
     }
     &.same-author {
         margin: 0 0 0 50px;
@@ -1468,11 +1468,36 @@ main.task {
 .calendar {
     .calendar__a {
         color: #000;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
     }
     .task__td {
         .calendar__a {
             color: red;
+            font-weight: 600;
         }
+    }
+    .today, .today a {
+        color: var(--primary);
+        font-weight: 600;
+    }
+}
+.month-year {
+    .fa {
+        font-size: 25px;
+        padding: 10px;
+    }
+    .calendar_month {
+        margin: 0;
+    }
+    .prev-month {
+        margin-right: auto;
+        margin-left: 5px;
+    }
+    .next-month {
+        margin-left: auto;
+        margin-right: 5px;
     }
 }
 .server_invite__ul {
