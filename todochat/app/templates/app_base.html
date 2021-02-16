@@ -29,9 +29,8 @@
         </h2>
     </div>
     <section class="nav__groups">
-        
         {% if user.invited_user.count > 0 %}
-        <a href="{% url 'user_invitations' %}" class="groups__h2" title="Invitations">Invitations
+        <a href="{% url 'user_invitations' %}" class="groups__h2 flex" title="Invitations">Invitations
                 <span class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         {% endif %}
         <h2 class="groups__h2">Groups</h2>
@@ -58,11 +57,14 @@
             </span>
         </a>
         {% endif %}
+        <a href="{% url 'user_tasks' %}" class="groups__h2 groups__h2--top-border flex" title="All tasks">All tasks
+            <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
+        </a>
         {% if user.server_set.all.count > 5 %}
         <button class="load_more" aria-expanded="false" aria-label="Show additional groups">Load more</button>
         {% endif %}
         {% if user.profile.friends.count > 0 %}
-        <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
+        <h2 class="groups__h2">Friends</h2>
         <ul class="groups__ul friends__ul">
             {% for friend in user.profile.friends.all %}
             <li class="flex">

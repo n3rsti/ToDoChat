@@ -195,4 +195,5 @@ class FilterTaskView(ListView):
             field_names.append(field_name.name)
         parameters = {field_name: value for field_name, value in self.request.GET.items() if field_name in field_names}
         context['tasks'] = self.request.user.users_tasks.filter(**parameters)
+        context['taskbar_title'] = "All tasks"
         return context

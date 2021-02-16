@@ -8,7 +8,7 @@
 let CURRENT_DATE = new Date();
 let d = new Date();
 let json = '{{ tasks_json|safe }}'
-let tasks = JSON.parse(json.replace(/(\r\n|\n|\r)/gm, ""))
+let tasks = JSON.parse(json.replace(/(\r\n|\n|\r)/gm, "")) // Replacing enters causing problems with parsing json
 let content = 'January February March April May June July August September October November December'.split(' ');
 let weekDayName = 'SUN MON TUES WED THURS FRI'.split(' ');
 let daysOfMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -38,6 +38,7 @@ function renderCalendar(startDay, totalDays, currentDate) {
     let a = $('<a>');
     a.text(i);
     a.addClass('calendar__a');
+    a.attr("href", `{% url 'user_tasks' %}?deadline=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${i}`)
     $day.append(a);
     let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString()
     for(let z = tasks_counter; z < tasks.length; z++){

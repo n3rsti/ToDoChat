@@ -173,6 +173,11 @@ h1.title {
     transition: transform .3s;
     will-change: transform;
     overflow-x: hidden;
+
+    .badge {
+        margin-left: auto;
+        margin-right: 10px;
+    }
 }
 .side__nav--open {
     transform: translateX(0);

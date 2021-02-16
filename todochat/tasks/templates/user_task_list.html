@@ -1,4 +1,48 @@
-{% for task in tasks %}
-<br>{{ task.title }}
-{{ task.id }}
-{% endfor %}
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
+{% block title %}
+<title>ToDoChat | {{ server.name }}</title>
+{% endblock title %}
+{% block content %}
+{% include "app_base.html" %}
+<main class="content chat tasks">
+    {% if tasks.count is 0 %}
+    No tasks
+    {% else %}
+    <ul class="task__list">
+    {% for task in tasks %}
+    <li class="task__li">
+        <article class="task">
+            <section class="task__top">
+                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{task.server.name}}#{{ task.task_id }}</strong> {{ task.title }}</a> 
+                <div class="top__users task_status_section task_status_section--center">
+                    {% if task.status == "open" %}
+                    <span class="badge open">Open</span>
+                    {% elif task.status == "approved" %}
+                    <span class="badge bg-success">Approved</span>
+                    {% elif task.status == "need_more_work" %}
+                    <span class="badge bg-warning">Need more work</span>
+                    {% elif task.status == "submitted_for_review" %}
+                    <span class="badge bg-success">Submitted</span>
+                    {% endif %}
+                </div>
+            </section>
+            <section class="task__date">
+                Created on
+                {{ task.created|date:"d M, Y" }}
+                by 
+                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+            </section>
+        <article>
+    </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</main>
+{% endblock content %}
