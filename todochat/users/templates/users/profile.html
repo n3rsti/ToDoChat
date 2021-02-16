@@ -8,7 +8,7 @@
     <button onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
     </button>
-    <section class="profile__image-section">
+    <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url}}')">
         <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
     </section>
     <h1 class="title--thin">{{ user.username }}</h1>
@@ -24,10 +24,4 @@
     </a>
 
 </main>
-<style>
-    .profile__image-section {
-        background: url('{{ user.profile.background.url}}');
-        background-size: cover;
-    }
-</style>
 {% endblock content %}

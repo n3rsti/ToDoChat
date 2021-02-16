@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}
+<title>Edit profile</title>
+{% endblock title %}
 {% block content %}
 {% include "app_base.html" %}
 <main class="content content--profile profile--edit">
-    <button  onClick="window.history.back();return false;" class="back__button">
+    <button onClick="window.history.back();return false;" class="back__button">
         <i class="fas fa-angle-left"></i>
-   </button>
-    <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    </button>
+    <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url}}')">
+        <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+    </section>
     <form method="POST" enctype="multipart/form-data" class="login__form">
         {% csrf_token %}
         {{ u_form }}

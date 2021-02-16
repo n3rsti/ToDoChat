@@ -48,7 +48,6 @@ def profile_edit(request):
     context = {
         'u_form': u_form,
         'p_form': p_form,
-        'title': 'Edit profile'
     }
     return render(request, 'users/profile_edit.html', context)
 

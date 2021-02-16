@@ -926,6 +926,9 @@ main.chat {
   width: 40px; }
 
 .profile__image-section {
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
