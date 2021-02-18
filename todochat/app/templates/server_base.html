@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load templatetags %}
 <header class="navbar header">
     <a href="{% url 'server_detail' server.id %}" class="header__server-link navbar-brand"
         title="{{server.name}} groupdetails">
@@ -40,22 +40,58 @@
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
         <a href="{% url 'server_tasks' server.id %}" class="groups__li">All tasks</a>
-        <a href="" class="groups__li">My tasks</a>
+        <a href="{% url 'user_tasks' %}" class="groups__li">My tasks</a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
-            <a href="{% url 'room' server.id channel.name %}" class="groups__li" title="{{channel.name}} channel">#{{ channel.name }}</a>
+            <a href="{% url 'room' server.id channel.name %}" class="groups__li" title="{{channel.name}} channel">
+                #{{ channel.name }}</a>
             {% endfor %}
-            <div class="add__li">
-                <button class="nav__add-button" aria-label="Open channel creation" aria-expanded="false">
-                    Add channel
-                    <span class="li__span li__plus">
-                        <i class="fas fa-plus"></i>
-                    </span>
-                </button>
-            </div>
         </ul>
+        {% if user.server_set.count > 1 %}
+        <h2 class="groups__h2 groups__h2--top-border">Other groups</h2>
+        <ul class="groups__ul">
+            {% for server in user.server_set.all %}
+            {% if server != object %}
+            <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %}">
+                {% if server.image == 'default.png' %}
+                <div class="groups__img">{{ server.name.0 }}</div>
+                {% else %}
+                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
+                {% endif %}
+                <a href="{% url 'server_detail' server.id %}" class="groups__li" title="{{server.name}} group">
+                    {{ server.name|shorter_name:12 }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% if user.profile.friends.count > 0 %}
+        <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
+        <ul class="groups__ul friends__ul">
+            {% for friend in user.profile.friends.all %}
+            <li class="flex">
+                <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                    class="users__img">
+                <a href="{% url 'user_detail' friend.username %}" class="groups__li"
+                    title="{{ friend.username }} profile">{{ friend.username }}</a>
+            </li>
+
+            {% endfor %}
+        </ul>
+        {% endif %}
     </section>
+    {% if request.user == server.owner %}
+        <div class="add__li">
+            <button class="nav__add-button" aria-label="Open channel creation" aria-expanded="false">
+                Add channel
+                <span class="li__span li__plus">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </button>
+        </div>
+        {% endif %}
     <div class="bottom__side">
         <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout" tabindex="-1" title="Logout">
             <i class="fas fa-sign-out-alt"></i>

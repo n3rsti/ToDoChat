@@ -77,25 +77,25 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <div class="add__li">
-            <a href="{% url 'user_search' %}" class="nav__add-button nav__add-button--friend" title="Create server">
-                Add friend
-                <span class="li__span li__plus">
-                    <i class="fas fa-user-plus"></i>
-                </span>
-            </a>
-        </div>
-        {% if user.server_set.count > 0 %}
-        <div class="add__li add__li--friend">
-            <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
-                Add group
-                <span class="li__span li__plus">
-                    <i class="fas fa-plus"></i>
-                </span>
-            </a>
-        </div>
-        {% endif %}
     </section>
+    <div class="add__li">
+        <a href="{% url 'user_search' %}" class="nav__add-button nav__add-button--friend" title="Create server">
+            Add friend
+            <span class="li__span li__plus">
+                <i class="fas fa-user-plus"></i>
+            </span>
+        </a>
+    </div>
+    {% if user.server_set.count > 0 %}
+    <div class="add__li add__li--friend">
+        <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
+            Add group
+            <span class="li__span li__plus">
+                <i class="fas fa-plus"></i>
+            </span>
+        </a>
+    </div>
+    {% endif %}
     <div class="bottom__side">
         <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout" tabindex="-1" title="Logout">
             <i class="fas fa-sign-out-alt"></i>
