@@ -1305,11 +1305,10 @@ main.task {
   display: flex;
   justify-content: center; }
 .calendar .task__td .calendar__a {
-  color: red;
+  color: #e74c3c;
   font-weight: 600; }
-.calendar .today, .calendar .today a {
-  color: var(--primary);
-  font-weight: 600; }
+.calendar .today {
+  background: #0d6efd; }
 .calendar td {
   padding: 3px; }
 

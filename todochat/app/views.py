@@ -8,6 +8,7 @@ from users.models import UsersMessage, UsersChat
 from datetime import datetime
 import random
 import string
+from django.utils import timezone
 from django.core import serializers
 from chat.models import Channel
 from django.http import HttpResponse
@@ -29,7 +30,8 @@ def create_random_id(length):
 def main_view(request):
     tasks = request.user.users_tasks.all().order_by('created')
     context = {
-        "tasks_json": serializers.serialize('json', tasks)
+        "tasks_json": serializers.serialize('json', tasks),
+        "today_tasks": Task.filter_by_date(datetime.today(), request.user)
     }
     return render(request, 'index.html', context)
 

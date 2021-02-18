@@ -86,7 +86,7 @@
                     <div class="form_section collapse" name="form_asigned">
                         {% for user in server.users.all %}
                         <div class="form-check">
-                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input">
+                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input" value="{{ user.username }}">
                             <label for="{{ user.username }}" class="form-check-label">{{ user.username }}</label>
                         </div>
                         {% endfor %}

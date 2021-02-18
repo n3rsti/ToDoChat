@@ -1459,13 +1459,12 @@ main.task {
     }
     .task__td {
         .calendar__a {
-            color: red;
+            color: #e74c3c;
             font-weight: 600;
         }
     }
-    .today, .today a {
-        color: var(--primary);
-        font-weight: 600;
+    .today{
+        background: #0d6efd;
     }
     td {
         padding: 3px;

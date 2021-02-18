@@ -51,9 +51,8 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
             if len(assignments) == 0:
                 task.assigned_for.add(request.user)
             else:
-                for i in range(server.users.count()):
-                    if assignments[i] == "on":
-                        task.assigned_for.add(server.users.all()[i])
+                for username in assignments:
+                    task.assigned_for.add(server.users.get(username=username))
             task.save()
             return redirect("server_tasks", server_id)
         elif new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
