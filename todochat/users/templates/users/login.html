@@ -11,7 +11,7 @@
         <form action="" class="form" method="post">
             {% csrf_token %}
             {{ form }}
-            <button class="form__button btn btn-primary" name="login_button" type="submit" value="log in">log in</button>
+            <button class="form__button btn btn-primary" name="login_button" type="submit" value="log in">Log In</button>
             <h3 class="sign-up">don't have an account? <a href="{% url 'register' %}" title="Sign up">sign up</a> </h3>
         </form>
     </div>

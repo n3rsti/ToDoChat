@@ -32,6 +32,22 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm), name="login"),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
     path('register/', register, name="register"),
+    path('password-reset/', auth_views.PasswordResetView.as_view(
+        template_name='users/password_reset.html'), 
+        name="password_reset"
+        ),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='users/password_reset_done.html'), 
+        name="password_reset_done"
+        ),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='users/password_reset_confirm.html'), 
+        name="password_reset_confirm"
+        ),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='users/password_reset_complete.html'), 
+        name="password_reset_complete"
+        ),
     path('server/new/', CreateServerView.as_view(), name="create_server"),
     path('server/<int:pk>/details', DetailServerView.as_view(), name="server_detail"),
     path('server/<int:pk>/', DetailServerView.as_view(), name="server_detail"),
