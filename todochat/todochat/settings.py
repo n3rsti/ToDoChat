@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'channels',
@@ -99,7 +97,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -118,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -131,7 +127,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -166,45 +161,9 @@ CKEDITOR_CONFIGS = {
         'resize_enabled': False,
         'extraPlugins': ','.join(
             [
-                #'easyimage',
-                #'balloontoolbar',
-                #'cloudservices',
-                'button',
-                'div',
-                'autolink',
-                'autoembed',
-                'embedsemantic',
-                'autogrow',
-                # 'devtools',
-                'widget',
-                'lineutils',
-                'clipboard',
-                'dialog',
-                'dialogui',
-                'elementspath'
-            ]),
-            'autoGrow_maxHeight': 600,
-            'autoGrow_minHeight': 100
-
-    },
-    'comment': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList'],
-            ['Link', 'Unlink'],
-            ['Image']
-        ],
-        'fillEmptyBlocks': False,
-        'tabSpaces': 0,
-        'width': '100%',
-        'height': 100,
-        'resize_enabled': False,
-        'extraPlugins': ','.join(
-            [
-                #'easyimage',
-                #'balloontoolbar',
-                #'cloudservices',
+                # 'easyimage',
+                # 'balloontoolbar',
+                # 'cloudservices',
                 'button',
                 'div',
                 'autolink',
@@ -222,9 +181,44 @@ CKEDITOR_CONFIGS = {
         'autoGrow_maxHeight': 600,
         'autoGrow_minHeight': 100
 
+    },
+    'comment': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image']
+        ],
+        'fillEmptyBlocks': False,
+        'tabSpaces': 0,
+        'width': '100%',
+        'height': 100,
+        'resize_enabled': False,
+        'extraPlugins': ','.join(
+            [
+                # 'easyimage',
+                # 'balloontoolbar',
+                # 'cloudservices',
+                'button',
+                'div',
+                'autolink',
+                'autoembed',
+                'embedsemantic',
+                'autogrow',
+                # 'devtools',
+                'widget',
+                'lineutils',
+                'clipboard',
+                'dialog',
+                'dialogui',
+                'elementspath'
+            ]),
+        'autoGrow_maxHeight': 600,
+        'autoGrow_minHeight': 100
 
     },
-    
+
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
