@@ -2,10 +2,10 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from app.models import Channel, Server
-from channels.db import database_sync_to_async
 from chat.models import ChannelMessage
 from app.views import create_num_id
 from django.contrib.auth.models import User
+
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -47,7 +47,6 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
         async_to_sync(self.create_chat_message(message, author))
-        
 
     # Receive message from room group
     def chat_message(self, event):
@@ -61,12 +60,10 @@ class ChatConsumer(WebsocketConsumer):
             'image': image
         }))
 
-    
-        
     def create_chat_message(self, message, author):
-            channel = self.channel
+        channel = self.channel
+        id = create_num_id(20)
+        author_obj = User.objects.get(username=author)
+        while not ChannelMessage.objects.filter(id=id).first() is None:
             id = create_num_id(20)
-            author_obj = User.objects.get(username=author)
-            while not ChannelMessage.objects.filter(id=id).first() is None:
-                id = create_num_id(20)
-            return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)
+        return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)

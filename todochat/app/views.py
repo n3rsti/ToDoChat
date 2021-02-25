@@ -43,7 +43,6 @@ class CreateServerView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        form_name = form.cleaned_data.get('name')
         form_id = create_num_id(18)
         # Check if there is existing Server with created id
         while Server.objects.filter(id=form_id).count() > 0:
@@ -67,7 +66,8 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         removed_user = request.POST.get("removed_user")
         server = Server.objects.get(id=self.kwargs['pk'])
 
-        if new_channel is not None and 0 < len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+        if (new_channel is not None and 0 < len(new_channel) <= 20 and
+                Channel.objects.filter(name=new_channel, server=server).first() is None):
             if server is not None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
@@ -84,7 +84,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['server'] = server
-        context['heading'] = f'#{server.name}' # h1 in server_base.html
+        context['heading'] = f'#{server.name}'  # h1 in server_base.html
         return context
 
 
@@ -92,12 +92,12 @@ def invite_server_user(request, pk, username):
     server = Server.objects.get(pk=pk)
     invited_user = User.objects.get(username=username)
     if invited_user in request.user.profile.friends.all():
-        if not invited_user in server.users.all():
+        if invited_user not in server.users.all():
             invitation_id = create_random_id(10)
             invitation = ServerInvitation.objects.create(server=server, id=invitation_id, invited_user=invited_user)
             message_id = create_num_id(20)
             print(message_id)
-            chat=UsersChat.objects.filter(users=request.user).get(users=invited_user)
+            chat = UsersChat.objects.filter(users=request.user).get(users=invited_user)
             if not chat:
                 chat = UsersChat.objects.create(id=f'{invited_user}_{request.user}')
                 chat.users.add(request.user)
