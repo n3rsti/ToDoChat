@@ -14,12 +14,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include, re_path
-from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, InvitationView
-from users.views import register, profile, profile_edit, UserDetailView, UserInvitations, UserSearchView
-from tasks.views import TaskListView, TaskDetailView, TaskUpdateView, FilterTaskView
+from django.urls import path, include
+from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, \
+    InvitationView
+from users.views import register, UserInvitations, UserSearchView
+from tasks.views import FilterTaskView
 from django.conf import settings
-from django.conf.urls import url
 from django.conf.urls.static import static
 from chat.views import ChannelDetailView
 from users.forms import UserLoginForm
@@ -29,7 +29,8 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', main_view, name="index"),
     path('server/<int:server_id>/tasks/', include('tasks.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm), name="login"),
+    path('login/', auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm),
+         name="login"),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
     path('register/', register, name="register"),
     path('password-reset/', auth_views.PasswordResetView.as_view(
