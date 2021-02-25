@@ -2,6 +2,7 @@ from django.test import TestCase
 from .models import Server, Channel
 from django.contrib.auth.models import User
 
+
 # Create your tests here.
 class ServerModelTest(TestCase):
     @classmethod
@@ -49,6 +50,7 @@ class ChannelModelTest(TestCase):
         server = Server.objects.create(name="test_name", id=123, owner=user1)
         server.save()
         channel = Channel.objects.create(server=server, name="test_channel", pk=1234)
+        channel.save()
 
     def test_name_length(self):
         channel = Channel.objects.get(pk=1234)

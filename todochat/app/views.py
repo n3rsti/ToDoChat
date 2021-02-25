@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, DetailView, UpdateView, ListView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Server, ServerInvitation
 from tasks.models import Task
@@ -8,23 +8,23 @@ from users.models import UsersMessage, UsersChat
 from datetime import datetime
 import random
 import string
-from django.utils import timezone
 from django.core import serializers
 from chat.models import Channel
-from django.http import HttpResponse
 from app.forms import ServerUpdateForm, ServerCreateForm
-import json
 from django.contrib.auth.models import User
+
 
 def create_num_id(length):
     letters = string.digits
     id = ''.join(random.choice(letters) for i in range(length))
     return id
 
+
 def create_random_id(length):
     letters = string.ascii_letters
     id = ''.join(random.choice(letters) for i in range(length))
     return id
+
 
 @login_required
 def main_view(request):
@@ -61,30 +61,30 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if self.request.user in server.users.all():
             return True
         return False
-    
+
     def post(self, request, pk):
         new_channel = request.POST.get("name")
         removed_user = request.POST.get("removed_user")
         server = Server.objects.get(id=self.kwargs['pk'])
-        
-        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
-            if not server is None:
+
+        if new_channel is not None and 0 < len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
+            if server is not None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
-            return redirect("room", pk=server_id, room_name=new_channel)
+            return redirect("room", pk=server.id, room_name=new_channel)
         elif removed_user and request.user == server.owner:
             user = User.objects.get(username=removed_user)
             server.users.remove(user)
         elif request.POST.get("leave_server") and request.user != server.owner:
             server.users.remove(request.user)
-            return ("index")
+            return redirect("index")
         return redirect("server_detail", pk)
-    
+
     def get_context_data(self, **kwargs):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['server'] = server
-        context['heading'] = f'#{server.name}' #h1 in server_base.html
+        context['heading'] = f'#{server.name}' # h1 in server_base.html
         return context
 
 
@@ -103,7 +103,10 @@ def invite_server_user(request, pk, username):
                 chat.users.add(request.user)
                 chat.users.add(invited_user)
                 chat.save()
-            invitation_message = UsersMessage.objects.create(id=message_id,chat=chat,content=f'todochat.com/i/{invitation_id}',author=request.user)
+            invitation_message = UsersMessage.objects.create(id=message_id,
+                                                             chat=chat,
+                                                             content=f'todochat.com/i/{invitation_id}',
+                                                             author=request.user)
             invitation.save()
             invitation_message.save()
 
@@ -120,7 +123,7 @@ class UpdateServerView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == server.owner:
             return True
         return False
-    
+
     def get_context_data(self, **kwargs):
         server = Server.objects.get(id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)

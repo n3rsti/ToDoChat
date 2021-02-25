@@ -1,8 +1,9 @@
 from django import forms
 from app.models import Server
 
+
 class ServerUpdateForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
 
     class Meta:
@@ -13,8 +14,9 @@ class ServerUpdateForm(forms.ModelForm):
         super(ServerUpdateForm, self).__init__(*args, **kwargs)
         self.fields['image'].required = False
 
+
 class ServerCreateForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
 
     class Meta:
