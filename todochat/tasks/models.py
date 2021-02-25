@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from app.models import Server
 from django.utils import timezone
 from django.urls import reverse
-from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+
 
 # Create your models here.
 class Task(models.Model):
@@ -13,8 +13,8 @@ class Task(models.Model):
     description = RichTextUploadingField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_created_tasks')
     assigned_for = models.ManyToManyField(User, related_name='users_tasks')
-    created     = models.DateTimeField(editable=False, default=timezone.now)
-    modified    = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(editable=False, default=timezone.now)
+    modified = models.DateTimeField(default=timezone.now)
     server = models.ForeignKey(Server, related_name='server_tasks', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, default="open")
     deadline = models.DateTimeField(blank=True, null=True)
@@ -27,13 +27,13 @@ class Task(models.Model):
 
     def __str__(self):
         return f'{self.server.name} #{self.task_id}'
-    
+
     def change_status(self, status, user, *args, **kwargs):
         is_author = user == self.author
         is_assigned = user in self.assigned_for.all()
         if is_assigned or is_author:
             if status == "open":
-                if (self.status == "submitted_for_review" and is_assigned) or (self.status == "approved" and is_author):        
+                if (self.status == "submitted_for_review" and is_assigned) or (self.status == "approved" and is_author):
                     self.status = status
                     TaskStatusChange.objects.create(task=self, status=status, author=user)
             elif status == "submitted_for_review" and self.status == "open" and is_assigned:
@@ -49,31 +49,31 @@ class Task(models.Model):
 
     def filter_by_date(date, user):
         return Task.objects.filter(
-            deadline__year = date.year,
-            deadline__month = date.month,
-            deadline__day = date.day   
+            deadline__year=date.year,
+            deadline__month=date.month,
+            deadline__day=date.day
         ).filter(assigned_for=user)
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'server_id': self.server.id, 'id': self.id})
 
 
-
 class TaskComment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_task_comments')
-    created     = models.DateTimeField(editable=False, default=timezone.now)
-    modified    = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(editable=False, default=timezone.now)
+    modified = models.DateTimeField(default=timezone.now)
     content = RichTextUploadingField()
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_comments")
 
     def __str__(self):
         return f'Task: {self.task} ID: {self.id}'
 
+
 class TaskStatusChange(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_status_changes")
     status = models.CharField(max_length=30)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_task_status_changes')
-    created     = models.DateTimeField(editable=False, default=timezone.now)
+    created = models.DateTimeField(editable=False, default=timezone.now)
 
     def save(self, *args, **kwargs):
         if not self.task_id:

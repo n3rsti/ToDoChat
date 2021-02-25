@@ -1,14 +1,11 @@
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView, UpdateView, CreateView
+from django.shortcuts import redirect
+from django.views.generic import ListView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from tasks.models import Task, TaskComment, TaskStatusChange
+from tasks.models import Task, TaskComment
 from app.models import Server, Channel
 from django.contrib.auth.models import User
 from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
-import uuid
 import json
-import datetime
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from operator import attrgetter
 from itertools import chain
@@ -45,7 +42,7 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
             server = Server.objects.get(id=server_id)
             server_task_id = Task.objects.filter(server=server).count() + 1
             task = Task.objects.create(task_id=server_task_id, title=title,
-                                    description=description, author=request.user, server=server)
+                                       description=description, author=request.user, server=server)
             if deadline != "":
                 task.deadline = deadline
             if len(assignments) == 0:
@@ -55,8 +52,9 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
                     task.assigned_for.add(server.users.get(username=username))
             task.save()
             return redirect("server_tasks", server_id)
-        elif new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
-            if not server is None:
+        elif (new_channel is not None and 0 < len(new_channel) <= 20
+              and Channel.objects.filter(name=new_channel, server=server).first() is None):
+            if server is not None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
@@ -78,23 +76,23 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         context['heading'] = f'Task #{task.task_id}'
         context['comment_form'] = TaskCommentForm
         context['comment_list'] = sorted(
-    chain(task.task_comments.all(), task.task_status_changes.all()),
-    key=attrgetter('created'))
+            chain(task.task_comments.all(), task.task_status_changes.all()),
+            key=attrgetter('created'))
         return context
-
 
     def test_func(self):
         server = self.get_object().server
         if self.request.user in server.users.all():
             return True
         return False
-    
+
     def post(self, request, server_id, id):
         new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
         task = Task.objects.get(id=id)
-        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
-            if not server is None:
+        if new_channel is not None and 0 < len(new_channel) <= 20 and Channel.objects.filter(
+                name=new_channel, server=server).first() is None:
+            if server is not None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
@@ -120,7 +118,6 @@ class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
         return HttpResponseRedirect(self.request.path_info)
 
 
-
 def change_status_view(request, server_id, id):
     if request.method == "GET":
         if request.GET["status"]:
@@ -129,6 +126,7 @@ def change_status_view(request, server_id, id):
             if request.GET["status"] in status_list:
                 task.change_status(request.GET["status"], request.user)
     return redirect("task_detail", server_id, id)
+
 
 class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
     model = Task
@@ -151,12 +149,12 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
             return True
         return False
 
-
     def post(self, request, server_id, id):
         new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
-        if new_channel is not None and len(new_channel) > 0 and len(new_channel) <= 20 and Channel.objects.filter(name=new_channel, server=server).first() is None:
-            if not server is None:
+        if new_channel is not None and 0 < len(new_channel) <= 20 and Channel.objects.filter(
+                name=new_channel, server=server).first() is None:
+            if server is not None:
                 channel = Channel(name=new_channel, server=server)
                 channel.save()
             return redirect("room", pk=server_id, room_name=new_channel)
@@ -179,14 +177,13 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
         return redirect("task_detail", server_id, id)
 
 
-    
 class FilterTaskView(ListView):
     model = Task
     template_name = "user_task_list.html"
 
     def get_object(self):
         return self.request.user.users_tasks.all()
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         field_names = []
