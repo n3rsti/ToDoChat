@@ -3,33 +3,34 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Profile
 from django.contrib.auth import password_validation
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core import validators
 
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class':'form-control'}),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
         help_text=password_validation.password_validators_help_text_html(),
     )
     password2 = forms.CharField(
         label=_("Password confirmation"),
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class':'form-control'}),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
@@ -43,9 +44,10 @@ class ProfileUpdateForm(forms.ModelForm):
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
     background = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
     default_validators = [validators.validate_image_file_extension]
+
     class Meta:
         model = Profile
-        fields = ['description', 'image', 'background']      
+        fields = ['description', 'image', 'background']
 
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
@@ -64,4 +66,4 @@ class UserLoginForm(AuthenticationForm):
         attrs={
             'class': 'form-control',
         }
-))
+    ))

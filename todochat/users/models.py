@@ -17,7 +17,6 @@ class Profile(models.Model):
     def save(self, *args, **kwargs):
         try:
             super().save()
-            background = Image.open(self.background.path)
             img = Image.open(self.image.path)
 
             if img.height > 300 or img.width > 300:
@@ -37,14 +36,14 @@ class UsersChat(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
     users = models.ManyToManyField(User, related_name="users_chat")
 
+
 class UsersMessage(models.Model):
     id = models.CharField(primary_key=True, default="error", max_length=20)
     chat = models.ForeignKey(UsersChat, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    created     = models.DateTimeField(editable=False, default=timezone.now)
-    modified    = models.DateTimeField(default=timezone.now)
-
+    created = models.DateTimeField(editable=False, default=timezone.now)
+    modified = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         if not self.id:

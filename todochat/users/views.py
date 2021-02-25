@@ -4,10 +4,8 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
-from users.models import User, UserInvitation, UsersChat, UsersMessage
+from users.models import User, UserInvitation, UsersChat
 from django.shortcuts import get_object_or_404
-from chat.models import Channel
-
 
 
 def register(request):
@@ -35,7 +33,7 @@ def profile(request):
 def profile_edit(request):
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES,  instance=request.user.profile)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -69,7 +67,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         elif request.POST.get('invite_button') == 'invite':
             invited_user = User.objects.filter(username=request.POST.get('invited')).first()
             user = request.user
-            if not invited_user == None:
+            if invited_user is not None:
                 if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
                     if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
                         invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
@@ -77,33 +75,30 @@ class UserDetailView(LoginRequiredMixin, DetailView):
                         invited_user.profile.friends.add(user)
                         invitation.delete()
                         return redirect('user_detail', invited_user.username)
-        
+
                 invitation = UserInvitation(inviting=user, invited=invited_user)
                 invitation.save()
                 return redirect('user_detail', invited_user.username)
-        
+
         elif request.POST.get('invite_button') == 'reject':
             inviting_user = User.objects.get(username=self.request.POST.get('inviting'))
             invitation = UserInvitation.objects.get(invited=self.request.user, inviting=inviting_user)
             invitation.delete()
             return redirect('user_detail', inviting_user.username)
-        
+
         elif request.POST.get('invite_button') == 'cancel':
             inviting_user = self.request.user
             invited_user = User.objects.get(username=self.request.POST.get('invited'))
             invitation = UserInvitation.objects.get(inviting=inviting_user, invited=invited_user)
             invitation.delete()
             return redirect('user_detail', invited_user.username)
-        
+
         return redirect('index')
-
-
-            
 
     def get_object(self):
         user_pk = get_object_or_404(User, username=self.kwargs.get("username"))
         return user_pk
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["taskbar_img"] = True
@@ -138,6 +133,7 @@ class UserInvitations(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return UserInvitation.objects.filter(invited=self.request.user)
 
+
 class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = UsersChat
     template_name = 'users/chat_room.html'
@@ -147,7 +143,6 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if self.request.user.profile in user.friends_set.all():
             return True
         return False
-       
 
     def get_object(self):
         friend = User.objects.get(username=self.kwargs['username'])
@@ -155,13 +150,11 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         for chat_channel in chat:
             if friend in chat_channel.users.all():
                 return chat_channel
-        
-        chat = UsersChat.objects.create(id = f'{friend.username}_{self.request.user.username}')
+
+        chat = UsersChat.objects.create(id=f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
         chat.save()
         return chat
-        
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -174,23 +167,23 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             if friend in chat_channel.users.all():
                 context["messages"] = chat_channel.usersmessage_set.order_by('created')
                 return context
-                
-        
-        chat = UsersChat.objects.create(id = f'{friend.username}_{self.request.user.username}')
+
+        chat = UsersChat.objects.create(id=f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
         chat.save()
         context["messages"] = chat.usersmessage_set.all()
         return context
 
+
 class UserSearchView(LoginRequiredMixin, ListView):
     template_name = "user_search.html"
     model = User
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_name = self.request.GET.get('user', '')
         if not user_name == '':
-            context['all_search_results'] = User.objects.filter(username__icontains=user_name )
+            context['all_search_results'] = User.objects.filter(username__icontains=user_name)
             if context['all_search_results'].count() == 0:
                 context['search_msg'] = 'Not found'
             context['prev_placeholder'] = user_name
@@ -201,7 +194,7 @@ class UserSearchView(LoginRequiredMixin, ListView):
         if request.POST.get('invite_button') == 'invite':
             invited_user = User.objects.filter(username=request.POST.get('invited')).first()
             user = request.user
-            if not invited_user == None:
+            if invited_user is not None:
                 if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
                     if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
                         invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
@@ -209,22 +202,22 @@ class UserSearchView(LoginRequiredMixin, ListView):
                         invited_user.profile.friends.add(user)
                         invitation.delete()
                         return redirect(f'/search?user={prev_search}')
-        
+
                 invitation = UserInvitation(inviting=user, invited=invited_user)
                 invitation.save()
                 return redirect(f'/search?user={prev_search}')
-        
+
         elif request.POST.get('invite_button') == 'reject':
             inviting_user = User.objects.get(username=self.request.POST.get('inviting'))
             invitation = UserInvitation.objects.get(invited=self.request.user, inviting=inviting_user)
             invitation.delete()
             return redirect(f'/search?user={prev_search}')
-        
+
         elif request.POST.get('invite_button') == 'cancel':
             inviting_user = self.request.user
             invited_user = User.objects.get(username=self.request.POST.get('invited'))
             invitation = UserInvitation.objects.get(inviting=inviting_user, invited=invited_user)
             invitation.delete()
             return redirect(f'/search?user={prev_search}')
-        
+
         return redirect('user_search')
