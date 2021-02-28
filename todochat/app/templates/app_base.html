@@ -57,7 +57,7 @@
             </span>
         </a>
         {% endif %}
-        <a href="{% url 'user_tasks' %}" class="groups__h2 groups__h2--top-border flex" title="All tasks">All tasks
+        <a href="{% url 'user_tasks' %}?order=-created" class="groups__h2 groups__h2--top-border flex" title="All tasks">All tasks
             <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
         </a>
         {% if user.server_set.all.count > 5 %}

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
+{% load crispy_forms_tags %}
 <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
 <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+<script src="{%  static 'js/forms.js' %}"></script>
 {{ block.super }}
 {% endblock %}
 {% block title %}
@@ -15,6 +17,15 @@
     {% if tasks.count is 0 %}
     No tasks
     {% else %}
+    <div class="tasks__filter">
+    <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+        Filter<i class="fas fa-filter"></i>
+    </button>
+    <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+        Sort<i class="fas fa-sort"></i>
+    </button>
+
+    </div>
     <ul class="task__list">
     {% for task in tasks %}
     <li class="task__li">
@@ -39,10 +50,61 @@
                 by 
                 <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
             </section>
-        <article>
+        </article>
     </li>
     {% endfor %}
     </ul>
     {% endif %}
 </main>
+<div class="sort_filter_section">
+    <form method="GET" class="task_sort_filter_form">
+    {% csrf_token %}
+    <div class="modal task_filter" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Filter tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  onclick="$('.task_filter').modal('hide')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                      {{ filter_form|crispy }}
+              </div>
+              <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Filter</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                  onclick="$('.task_filter').modal('hide')">
+                  Close
+                </button>
+              </div>
+          </div>
+        </div>
+      </div>
+        <div class="modal task_sort" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Sort tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  onclick="$('.task_sort').modal('hide')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  {{ sort_form|crispy }}
+              </div>
+              <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Filter</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                  onclick="$('.task_sort').modal('hide')">
+                  Close
+                </button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </form>
+</div>
 {% endblock content %}

@@ -57,8 +57,14 @@
   </section>
   <section class="date">
     <i class="far fa-calendar-alt"></i>
-    {{ task.created|date:"d M, Y H:G" }}
+    {{ task.created|date:"d M, Y H:i" }}
   </section>
+    {% if task.deadline %}
+      <section class="deadline">
+        <b>Deadline</b>
+        {{ task.deadline|date:"d M, Y" }}
+      </section>
+    {% endif %}
   {% if task.description %}
   <section class="description">{{ task.description|safe }}</section>
   {% endif %}

@@ -5,15 +5,18 @@ window.onload = function () {
     }
     if($('.nav__add-button')){
         $('.nav__add-button').on("click", () => {
-            $('.channelcreation').modal('show')
+            $('.channelcreation').modal('show');
         })
     }
     if($('main.content')){
         $('main.content').on("click", ()=>{
             if($('main.content').hasClass('content--open')){
-                openNav()
+                openNav();
             }
         })
+    }
+    if(document.querySelector(".task_filter")){
+        blankFormFilter();
     }
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);

@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task, TaskComment
 from app.models import Server, Channel
 from django.contrib.auth.models import User
-from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm
+from .forms import TaskDescriptionForm, TaskUpdateForm, TaskCommentForm, TaskFilterForm, TaskSortForm
 import json
 from django.http import HttpResponseRedirect
 from operator import attrgetter
@@ -163,7 +163,6 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
         task = Task.objects.get(id=id)
         task.assigned_for.clear()
         assigned_list = request.POST.get("assigned_users_list")
-        print(json.loads(assigned_list))
         for user in json.loads(assigned_list):
             if User.objects.filter(username=user).first() in server.users.all():
                 task.assigned_for.add(User.objects.get(username=user))
@@ -189,7 +188,17 @@ class FilterTaskView(ListView):
         field_names = []
         for field_name in self.model._meta.get_fields():
             field_names.append(field_name.name)
+        sort_fields = ['created', '-created', 'deadline', '-deadline']
+        if self.request.GET.get("server"):
+            if self.request.GET['server'] == "All":
+                field_names.remove('server')
         parameters = {field_name: value for field_name, value in self.request.GET.items() if field_name in field_names}
-        context['tasks'] = self.request.user.users_tasks.filter(**parameters)
+        tasks = self.request.user.users_tasks.filter(**parameters)
         context['taskbar_title'] = "All tasks"
+        if self.request.GET.get('order'):
+            if self.request.GET['order'] in sort_fields:
+                tasks = tasks.order_by(self.request.GET['order'])
+        context['filter_form'] = TaskFilterForm(self.request.GET, user=self.request.user)
+        context['sort_form'] = TaskSortForm(self.request.GET)
+        context['tasks'] = tasks
         return context

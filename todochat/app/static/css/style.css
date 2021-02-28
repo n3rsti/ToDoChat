@@ -137,7 +137,6 @@ h1.title {
   width: 40px;
   background: none;
   border: 0;
-  z-index: 40;
   outline: none;
   z-index: 3;
   cursor: pointer; }
@@ -217,8 +216,7 @@ h1.title {
 .task__bar {
   color: #fff;
   font-size: 20px;
-  margin: 2px;
-  margin-left: 10px;
+  margin: 2px 2px 2px 10px;
   font-weight: 600; }
 
 .news__title {
@@ -269,7 +267,6 @@ h1.title {
 .nav__groups {
   width: 100%;
   height: -webkit-fill-available;
-  /* height of .hello__div, .add__li, .bottom__side  */
   margin-top: 5px;
   display: flex;
   flex-direction: column;
@@ -298,8 +295,7 @@ div.groups__img, div.nav__server-logo {
 
 .groups__li {
   margin: 0;
-  padding: 6px;
-  padding-left: 15px;
+  padding: 6px 6px 6px 15px;
   align-items: center;
   cursor: pointer;
   color: #fff;
@@ -354,13 +350,12 @@ div.groups__img, div.nav__server-logo {
 
 .form__hr {
   width: 250px;
-  margin: 0;
+  margin: 0 0 5px 0;
   padding: 0;
   border: 0;
   background: #95a5a6;
   height: 3px;
   transform: scaleY(0.5);
-  margin-bottom: 5px;
   position: relative; }
 
 .form__hr::before {
@@ -853,7 +848,6 @@ main.chat {
 
 .chat-log__li {
   width: 100%;
-  margin-left: 0;
   margin: 0;
   list-style-type: none;
   display: flex;
@@ -1052,8 +1046,7 @@ article.task {
   flex-direction: column; }
   article.task .task__date, article.task .task__description, article.task .task__top {
     width: 100%;
-    padding: 10px;
-    padding-bottom: 2px; }
+    padding: 10px 10px 2px 10px; }
   article.task .top__users {
     position: absolute;
     right: 5px;
@@ -1132,11 +1125,11 @@ main.task {
     main.task .description p {
       margin: 0;
       padding: 20px 0; }
-  main.task .date, main.task .author {
+  main.task .date, main.task .author, main.task .deadline {
     width: 100%;
     padding: 10px 0;
     font-size: 90%; }
-    main.task .date .far, main.task .date .fas, main.task .author .far, main.task .author .fas {
+    main.task .date .far, main.task .date .fas, main.task .author .far, main.task .author .fas, main.task .deadline .far, main.task .deadline .fas {
       margin-right: 5px; }
   main.task section {
     border-bottom: 1px solid #e8ecee; }
@@ -1211,8 +1204,7 @@ main.task {
       align-items: center;
       justify-content: center;
       width: 20px;
-      margin: 0 10px;
-      margin-left: 5px;
+      margin: 0 10px 0 5px;
       position: absolute;
       right: 6px;
       top: 50%;
@@ -1327,5 +1319,20 @@ main.task {
 
 .server_remove_user_modal .removed_user_span {
   font-weight: 600; }
+
+.tasks__filter {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid var(--primary); }
+  .tasks__filter .fas {
+    font-size: 20px;
+    padding: 10px; }
+  .tasks__filter .btn {
+    outline: none;
+    color: var(--primary); }
+    .tasks__filter .btn:focus {
+      box-shadow: none; }
+    .tasks__filter .btn:first-child {
+      border-right: 1px solid var(--primary); }
 
 /*# sourceMappingURL=style.css.map */
