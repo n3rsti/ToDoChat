@@ -83,8 +83,8 @@ function hideGroups(){
 }
 function collapseFormSection(button, aria_expanded){
     $(`[name=${button.dataset.controls}]`).collapse('toggle');
-    btnIcon = button.querySelector('.fas');
-    if(aria_expanded=="true"){
+    let btnIcon = button.querySelector('.fas');
+    if(aria_expanded==="true"){
         btnIcon.classList.remove('fa-minus');
         btnIcon.classList.add('fa-plus');
         button.setAttribute('aria-expanded', 'false');
@@ -97,12 +97,13 @@ function collapseFormSection(button, aria_expanded){
 
 }
 function collapseTaskForm(){
-    taskForm = document.querySelector('.task_section');
+    let taskForm = document.querySelector('.task_section');
     taskForm.classList.toggle('task_section--open');
 }
 function confirmTaskDelete(comment_id){
-    let confirmDeleteDiv = $(`[name='confirm#${comment_id}']`)
-    if(confirmDeleteDiv.css('z-index') == -1){
+    let confirmDeleteDiv = $(`.confirm${comment_id}`);
+    console.log(confirmDeleteDiv)
+    if(confirmDeleteDiv.css('z-index') === "-1"){
         confirmDeleteDiv.css('z-index', 1)
     }
     else {

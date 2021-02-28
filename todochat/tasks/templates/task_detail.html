@@ -1,409 +1,433 @@
-{% extends 'base.html'%} {% block title %}
-<title>#{{task.task_id}} {{task.title}}</title>
+{% extends 'base.html' %} {% block title %}
+    <title>#{{ task.task_id }} {{ task.title }}</title>
 {% endblock title %} {% block content %} {% include "server_base.html" %}
-<main class="content task">
-  <section class="btn-row">
-    <form method="post">
-      {% if task.status == "open" or task.status == "need_more_work" %}
-        {% if request.user == task.author %}
-        <button type="button" class="btn btn-success" onclick="$('.task_approve').modal('show')">Approve</button>
-        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
-        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
-          Delete
-        </button>
-        {% elif request.user in task.assigned_for.all %}
-        <button type="button" class="btn btn-success" onclick="$('.task_submit').modal('show')">Submit for review</button>
-        {% endif %}
-      {% elif task.status == "submitted_for_review" %}
-        {% if request.user == task.author %}
-        <button type="button" class="btn btn-success" onclick="$('.task_approve').modal('show')">Approve</button>
-        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
-        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
-          Delete
-        </button>
-        <button type="button" class="btn btn-warning" onclick="$('.task_need_more_work').modal('show')">Need more work</button>
-        {% elif request.user in task.assigned_for.all %}
-        <button type="button" class="btn btn-danger" onclick="$('.task_cancel_submit').modal('show')">
-          Cancel
-        </button>
-        {% endif %}
-      {% elif task.status == "approved" %}
-        {% if request.user == task.author %}
-        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
-        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
-          Delete
-        </button>
-        <button type="button" class="btn btn-info text-light" onclick="$('.task_reopen').modal('show')">Reopen</button>
-        {% endif %}
-      {% endif %}
-    </form>
-  </section>
-  <section class="title task_status_section">
-    <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1>
-    
-    {% if task.status == "open" %}
-    <span class="badge open">Open</span>
-    {% elif task.status == "approved" %}
-    <span class="badge bg-success">Approved</span>
-    {% elif task.status == "need_more_work" %}
-    <span class="badge bg-warning">Need more work</span>
-    {% elif task.status == "submitted_for_review" %}
-    <span class="badge bg-success">Submitted</span>
-    {% endif %}
-  </section>
-  <section class="author">
-    <i class="fas fa-user"></i>
-    <a href="{% url 'user_detail' task.author %}"> {{ task.author }} </a>
-  </section>
-  <section class="date">
-    <i class="far fa-calendar-alt"></i>
-    {{ task.created|date:"d M, Y H:i" }}
-  </section>
-    {% if task.deadline %}
-      <section class="deadline">
-        <b>Deadline</b>
-        {{ task.deadline|date:"d M, Y" }}
-      </section>
-    {% endif %}
-  {% if task.description %}
-  <section class="description">{{ task.description|safe }}</section>
-  {% endif %}
-  {% if task.comments %}
-  <section class="task__comments">
-    <ul class="comment__ul">
-      {% for comment in comment_list %}
-      {% if comment.status %}
-      <li class="status__li">
-        <div class="task__status_change">
-          <section class="status__content">
-            <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }} profile photo" class="comment__profile_img">
-            <a href="{% url 'user_detail' task.author %}">{{ comment.author }}</a> {{ comment.user_friendly_status }} 
-            <span class="status__task">{{ comment.task.title }}<span class="task__id">#{{comment.task.id}}</span></span>
-          </section>
-        </div>
-      </li>
-      {% else %}
-      <li class="comment__li">
-      <div class="task__comment">
-        <section class="comment__top">
-          <div class="top-left">
-            <img src="{{ comment.author.profile.image.url }}" alt="" class="comment__profile_img"> <a
-              href="{% url 'user_detail' comment.author">{{ comment.author }}</a>
-            <span class="bottom-all_date">
-              <span>
-                {{ comment.created|timesince}}</span> ago
-            </span>
-          </div>
-          {% if comment.author == request.user %}
-          <button class="btn delete_task-btn" onclick="confirmTaskDelete('{{comment.id}}')">
-            <i class="fas fa-trash"></i>
-          </button>
-          {% endif %}
+    <main class="content task">
+        <section class="btn-row">
+            <form method="post">
+                {% if task.status == "open" or task.status == "need_more_work" %}
+                    {% if request.user == task.author %}
+                        <button type="button" class="btn btn-success" onclick="$('.task_approve').modal('show')">
+                            Approve
+                        </button>
+                        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
+                        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
+                            Delete
+                        </button>
+                    {% elif request.user in task.assigned_for.all %}
+                        <button type="button" class="btn btn-success" onclick="$('.task_submit').modal('show')">Submit
+                            for review
+                        </button>
+                    {% endif %}
+                {% elif task.status == "submitted_for_review" %}
+                    {% if request.user == task.author %}
+                        <button type="button" class="btn btn-success" onclick="$('.task_approve').modal('show')">
+                            Approve
+                        </button>
+                        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
+                        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-warning" onclick="$('.task_need_more_work').modal('show')">
+                            Need more work
+                        </button>
+                    {% elif request.user in task.assigned_for.all %}
+                        <button type="button" class="btn btn-danger" onclick="$('.task_cancel_submit').modal('show')">
+                            Cancel
+                        </button>
+                    {% endif %}
+                {% elif task.status == "approved" %}
+                    {% if request.user == task.author %}
+                        <a href="{% url 'task_update' server.id task.id %}" class="btn btn-primary">Edit</a>
+                        <button type="button" class="btn btn-danger" onclick="$('.task_delete').modal('show')">
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-info text-light" onclick="$('.task_reopen').modal('show')">
+                            Reopen
+                        </button>
+                    {% endif %}
+                {% endif %}
+            </form>
         </section>
-        <section class="comment__bottom">
-          {{ comment.content|safe }}
+        <section class="title task_status_section">
+            <h1>{{ task.title }} <span class="task__id">#{{ task.task_id }}</span></h1>
+
+            {% if task.status == "open" %}
+                <span class="badge open">Open</span>
+            {% elif task.status == "approved" %}
+                <span class="badge bg-success">Approved</span>
+            {% elif task.status == "need_more_work" %}
+                <span class="badge bg-warning">Need more work</span>
+            {% elif task.status == "submitted_for_review" %}
+                <span class="badge bg-success">Submitted</span>
+            {% endif %}
         </section>
-        {% if comment.author == request.user %}
-        <section class="confirm_delete" name="confirm#{{comment.id}}">
-          <form method="post">
+        <section class="author">
+            <i class="fas fa-user"></i>
+            <a href="{% url 'user_detail' task.author %}"> {{ task.author }} </a>
+        </section>
+        <section class="date">
+            <i class="far fa-calendar-alt"></i>
+            {{ task.created|date:"d M, Y H:i" }}
+        </section>
+        {% if task.deadline %}
+            <section class="deadline">
+                <b>Deadline</b>
+                {{ task.deadline|date:"d M, Y" }}
+            </section>
+        {% endif %}
+        {% if task.description %}
+            <section class="description">{{ task.description|safe }}</section>
+        {% endif %}
+        {% if task.task_comments.count > 0 %}
+            <section class="task__comments">
+                <ul class="comment__ul">
+                    {% for comment in comment_list %}
+                        {% if comment.status %}
+                            <li class="status__li">
+                                <div class="task__status_change">
+                                    <section class="status__content">
+                                        <img src="{{ comment.author.profile.image.url }}"
+                                             alt="{{ comment.author }} profile photo" class="comment__profile_img">
+                                        <a href="{% url 'user_detail' task.author %}">{{ comment.author }}</a> {{ comment.user_friendly_status }}
+                                        <span class="status__task">{{ comment.task.title }}<span
+                                                class="task__id">#{{ comment.task.id }}</span></span>
+                                    </section>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="comment__li">
+                                <div class="task__comment">
+                                    <section class="comment__top">
+                                        <div class="top-left">
+                                            <img src="{{ comment.author.profile.image.url }}" alt=""
+                                                 class="comment__profile_img"> <a
+                                                href="{% url 'user_detail' comment.author%}">{{ comment.author }}</a>
+            <span class=" bottom-all_date">
+                                            <span>
+                {{ comment.created|timesince }}</span> ago
+                                            </span>
+                                        </div>
+                                        {% if comment.author == request.user %}
+                                            <button class="btn delete_task-btn"
+                                                    onclick="confirmTaskDelete('{{ comment.id }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% endif %}
+                                    </section>
+                                    <section class="comment__bottom">
+                                        {{ comment.content|safe }}
+                                    </section>
+                                    {% if comment.author == request.user %}
+                                        <section class="confirm_delete confirm{{ comment.id }}">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                                <button class="btn btn-danger" type="submit" name="delete_message"
+                                                        value="Delete comment">Delete
+                                                </button>
+                                            </form>
+
+                                            <button class="btn btn-secondary"
+                                                    onclick="confirmTaskDelete('{{ comment.id }}')">Cancel
+                                            </button>
+                                        </section>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+            </section>
+        {% endif %}
+        <h2>Comment</h2>
+        <form method="POST" class="task__form">
             {% csrf_token %}
-            <input type="hidden" name="comment_id" value="{{comment.id}}">
-            <button class="btn btn-danger" type="submit" name="delete_message" value="Delete comment">Delete</button>
-          </form>
-          
-          <button class="btn btn-secondary" onclick="confirmTaskDelete('{{comment.id}}')">Cancel</button>
-        </section>
+            <div class="form_section" name="form_description">
+                <label for="form_description" hidden>Comment</label>
+                {{ comment_form.media }}
+                {{ comment_form.as_p }}
+                <small class="form-text text-muted">Comments can be maximum 500 characters long.</small>
+                <button type="submit" value="comment" class="btn btn-primary ml-0" name="comment_task">Comment</button>
+            </div>
+        </form>
+    </main>
+    <div class="modals_div">
+        {% if task.status == "open" or task.status == "need_more_work" %}
+            {% if request.user == task.author %}
+                <div class="modal task_approve" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Approve task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_approve').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to approve <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved"
+                                       class="btn btn-success">Approve</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_approve').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal task_delete" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
+                                        Delete
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% elif request.user in task.assigned_for.all %}
+                <div class="modal task_submit" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Submit task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_submit').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to submit for review <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=submitted_for_review"
+                                       class="btn btn-success">Submit</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_submit').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% elif task.status == "submitted_for_review" %}
+            {% if request.user == task.author %}
+                <div class="modal task_approve" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Approve task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_approve').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to approve <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved"
+                                       class="btn btn-success">Approve</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_approve').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal task_delete" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
+                                        Delete
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal task_need_more_work" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Request more work</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_need_more_work').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to request more work on <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=need_more_work"
+                                       class="btn btn-warning">Request</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_need_more_work').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% elif request.user in task.assigned_for.all %}
+                <div class="modal task_cancel_submit" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Cancel submission</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_cancel_submit').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to cancel submission of <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=open"
+                                       class="btn btn-danger">Cancel</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_cancel_submit').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% elif task.status == "approved" %}
+            {% if request.user == task.author %}
+                <div class="modal task_delete" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
+                                        Delete
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_delete').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal task_reopen" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Reopen task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                            onclick="$('.task_reopen').modal('hide')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Do you want to reopen <b>#{{ task.task_id }} {{ task.title }}?</b>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'task_change_status' task.server.id task.id %}?status=open"
+                                       class="btn btn-info text-light">Reopen</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="$('.task_reopen').modal('hide')">
+                                        Close
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
-      </div>
-    </li>
-    {% endif %}
-      {% endfor %}
-    </ul>
-    
-  </section>
-  {% endif %}
-  <h2>Comment</h2>
-  <form method="POST" class="task__form">
-    {% csrf_token %}
-    <div class="form_section" name="form_description">
-      <label for="form_description" hidden>Comment</label>
-      {{ comment_form.media }}
-      {{ comment_form.as_p }}
-      <small class="form-text text-muted">Comments can be maximum 500 characters long.</small>
-      <button type="submit" value="comment" class="btn btn-primary ml-0" name="comment_task">Comment</button>
     </div>
-  </form>
-</main>
-<div class="modals_div">
-{% if task.status == "open" or task.status == "need_more_work" %}
-      {% if request.user == task.author %}
-      <div class="modal task_approve" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Approve task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_approve').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to approve <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved" class="btn btn-success">Approve</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_approve').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="modal task_delete" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Delete task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_delete').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
-                  Delete
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_delete').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {% elif request.user in task.assigned_for.all %}
-      <div class="modal task_submit" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Submit task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_submit').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to submit for review <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=submitted_for_review" class="btn btn-success">Submit</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_submit').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-{% elif task.status == "submitted_for_review" %}
-      {% if request.user == task.author %}
-      <div class="modal task_approve" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Approve task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_approve').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to approve <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=approved" class="btn btn-success">Approve</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_approve').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="modal task_delete" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Delete task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_delete').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
-                  Delete
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_delete').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="modal task_need_more_work" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Request more work</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_need_more_work').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to request more work on <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=need_more_work" class="btn btn-warning">Request</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_need_more_work').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {% elif request.user in task.assigned_for.all %}
-      <div class="modal task_cancel_submit" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Cancel submission</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_cancel_submit').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to cancel submission of <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=open" class="btn btn-danger">Cancel</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_cancel_submit').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-{% elif task.status == "approved" %}
-      {% if request.user == task.author %}
-      <div class="modal task_delete" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Delete task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_delete').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to delete <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-danger" name="delete_task" value="delete">
-                  Delete
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_delete').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="modal task_reopen" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title">Reopen task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_reopen').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Do you want to reopen <b>#{{ task.task_id }} {{ task.title }}?</b>
-                </p>
-              </div>
-              <div class="modal-footer">
-                <a href="{% url 'task_change_status' task.server.id task.id %}?status=open" class="btn btn-info text-light">Reopen</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_reopen').modal('hide')">
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-{% endif %}
-</div>
 {% endblock content %}

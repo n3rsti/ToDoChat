@@ -1,187 +1,187 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-<title>ToDoChat</title>
+    <title>ToDoChat</title>
 {% endblock title %}
 {% block extra_head %}
-<script>
-  let CURRENT_DATE = new Date();
-  let d = new Date();
-  let json = '{{ tasks_json|safe }}'
-  let tasks = JSON.parse(json.replace(/(\r\n|\n|\r)/gm, "")) // Replacing enters causing problems with parsing json
-  let content = 'January February March April May June July August September October November December'.split(' ');
-  let weekDayName = 'SUN MON TUES WED THURS FRI'.split(' ');
-  let daysOfMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    <script>
+        let CURRENT_DATE = new Date();
+        let d = new Date();
+        let json = '{{ tasks_json|safe }}'
+        let tasks = JSON.parse(json.replace(/(\r\n|\n|\r)/gm, "")) // Replacing enters causing problems with parsing json
+        let content = 'January February March April May June July August September October November December'.split(' ');
+        let weekDayName = 'SUN MON TUES WED THURS FRI'.split(' ');
+        let daysOfMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-  // Returns the day of week which month starts (eg 0 for Sunday, 1 for Monday, etc.)
-  function getCalendarStart(dayOfWeek, currentDate) {
-    let date = currentDate - 1;
-    let startOffset = (date % 7) - dayOfWeek;
-    if (startOffset > 0) {
-      startOffset -= 7;
-    }
-    return Math.abs(startOffset);
-  }
-
-  // Render Calendar
-  function renderCalendar(startDay, totalDays, currentDate) {
-    let currentRow = 1;
-    let currentDay = startDay;
-    let $table = $('table');
-    $table.addClass('calendar')
-    let $week = getCalendarRow();
-    let $day;
-    let i = 1;
-    let tasks_counter = 0;
-    for (; i <= totalDays; i++) {
-      $day = $week.find('td').eq(currentDay);
-      let a = $('<a>');
-      a.text(i);
-      a.addClass('calendar__a');
-      a.attr("href", `{% url 'user_tasks' %}?deadline=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${i}`) // YYYY-M-D - for creating links
-      $day.append(a);
-      let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString() // MM/DD/YYYY - for checking if there are tasks for each day
-      for (let z = tasks_counter; z < tasks.length; z++) {
-
-        task_date = new Date(tasks[z].fields.deadline).toLocaleDateString()
-        if (task_date == currentRenderedDayDate) {
-          $day.addClass('task__td');
-          tasks_counter++;
+        // Returns the day of week which month starts (eg 0 for Sunday, 1 for Monday, etc.)
+        function getCalendarStart(dayOfWeek, currentDate) {
+            let date = currentDate - 1;
+            let startOffset = (date % 7) - dayOfWeek;
+            if (startOffset > 0) {
+                startOffset -= 7;
+            }
+            return Math.abs(startOffset);
         }
-      }
-      if (i === currentDate) {
-        $day.addClass('today');
-      }
 
-      // +1 next day until Saturday (6), then reset to Sunday (0)
-      currentDay = ++currentDay % 7;
+        // Render Calendar
+        function renderCalendar(startDay, totalDays, currentDate) {
+            let currentRow = 1;
+            let currentDay = startDay;
+            let $table = $('table');
+            $table.addClass('calendar')
+            let $week = getCalendarRow();
+            let $day;
+            let i = 1;
+            let tasks_counter = 0;
+            for (; i <= totalDays; i++) {
+                $day = $week.find('td').eq(currentDay);
+                let a = $('<a>');
+                a.text(i);
+                a.addClass('calendar__a');
+                a.attr("href", `{% url 'user_tasks' %}?deadline=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${i}`) // YYYY-M-D - for creating links
+                $day.append(a);
+                let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString() // MM/DD/YYYY - for checking if there are tasks for each day
+                for (let z = tasks_counter; z < tasks.length; z++) {
 
-      // Generate new row when day is Saturday, but only if there are
-      // additional days to render
-      if (currentDay === 0 && (i + 1 <= totalDays)) {
-        $week = getCalendarRow();
-        currentRow++;
-      }
-    }
-  }
+                    let task_date = new Date(tasks[z].fields.deadline).toLocaleDateString()
+                    if (task_date === currentRenderedDayDate) {
+                        $day.addClass('task__td');
+                        tasks_counter++;
+                    }
+                }
+                if (i === currentDate) {
+                    $day.addClass('today');
+                }
 
-  // Clear generated calendar
-  function clearCalendar() {
-    let $trs = $('tr').not(':eq(0)');
-    $trs.remove();
-    $('.calendar_month').empty();
-  }
+                // +1 next day until Saturday (6), then reset to Sunday (0)
+                currentDay = ++currentDay % 7;
 
-  // Generates table row used when rendering Calendar
-  function getCalendarRow() {
-    let $table = $('table');
-    let $tr = $('<tr/>');
-    for (let i = 0, len = 7; i < len; i++) {
-      $tr.append($('<td/>'));
-    }
-    $table.append($tr);
-    return $tr;
-  }
+                // Generate new row when day is Saturday, but only if there are
+                // additional days to render
+                if (currentDay === 0 && (i + 1 <= totalDays)) {
+                    $week = getCalendarRow();
+                    currentRow++;
+                }
+            }
+        }
 
-  function myCalendar() {
-    let month = d.getUTCMonth();
-    let day = d.getUTCDay();
-    let year = d.getUTCFullYear();
-    let date = d.getUTCDate();
-    let totalDaysOfMonth = daysOfMonth[month];
-    let counter = 1;
-    let $h3 = $('.calendar_month');
+        // Clear generated calendar
+        function clearCalendar() {
+            let $trs = $('tr').not(':eq(0)');
+            $trs.remove();
+            $('.calendar_month').empty();
+        }
 
-    $h3.text(content[month] + ' ' + year);
+        // Generates table row used when rendering Calendar
+        function getCalendarRow() {
+            let $table = $('table');
+            let $tr = $('<tr/>');
+            for (let i = 0, len = 7; i < len; i++) {
+                $tr.append($('<td/>'));
+            }
+            $table.append($tr);
+            return $tr;
+        }
 
-    let dateToHighlight = 0;
+        function myCalendar() {
+            let month = d.getUTCMonth();
+            let day = d.getUTCDay();
+            let year = d.getUTCFullYear();
+            let date = d.getUTCDate();
+            let totalDaysOfMonth = daysOfMonth[month];
+            let $h3 = $('.calendar_month');
 
-    // Determine if Month && Year are current for Date Highlight
-    if (CURRENT_DATE.getUTCMonth() === month && CURRENT_DATE.getUTCFullYear() === year) {
-      dateToHighlight = date;
-    }
+            $h3.text(content[month] + ' ' + year);
 
-    //Getting February Days Including The Leap Year
-    if (month === 1) {
-      if ((year % 100 !== 0) && (year % 4 === 0) || (year % 400 === 0)) {
-        totalDaysOfMonth = 29;
-      }
-    }
+            let dateToHighlight = 0;
 
-    // Get Start Day
-    renderCalendar(getCalendarStart(day, date), totalDaysOfMonth, dateToHighlight);
-  };
+            // Determine if Month && Year are current for Date Highlight
+            if (CURRENT_DATE.getUTCMonth() === month && CURRENT_DATE.getUTCFullYear() === year) {
+                dateToHighlight = date;
+            }
 
-  function navigationHandler(dir) {
-    d.setUTCMonth(d.getUTCMonth() + dir);
-    clearCalendar();
-    myCalendar();
-  }
+            //Getting February Days Including The Leap Year
+            if (month === 1) {
+                if ((year % 100 !== 0) && (year % 4 === 0) || (year % 400 === 0)) {
+                    totalDaysOfMonth = 29;
+                }
+            }
 
-  $(document).ready(function () {
-    // Bind Events
-    $('.prev-month').click(function () {
-      navigationHandler(-1);
-    });
-    $('.next-month').click(function () {
-      navigationHandler(1);
-    });
-    // Generate Calendar
-    myCalendar();
-  });
+            // Get Start Day
+            renderCalendar(getCalendarStart(day, date), totalDaysOfMonth, dateToHighlight);
+        }
 
-</script>
+        function navigationHandler(dir) {
+            d.setUTCMonth(d.getUTCMonth() + dir);
+            clearCalendar();
+            myCalendar();
+        }
+
+        $(document).ready(function () {
+            // Bind Events
+            $('.prev-month').click(function () {
+                navigationHandler(-1);
+            });
+            $('.next-month').click(function () {
+                navigationHandler(1);
+            });
+            // Generate Calendar
+            myCalendar();
+        });
+
+    </script>
 {% endblock extra_head %}
 {% block content %}
-{% include "app_base.html" %}
-<main class="content">
-  <div class="container calendar_div">
+    {% include "app_base.html" %}
+    <main class="content">
+        <div class="container calendar_div">
 
-    <br>
-    <div class="month-year text-center flex justify-content-center">
-      <i class="prev-month fa fa-chevron-left fa-3x"></i>
-      <h3 class="calendar_month"></h3> <i class="next-month fa fa-chevron-right fa-3x"></i>
-    </div>
-    <table class="table table-bordered">
-      <tr>
-        <th>S</th>
-        <th>M</th>
-        <th>T</th>
-        <th>W</th>
-        <th>T</th>
-        <th>F</th>
-        <th>S</th>
-      </tr>
-    </table>
-  </div>
-  <h2 class="text-center">Tasks ending today</h2>
-  <ul class="task__list">
-    {% for task in today_tasks %}
-    <li class="task__li">
-      <article class="task">
-        <section class="task__top">
-          <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{task.server.name}}#{{ task.task_id }}</strong> {{ task.title }}</a>
-          <div class="top__users task_status_section task_status_section--center">
-            {% if task.status == "open" %}
-            <span class="badge open">Open</span>
-            {% elif task.status == "approved" %}
-            <span class="badge bg-success">Approved</span>
-            {% elif task.status == "need_more_work" %}
-            <span class="badge bg-warning">Need more work</span>
-            {% elif task.status == "submitted_for_review" %}
-            <span class="badge bg-success">Submitted</span>
-            {% endif %}
-          </div>
-        </section>
-        <section class="task__date">
-          Created on
-          {{ task.created|date:"d M, Y" }}
-          by
-          <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
-        </section>
-        </article>
-    </li>
-    {% endfor %}
-  </ul>
-</main>
+            <br>
+            <div class="month-year text-center flex justify-content-center">
+                <i class="prev-month fa fa-chevron-left fa-3x"></i>
+                <h3 class="calendar_month"></h3> <i class="next-month fa fa-chevron-right fa-3x"></i>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>S</th>
+                    <th>M</th>
+                    <th>T</th>
+                    <th>W</th>
+                    <th>T</th>
+                    <th>F</th>
+                    <th>S</th>
+                </tr>
+            </table>
+        </div>
+        <h2 class="text-center">Tasks ending today</h2>
+        <ul class="task__list">
+            {% for task in today_tasks %}
+                <li class="task__li">
+                    <article class="task">
+                        <section class="task__top">
+                            <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}
+                            </a>
+                            <div class="top__users task_status_section task_status_section--center">
+                                {% if task.status == "open" %}
+                                    <span class="badge open">Open</span>
+                                {% elif task.status == "approved" %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif task.status == "need_more_work" %}
+                                    <span class="badge bg-warning">Need more work</span>
+                                {% elif task.status == "submitted_for_review" %}
+                                    <span class="badge bg-success">Submitted</span>
+                                {% endif %}
+                            </div>
+                        </section>
+                        <section class="task__date">
+                            Created on
+                            {{ task.created|date:"d M, Y" }}
+                            by
+                            <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+                        </section>
+                    </article>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
 {% endblock content %}

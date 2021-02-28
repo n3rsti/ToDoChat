@@ -2,19 +2,19 @@
 {% load static %}
 <header class="navbar header bg-primary">
     {% if taskbar_img %}
-    <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
-        <img src="{{ friend.profile.image.url }}" alt="" class="nav__server-logo">
-        <h2 class="task__bar">{{ taskbar_title }}</h2>
-    </a>
+        <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
+            <img src="{{ friend.profile.image.url }}" alt="" class="nav__server-logo">
+            <h2 class="task__bar">{{ taskbar_title }}</h2>
+        </a>
     {% else %}
-    <h2 class="task__bar">{{ taskbar_title }}</h2>
+        <h2 class="task__bar">{{ taskbar_title }}</h2>
     {% endif %}
 
     <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
-        aria-controls="side-nav" tabindex="0">
-        <hr class="button__hr">
-        <hr class="button__hr">
-        <hr class="button__hr">
+            aria-controls="side-nav" tabindex="0">
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
     </button>
 </header>
 
@@ -30,52 +30,53 @@
     </div>
     <section class="nav__groups">
         {% if user.invited_user.count > 0 %}
-        <a href="{% url 'user_invitations' %}" class="groups__h2 flex" title="Invitations">Invitations
+            <a href="{% url 'user_invitations' %}" class="groups__h2 flex" title="Invitations">Invitations
                 <span class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         {% endif %}
         <h2 class="groups__h2">Groups</h2>
         {% if user.server_set.count > 0 %}
-        <ul class="groups__ul">
-            {% for server in user.server_set.all %}
-            <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %}">
-                {% if server.image == 'default.png' %}
-                <div class="groups__img">{{ server.name.0 }}</div>
-                {% else %}
-                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
-                {% endif %}
-                <a href="{% url 'server_detail' server.id %}" class="groups__li"
-                    title="{{server.name}} group">{{ server.name|shorter_name:12 }}</a>
-            </li>
-            {% endfor %}
+            <ul class="groups__ul">
+                {% for server in user.server_set.all %}
+                    <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %}">
+                        {% if server.image == 'default.png' %}
+                            <div class="groups__img">{{ server.name.0 }}</div>
+                        {% else %}
+                            <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
+                        {% endif %}
+                        <a href="{% url 'server_detail' server.id %}" class="groups__li"
+                           title="{{ server.name }} group">{{ server.name|shorter_name:12 }}</a>
+                    </li>
+                {% endfor %}
 
-        </ul>
+            </ul>
         {% else %}
-        <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
-            Add group
-            <span class="li__span li__plus">
+            <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
+                Add group
+                <span class="li__span li__plus">
                 <i class="fas fa-plus"></i>
             </span>
-        </a>
+            </a>
         {% endif %}
-        <a href="{% url 'user_tasks' %}?order=-created" class="groups__h2 groups__h2--top-border flex" title="All tasks">All tasks
+        <a href="{% url 'user_tasks' %}?order=-created" class="groups__h2 groups__h2--top-border flex"
+           title="All tasks">All tasks
             <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
         </a>
         {% if user.server_set.all.count > 5 %}
-        <button class="load_more" aria-expanded="false" aria-label="Show additional groups">Load more</button>
+            <button class="load_more" aria-expanded="false" aria-label="Show additional groups">Load more</button>
         {% endif %}
         {% if user.profile.friends.count > 0 %}
-        <h2 class="groups__h2">Friends</h2>
-        <ul class="groups__ul friends__ul">
-            {% for friend in user.profile.friends.all %}
-            <li class="flex">
-                <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                    class="users__img">
-                <a href="{% url 'user_detail' friend.username %}" class="groups__li"
-                    title="{{ friend.username }} profile">{{ friend.username }}</a>
-            </li>
+            <h2 class="groups__h2">Friends</h2>
+            <ul class="groups__ul friends__ul">
+                {% for friend in user.profile.friends.all %}
+                    <li class="flex">
+                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                             class="users__img">
+                        <a href="{% url 'user_detail' friend.username %}" class="groups__li"
+                           title="{{ friend.username }} profile">{{ friend.username }}</a>
+                    </li>
 
-            {% endfor %}
-        </ul>
+                {% endfor %}
+            </ul>
         {% endif %}
     </section>
     <div class="add__li">
@@ -87,14 +88,14 @@
         </a>
     </div>
     {% if user.server_set.count > 0 %}
-    <div class="add__li add__li--friend">
-        <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
-            Add group
-            <span class="li__span li__plus">
+        <div class="add__li add__li--friend">
+            <a href="{% url 'create_server' %}" class="nav__add-button" title="Create server">
+                Add group
+                <span class="li__span li__plus">
                 <i class="fas fa-plus"></i>
             </span>
-        </a>
-    </div>
+            </a>
+        </div>
     {% endif %}
     <div class="bottom__side">
         <a href="{% url 'logout' %}" class="bottom__button bottom__button-logout" tabindex="-1" title="Logout">
@@ -106,7 +107,6 @@
         <a class="bottom__button bottom__button-settings" href="{% url 'profile_edit' %}" title="Profile settings">
             <i class="fas fa-cog"></i>
         </a>
-
 
 
     </div>

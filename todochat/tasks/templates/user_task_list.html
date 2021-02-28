@@ -1,109 +1,110 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
-{% load crispy_forms_tags %}
-<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
-<script src="{%  static 'js/forms.js' %}"></script>
-{{ block.super }}
+    {% load crispy_forms_tags %}
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+    <script src="{% static 'js/forms.js' %}"></script>
+    {{ block.super }}
 {% endblock %}
 {% block title %}
-<title>ToDoChat | All tasks</title>
+    <title>ToDoChat | All tasks</title>
 {% endblock title %}
 {% block content %}
-{% include "app_base.html" %}
-<main class="content chat tasks">
-    {% if tasks.count is 0 %}
-    No tasks
-    {% else %}
-    <div class="tasks__filter">
-        <button class="btn w-50" onclick="$('.task_filter').modal('show')">
-            Filter<i class="fas fa-filter"></i>
-        </button>
-        <button class="btn w-50" onclick="$('.task_sort').modal('show')">
-            Sort<i class="fas fa-sort"></i>
-        </button>
-    </div>
-    <ul class="task__list">
-    {% for task in tasks %}
-    <li class="task__li">
-        <article class="task">
-            <section class="task__top">
-                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{task.server.name}}#{{ task.task_id }}</strong> {{ task.title }}</a> 
-                <div class="top__users task_status_section task_status_section--center">
-                    {% if task.status == "open" %}
-                    <span class="badge open">Open</span>
-                    {% elif task.status == "approved" %}
-                    <span class="badge bg-success">Approved</span>
-                    {% elif task.status == "need_more_work" %}
-                    <span class="badge bg-warning">Need more work</span>
-                    {% elif task.status == "submitted_for_review" %}
-                    <span class="badge bg-success">Submitted</span>
-                    {% endif %}
+    {% include "app_base.html" %}
+    <main class="content chat tasks">
+        {% if tasks.count is 0 %}
+            No tasks
+        {% else %}
+            <div class="tasks__filter">
+                <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+                    Filter<i class="fas fa-filter"></i>
+                </button>
+                <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+                    Sort<i class="fas fa-sort"></i>
+                </button>
+            </div>
+            <ul class="task__list">
+                {% for task in tasks %}
+                    <li class="task__li">
+                        <article class="task">
+                            <section class="task__top">
+                                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}
+                                </a>
+                                <div class="top__users task_status_section task_status_section--center">
+                                    {% if task.status == "open" %}
+                                        <span class="badge open">Open</span>
+                                    {% elif task.status == "approved" %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif task.status == "need_more_work" %}
+                                        <span class="badge bg-warning">Need more work</span>
+                                    {% elif task.status == "submitted_for_review" %}
+                                        <span class="badge bg-success">Submitted</span>
+                                    {% endif %}
+                                </div>
+                            </section>
+                            <section class="task__date">
+                                Created on
+                                {{ task.created|date:"d M, Y" }}
+                                by
+                                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+                            </section>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </main>
+    <div class="sort_filter_section">
+        <form method="GET" class="task_sort_filter_form">
+            {% csrf_token %}
+            <div class="modal task_filter" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Filter tasks</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                    onclick="$('.task_filter').modal('hide')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ filter_form|crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    onclick="$('.task_filter').modal('hide')">
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </section>
-            <section class="task__date">
-                Created on
-                {{ task.created|date:"d M, Y" }}
-                by 
-                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
-            </section>
-        </article>
-    </li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-</main>
-<div class="sort_filter_section">
-    <form method="GET" class="task_sort_filter_form">
-    {% csrf_token %}
-    <div class="modal task_filter" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Filter tasks</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_filter').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                      {{ filter_form|crispy }}
-              </div>
-              <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Filter</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_filter').modal('hide')">
-                  Close
-                </button>
-              </div>
-          </div>
-        </div>
-      </div>
-        <div class="modal task_sort" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Sort tasks</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                  onclick="$('.task_sort').modal('hide')">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                  {{ sort_form|crispy }}
-              </div>
-              <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Filter</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                  onclick="$('.task_sort').modal('hide')">
-                  Close
-                </button>
-              </div>
-          </div>
-        </div>
-      </div>
-    </form>
-</div>
+            </div>
+            <div class="modal task_sort" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sort tasks</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                    onclick="$('.task_sort').modal('hide')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ sort_form|crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    onclick="$('.task_sort').modal('hide')">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

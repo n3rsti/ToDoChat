@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}
-<title>ToDoChat</title>
+    <title>ToDoChat</title>
 {% endblock title %}
 {% block content %}
-{% include "server_base.html" %}
+    {% include "server_base.html" %}
 
-<main class="content content--profile">
-    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
-    <h1 class="title--thin">{{ object.name }}</h1>
-</main>
+    <main class="content content--profile">
+        <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img">
+        <h1 class="title--thin">{{ object.name }}</h1>
+    </main>
 {% endblock content %}

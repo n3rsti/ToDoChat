@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-{% block title %}
-<title>ToDoChat - Update Server</title>
-{% endblock title %}
-{% include "server_base.html" %}
+    {% block title %}
+        <title>ToDoChat - Update Server</title>
+    {% endblock title %}
+    {% include "server_base.html" %}
 
-<main class="content content--profile profile--edit">
-    {% if server.image == 'default.png' %}
-    <div class="profile__img no-img server">{{ server.name.0 }}</div>
-    {% else %}
-    <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img server">
-    {% endif %}
-    <h1 class="title--thin">{{ object.name }}</h1>
-    {{ object.owner.name }}
-    <button  onClick="window.history.back();return false;" class="back__button">
-         <i class="fas fa-angle-left"></i>
-    </button>
-    <form method="POST" class="login__form" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit" class="btn btn-primary btn-lg mb-3" name="update_button">Update</button>
-    </form>
-   
-    
-</main>
+    <main class="content content--profile profile--edit">
+        {% if server.image == 'default.png' %}
+            <div class="profile__img no-img server">{{ server.name.0 }}</div>
+        {% else %}
+            <img src="{{ object.image.url }}" alt="{{ object.name }} server image" class="profile__img server">
+        {% endif %}
+        <h1 class="title--thin">{{ object.name }}</h1>
+        {{ object.owner.name }}
+        <button onClick="window.history.back();return false;" class="back__button">
+            <i class="fas fa-angle-left"></i>
+        </button>
+        <form method="POST" class="login__form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn btn-primary btn-lg mb-3" name="update_button">Update</button>
+        </form>
+
+
+    </main>
 {% endblock content %}

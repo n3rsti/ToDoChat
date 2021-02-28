@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-<title>Edit profile</title>
+    <title>Edit profile</title>
 {% endblock title %}
 {% block content %}
-{% include "app_base.html" %}
-<main class="content content--profile profile--edit">
-    <button onClick="window.history.back();return false;" class="back__button">
-        <i class="fas fa-angle-left"></i>
-    </button>
-    <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url}}')">
-        <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
-    </section>
-    <form method="POST" enctype="multipart/form-data" class="login__form">
-        {% csrf_token %}
-        {{ u_form }}
-        {{ p_form }}
-        <section class="form-group flex w-100 mt-3">
-            Change password <a href="{% url 'password_reset' %}" class="btn btn-primary ml-auto">Edit</a>
+    {% include "app_base.html" %}
+    <main class="content content--profile profile--edit">
+        <button onClick="window.history.back();return false;" class="back__button">
+            <i class="fas fa-angle-left"></i>
+        </button>
+        <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url }}')">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
         </section>
-        <section class="form-group align-self-start">
-            <button type="submit" class="btn btn-primary mb-3" name="update_button">Save</button>
-            <a href="{% url 'profile' %}" class="btn btn-danger mb-3">Cancel</a>
-        </section>
-        
-        
-    </form>
-</main>
+        <form method="POST" enctype="multipart/form-data" class="login__form">
+            {% csrf_token %}
+            {{ u_form }}
+            {{ p_form }}
+            <section class="form-group flex w-100 mt-3">
+                Change password <a href="{% url 'password_reset' %}" class="btn btn-primary ml-auto">Edit</a>
+            </section>
+            <section class="form-group align-self-start">
+                <button type="submit" class="btn btn-primary mb-3" name="update_button">Save</button>
+                <a href="{% url 'profile' %}" class="btn btn-danger mb-3">Cancel</a>
+            </section>
+
+
+        </form>
+    </main>
 {% endblock content %}

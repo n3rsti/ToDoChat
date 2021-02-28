@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-{% load static %}
-<section class="login">
-    <img src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
-    <h1 class="title">{{ title }}</h1>
-    <div class="login__form">
-        <form action="" class="form" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <button class="form__button" name="login_button" type="submit" value="log in">sign up</button>
-            <h3 class="sign-up">Already have an account? <a href="{% url 'login' %}" title="Log in">log in</a> </h3>
-        </form>
-    </div>
-</section>
+    {% load static %}
+    <section class="login">
+        <img src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+        <h1 class="title">{{ title }}</h1>
+        <div class="login__form">
+            <form action="" class="form" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button class="form__button" name="login_button" type="submit" value="log in">sign up</button>
+                <h3 class="sign-up">Already have an account? <a href="{% url 'login' %}" title="Log in">log in</a></h3>
+            </form>
+        </div>
+    </section>
 
 {% endblock content %}

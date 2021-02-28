@@ -1,70 +1,81 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-{% include "app_base.html" %}
+    {% include "app_base.html" %}
 
-<main class="content content--profile">
-    <button onClick="window.history.back();return false;" class="back__button">
-        <i class="fas fa-angle-left"></i>
-    </button>
-    <section class="profile__image-section">
-        <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img">
-    </section>
-    <h1 class="title--thin profile_invited">{{ object.username }}</h1>
-    {% if not object == user %}
-    {% if object in user.profile.friends.all %}
-    <section class="friend__buttons">
-        <a type="button" class="btn btn-primary" href="{% url 'user_chat' object.username %}">Send message</a>
-        <div class="friend__info">
-            <button type="button" class="btn btn-light invite__button friends"><i class="fas fa-user-check"></i></button>
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="removed" value="{{ object.username }}">
-                <button type="submit" class="btn btn-danger invite__button remove" name="invite_button" value="remove">Remove friend</button>
-            </form>
-        </div>
-    </section>
-    
-    {% else %}
-    {% if invitation == 'waiting' %}
-    <form method="POST" class="user_detail_form">
-        {% csrf_token %}
-        <input type="hidden" name="invited" value="{{ object.username }}">
-        <button type="submit" class="btn btn-danger" value="cancel" name="invite_button">Cancel invitation</button>
-    </form>
-    {% elif invitation == 'invited' %}
-    <form method="POST" class="user_detail_form invited">
-        {% csrf_token %}
-        <input type="hidden" name="invited" value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
-        <button type="submit" class="btn btn-primary" value="invite" name="invite_button">Accept</button>
-        <button type="submit" class="btn btn-danger" name="invite_button" value="reject">Reject</button>
-    </form>
-    {% else %}
-    <form method="POST" class="user_detail_form">
-        {% csrf_token %}
-        <input type="hidden" name="invited" value="{{ object.username }}">
-        <button type="submit" class="btn btn-primary invite" value="invite" name="invite_button"><i class="fas fa-user-plus"></i>Add</button>
-    </form>
-    {% endif %}
-    {% endif %}
-    {% endif %}
-    {% if object.profile.description %}
-    <p class="profile__description">{{ object.profile.description }}</p>
-    {% endif %}
-    <span class="profile__description ml-3">Account created:</span>
-    <h3 class="small font-weight-bold ml-3 profile__content">{{ object.date_joined|date:"d F Y"}}</h3>
-    <span class="profile__description ml-3 mt-1">E-mail:</span>
-    <h3 class="small font-weight-bold profile__content ml-3">{{ object.email }}</h3>
-    {% if object == user %}
-    <a href="{% url 'profile_edit' %}" class="edit__button btn btn-primary text-center ml-3 mt-2" title="Edit profile">
-        Edit profile
-    </a>
-    {% endif %}
-</main>
-<style>
-    .profile__image-section {
-        background: url('{{ object.profile.background.url}}');
-        background-size: cover;
-    }
-</style>
+    <main class="content content--profile">
+        <button onClick="window.history.back();return false;" class="back__button">
+            <i class="fas fa-angle-left"></i>
+        </button>
+        <section class="profile__image-section">
+            <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img">
+        </section>
+        <h1 class="title--thin profile_invited">{{ object.username }}</h1>
+        {% if not object == user %}
+            {% if object in user.profile.friends.all %}
+                <section class="friend__buttons">
+                    <a type="button" class="btn btn-primary" href="{% url 'user_chat' object.username %}">Send
+                        message</a>
+                    <div class="friend__info">
+                        <button type="button" class="btn btn-light invite__button friends"><i
+                                class="fas fa-user-check"></i></button>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="removed" value="{{ object.username }}">
+                            <button type="submit" class="btn btn-danger invite__button remove" name="invite_button"
+                                    value="remove">Remove friend
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+            {% else %}
+                {% if invitation == 'waiting' %}
+                    <form method="POST" class="user_detail_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ object.username }}">
+                        <button type="submit" class="btn btn-danger" value="cancel" name="invite_button">Cancel
+                            invitation
+                        </button>
+                    </form>
+                {% elif invitation == 'invited' %}
+                    <form method="POST" class="user_detail_form invited">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited"
+                               value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
+                        <button type="submit" class="btn btn-primary" value="invite" name="invite_button">Accept
+                        </button>
+                        <button type="submit" class="btn btn-danger" name="invite_button" value="reject">Reject</button>
+                    </form>
+                {% else %}
+                    <form method="POST" class="user_detail_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="invited" value="{{ object.username }}">
+                        <button type="submit" class="btn btn-primary invite" value="invite" name="invite_button"><i
+                                class="fas fa-user-plus"></i>Add
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        {% if object.profile.description %}
+            <p class="profile__description">{{ object.profile.description }}</p>
+        {% endif %}
+        <span class="profile__description ml-3">Account created:</span>
+        <h3 class="small font-weight-bold ml-3 profile__content">{{ object.date_joined|date:"d F Y" }}</h3>
+        <span class="profile__description ml-3 mt-1">E-mail:</span>
+        <h3 class="small font-weight-bold profile__content ml-3">{{ object.email }}</h3>
+        {% if object == user %}
+            <a href="{% url 'profile_edit' %}" class="edit__button btn btn-primary text-center ml-3 mt-2"
+               title="Edit profile">
+                Edit profile
+            </a>
+        {% endif %}
+    </main>
+    <style>
+        .profile__image-section {
+            background: url('{{ object.profile.background.url}}');
+            background-size: cover;
+        }
+    </style>
 {% endblock content %}

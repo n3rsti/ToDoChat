@@ -2,26 +2,27 @@
 {% load static %}
 {% block title %}<title>{{ user.username }} | ToDoChat</title>{% endblock title %}
 {% block content %}
-{% include "app_base.html" %}
+    {% include "app_base.html" %}
 
-<main class="content content--profile">
-    <button onClick="window.history.back();return false;" class="back__button">
-        <i class="fas fa-angle-left"></i>
-    </button>
-    <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url}}')">
-        <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
-    </section>
-    <h1 class="title--thin">{{ user.username }}</h1>
-    {% if user.profile.description %}
-    <p class="profile__description ml-3">{{ user.profile.description }}</p>
-    {% endif %}
-    <span class="profile__description ml-3">Account created:</span>
-    <h3 class="small font-weight-bold ml-3 profile__content">{{ user.date_joined|date:"d F Y"}}</h3>
-    <span class="profile__description ml-3 mt-1">E-mail:</span>
-    <h3 class="small font-weight-bold profile__content ml-3">{{ user.email }}</h3>
-    <a href="{% url 'profile_edit' %}" class="edit__button btn btn-primary text-center ml-3 mt-2" title="Edit profile">
-        Edit profile
-    </a>
+    <main class="content content--profile">
+        <button onClick="window.history.back();return false;" class="back__button">
+            <i class="fas fa-angle-left"></i>
+        </button>
+        <section class="profile__image-section" style="background-image: url('{{ user.profile.background.url }}')">
+            <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile image" class="profile__img">
+        </section>
+        <h1 class="title--thin">{{ user.username }}</h1>
+        {% if user.profile.description %}
+            <p class="profile__description ml-3">{{ user.profile.description }}</p>
+        {% endif %}
+        <span class="profile__description ml-3">Account created:</span>
+        <h3 class="small font-weight-bold ml-3 profile__content">{{ user.date_joined|date:"d F Y" }}</h3>
+        <span class="profile__description ml-3 mt-1">E-mail:</span>
+        <h3 class="small font-weight-bold profile__content ml-3">{{ user.email }}</h3>
+        <a href="{% url 'profile_edit' %}" class="edit__button btn btn-primary text-center ml-3 mt-2"
+           title="Edit profile">
+            Edit profile
+        </a>
 
-</main>
+    </main>
 {% endblock content %}
