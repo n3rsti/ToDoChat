@@ -36,7 +36,7 @@ class TaskCommentForm(forms.ModelForm):
 
 class TaskFilterForm(forms.Form):
     title = forms.CharField(required=False)
-    status = forms.ChoiceField(widget=forms.RadioSelect, choices=[
+    status = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[
         ("open", "Open"),
         ("approved", "Approved"),
         ("submitted_for_review", "Submitted for review"),
