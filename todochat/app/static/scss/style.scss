@@ -1116,6 +1116,9 @@ main.chat {
 }
 main.tasks {
     align-items: center;
+    margin-top: calc(65px + 55px);
+    min-height: calc(var(--vh, 1vh) * 100 - 65px);
+    height: auto;
 }
 article.task {
     width: 100%;
@@ -1493,6 +1496,10 @@ main.task {
     width: 100%;
     display: flex;
     border-bottom: 1px solid var(--primary);
+    position: fixed;
+    z-index: 1;
+    top: 65px;
+    background: #fff;
 
 
     .fas {

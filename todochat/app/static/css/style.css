@@ -1038,7 +1038,10 @@ main.chat {
   width: 50%; }
 
 main.tasks {
-  align-items: center; }
+  align-items: center;
+  margin-top: calc(65px + 55px);
+  min-height: calc(var(--vh, 1vh) * 100 - 65px);
+  height: auto; }
 
 article.task {
   width: 100%;
@@ -1323,7 +1326,11 @@ main.task {
 .tasks__filter {
   width: 100%;
   display: flex;
-  border-bottom: 1px solid var(--primary); }
+  border-bottom: 1px solid var(--primary);
+  position: fixed;
+  z-index: 1;
+  top: 65px;
+  background: #fff; }
   .tasks__filter .fas {
     font-size: 20px;
     padding: 10px; }

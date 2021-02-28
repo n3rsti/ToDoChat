@@ -39,8 +39,8 @@
                 {{ server.name }}</a>
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
-        <a href="{% url 'server_tasks' server.id %}" class="groups__li">All tasks</a>
-        <a href="{% url 'user_tasks' %}" class="groups__li">My tasks</a>
+        <a href="{% url 'server_tasks' server.id %}?order=created" class="groups__li">All tasks</a>
+        <a href="{% url 'user_tasks' %}?assigned_for={{ request.user.id }}" class="groups__li">My tasks</a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
