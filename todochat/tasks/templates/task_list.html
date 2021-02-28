@@ -1,111 +1,175 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
-<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
-{{ block.super }}
+    {% load crispy_forms_tags %}
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+    <script src="{% static 'js/forms.js' %}"></script>
+    {{ block.super }}
 {% endblock %}
 {% block title %}
-<title>ToDoChat | {{ server.name }}</title>
+    <title>ToDoChat | {{ server.name }}</title>
 {% endblock title %}
 {% block content %}
-{% include "server_base.html" %}
-<main class="content chat tasks">
-    {% if task_list.count is 0 %}
-    No tasks
-    {% else %}
-    <ul class="task__list">
-    {% for task in task_list %}
-    <li class="task__li">
-        <article class="task">
-            <section class="task__top">
-                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.task_id }}</strong> {{ task.title }}</a> 
-                <div class="top__users task_status_section task_status_section--center">
-                    {% if task.status == "open" %}
-                    <span class="badge open">Open</span>
-                    {% elif task.status == "approved" %}
-                    <span class="badge bg-success">Approved</span>
-                    {% elif task.status == "need_more_work" %}
-                    <span class="badge bg-warning">Need more work</span>
-                    {% elif task.status == "submitted_for_review" %}
-                    <span class="badge bg-success">Submitted</span>
-                    {% endif %}
-                </div>
-            </section>
-            {% if task.description %}
-            {% endif %}
-            <section class="task__date">
-                Created on
-                {{ task.created|date:"d M, Y" }}
-                by 
-                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
-            </section>
-        <article>
-    </li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-            <button class="create_task btn-primary btn">Create task <i class="fas fa-plus"></i></button>
-            <div class="task_section">
-                <button class="close_task">
-                    <i class="far fa-times-circle"></i>
+    {% include "server_base.html" %}
+    <main class="content chat tasks">
+        {% if task_list.count is 0 %}
+            No tasks
+        {% else %}
+            <div class="tasks__filter">
+                <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+                    Filter<i class="fas fa-filter"></i>
                 </button>
+                <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+                    Sort<i class="fas fa-sort"></i>
+                </button>
+            </div>
+            <ul class="task__list">
+                {% for task in task_list %}
+                    <li class="task__li">
+                        <article class="task">
+                            <section class="task__top">
+                                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>#{{ task.task_id }}</strong> {{ task.title }}
+                                </a>
+                                <div class="top__users task_status_section task_status_section--center">
+                                    {% if task.status == "open" %}
+                                        <span class="badge open">Open</span>
+                                    {% elif task.status == "approved" %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif task.status == "need_more_work" %}
+                                        <span class="badge bg-warning">Need more work</span>
+                                    {% elif task.status == "submitted_for_review" %}
+                                        <span class="badge bg-success">Submitted</span>
+                                    {% endif %}
+                                </div>
+                            </section>
+                            {% if task.description %}
+                            {% endif %}
+                            <section class="task__date">
+                                Created on
+                                {{ task.created|date:"d M, Y" }}
+                                by
+                                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+                            </section>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <button class="create_task btn-primary btn">Create task <i class="fas fa-plus"></i></button>
+        <div class="task_section">
+            <button class="close_task">
+                <i class="far fa-times-circle"></i>
+            </button>
 
 
-                <form method="POST" class="task__form">
-                    {% csrf_token %}
-                    <button class="btn" type="button"
+            <form method="POST" class="task__form">
+                {% csrf_token %}
+                <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
                         data-controls="form_title">
 
-                        <i class="fas fa-minus"></i>Title
-                    </button>
-                    <div class="form_section show" name="form_title">
-                        <label for="title" hidden>Title</label>
-                        <input type="text" name="title" id="title" class="form-control"
-                            placeholder="For example: make an app" required>
-                        <small class="form-text text-muted">Description can be maximum 20 characters long.</small>
-                    </div>
-                    <button class="btn" type="button"
+                    <i class="fas fa-minus"></i>Title
+                </button>
+                <div class="form_section show" name="form_title">
+                    <label for="title" hidden>Title</label>
+                    <input type="text" name="title" id="title" class="form-control"
+                           placeholder="For example: make an app" required>
+                    <small class="form-text text-muted">Description can be maximum 20 characters long.</small>
+                </div>
+                <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
                         data-controls="form_deadline">
 
-                        <i class="fas fa-plus"></i>Deadline (optional)
-                    </button>
-                    <div class="form_section collapse" name="form_deadline">
-                        <label for="deadline" hidden>Deadline</label>
-                        <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
-                    </div>
-                       
-                    <button class="btn" type="button"
+                    <i class="fas fa-plus"></i>Deadline (optional)
+                </button>
+                <div class="form_section collapse" name="form_deadline">
+                    <label for="deadline" hidden>Deadline</label>
+                    <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
+                </div>
+
+                <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         data-controls="form_asigned">
-                        <i class="fas fa-plus"></i>Assigned for
-                    </button>
-                    <div class="form_section collapse" name="form_asigned">
-                        {% for user in server.users.all %}
+                    <i class="fas fa-plus"></i>Assigned for
+                </button>
+                <div class="form_section collapse" name="form_asigned">
+                    {% for user in server.users.all %}
                         <div class="form-check">
-                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input" value="{{ user.username }}">
+                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input"
+                                   value="{{ user.username }}">
                             <label for="{{ user.username }}" class="form-check-label">{{ user.username }}</label>
                         </div>
-                        {% endfor %}
-                        <small class="form-text text-muted">Assign the task to chosen users.</small>
-                    </div>
-                    <button class="btn" type="button"
+                    {% endfor %}
+                    <small class="form-text text-muted">Assign the task to chosen users.</small>
+                </div>
+                <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         data-controls="form_description">
-                        <i class="fas fa-plus"></i>Description
-                    </button>
-                    <div class="form_section collapse" name="form_description">
-                        <label for="form_description" hidden>Description</label>
-                        {{ desc_form.media }}
-                        {{ desc_form.as_p }}
-                        <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
+                    <i class="fas fa-plus"></i>Description
+                </button>
+                <div class="form_section collapse" name="form_description">
+                    <label for="form_description" hidden>Description</label>
+                    {{ desc_form.media }}
+                    {{ desc_form.as_p }}
+                    <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
 
-</main>
+    </main>
+    <div class="sort_filter_section">
+        <form method="GET" class="task_sort_filter_form">
+            {% csrf_token %}
+            <div class="modal task_filter" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Filter tasks</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                    onclick="$('.task_filter').modal('hide')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ filter_form.title|as_crispy_field  }}
+                            {{ filter_form.status|as_crispy_field  }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    onclick="$('.task_filter').modal('hide')">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal task_sort" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sort tasks</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                    onclick="$('.task_sort').modal('hide')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ sort_form|crispy }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    onclick="$('.task_sort').modal('hide')">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

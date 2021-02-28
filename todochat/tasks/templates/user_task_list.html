@@ -18,13 +18,12 @@
     No tasks
     {% else %}
     <div class="tasks__filter">
-    <button class="btn w-50" onclick="$('.task_filter').modal('show')">
-        Filter<i class="fas fa-filter"></i>
-    </button>
-    <button class="btn w-50" onclick="$('.task_sort').modal('show')">
-        Sort<i class="fas fa-sort"></i>
-    </button>
-
+        <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+            Filter<i class="fas fa-filter"></i>
+        </button>
+        <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+            Sort<i class="fas fa-sort"></i>
+        </button>
     </div>
     <ul class="task__list">
     {% for task in tasks %}

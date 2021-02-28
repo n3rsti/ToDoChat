@@ -21,14 +21,20 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
             return True
         return False
 
+    def get_object(self):
+        return self.request.server.server_tasks.all().order_by('created')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         server = Server.objects.get(id=self.kwargs['server_id'])
         context['server'] = server
-        context['task_list'] = Task.objects.filter(
-            server=server).order_by('created')
         context['heading'] = 'All tasks'
         context['desc_form'] = TaskDescriptionForm
+
+        context['filter_form'] = TaskFilterForm(self.request.GET, user=self.request.user)
+        context['sort_form'] = TaskSortForm(self.request.GET)
+        context['task_list'] = filter_tasks(self.request, server.server_tasks.all())
+
         return context
 
     def post(self, request, server_id):
@@ -185,20 +191,24 @@ class FilterTaskView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        field_names = []
-        for field_name in self.model._meta.get_fields():
-            field_names.append(field_name.name)
-        sort_fields = ['created', '-created', 'deadline', '-deadline']
-        if self.request.GET.get("server"):
-            if self.request.GET['server'] == "All":
-                field_names.remove('server')
-        parameters = {field_name: value for field_name, value in self.request.GET.items() if field_name in field_names}
-        tasks = self.request.user.users_tasks.filter(**parameters)
-        context['taskbar_title'] = "All tasks"
-        if self.request.GET.get('order'):
-            if self.request.GET['order'] in sort_fields:
-                tasks = tasks.order_by(self.request.GET['order'])
         context['filter_form'] = TaskFilterForm(self.request.GET, user=self.request.user)
         context['sort_form'] = TaskSortForm(self.request.GET)
-        context['tasks'] = tasks
+        context['tasks'] = filter_tasks(self.request, self.request.user.users_tasks)
+        context['taskbar_title'] = "All tasks"
         return context
+
+
+def filter_tasks(request, tasks):
+    field_names = []
+    for field_name in Task._meta.get_fields():
+        field_names.append(field_name.name)
+    sort_fields = ['created', '-created', 'deadline', '-deadline']
+    if request.GET.get("server"):
+        if request.GET['server'] == "All":
+            field_names.remove('server')
+    parameters = {field_name: value for field_name, value in request.GET.items() if field_name in field_names}
+    tasks = tasks.filter(**parameters)
+    if request.GET.get('order'):
+        if request.GET['order'] in sort_fields:
+            tasks = tasks.order_by(request.GET['order'])
+    return tasks
