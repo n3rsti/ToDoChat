@@ -207,19 +207,7 @@ def filter_tasks(request, tasks):
         if request.GET['server'] == "All":
             field_names.remove('server')
     parameters = {field_name: value for field_name, value in request.GET.items() if field_name in field_names}
-    if request.GET.get('status'):
-        del parameters['status']
     tasks = tasks.filter(**parameters)
-    # Filter by status
-    status_task_list = None
-    if request.GET.get('status'):
-        status_task_list = Task.objects.none()
-        status_list = request.GET.getlist('status')
-        for status in status_list:
-            status_task_list |= tasks.filter(status=status)
-
-    if status_task_list is not None:
-        tasks = status_task_list
     if request.GET.get('order'):
         if request.GET['order'] in sort_fields:
             tasks = tasks.order_by(request.GET['order'])
