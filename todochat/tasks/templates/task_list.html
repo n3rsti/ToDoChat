@@ -14,17 +14,17 @@
 {% block content %}
     {% include "server_base.html" %}
     <main class="content chat tasks">
+        <div class="tasks__filter">
+            <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+                Filter<i class="fas fa-filter"></i>
+            </button>
+            <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+                Sort<i class="fas fa-sort"></i>
+            </button>
+        </div>
         {% if task_list.count is 0 %}
-            No tasks
+            No tasks matching query
         {% else %}
-            <div class="tasks__filter">
-                <button class="btn w-50" onclick="$('.task_filter').modal('show')">
-                    Filter<i class="fas fa-filter"></i>
-                </button>
-                <button class="btn w-50" onclick="$('.task_sort').modal('show')">
-                    Sort<i class="fas fa-sort"></i>
-                </button>
-            </div>
             <ul class="task__list">
                 {% for task in task_list %}
                     <li class="task__li">
