@@ -33,7 +33,7 @@
             {% endfor %}
         </ul>
         {% if request.user == server.owner %}
-            <button class="btn btn-success w-25 ml-3 align-self-center"
+            <button class="btn btn-success w-25 align-self-center"
                     onclick="$('.server_invite_modal').modal('show')">Invite
             </button>
         {% else %}

@@ -10,7 +10,7 @@
         <form method="POST" enctype="multipart/form-data" class="login__form">
             {% csrf_token %}
             {{ form }}
-            <button class="form__button form__button--edit" name="login_button" type="submit">Create server</button>
+            <button class="btn btn-primary mt-4" name="login_button" type="submit">Create server</button>
         </form>
     </main>
 {% endblock content %}

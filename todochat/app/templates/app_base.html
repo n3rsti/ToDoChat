@@ -18,7 +18,7 @@
     </button>
 </header>
 
-<nav class="side__nav bg-primary" name="side-nav">
+<nav class="side__nav bg-primary">
     <div class="hello__div">
         <a href="{% url 'profile' %}" title="My profile">
             <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo">
@@ -37,7 +37,7 @@
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
-                    <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %}">
+                    <li class="groups__li base ml-3 {% if forloop.counter <= 5 %}opened{% endif %}">
                         {% if server.image == 'default.png' %}
                             <div class="groups__img">{{ server.name.0 }}</div>
                         {% else %}
@@ -68,7 +68,7 @@
             <h2 class="groups__h2">Friends</h2>
             <ul class="groups__ul friends__ul">
                 {% for friend in user.profile.friends.all %}
-                    <li class="flex">
+                    <li class="flex ml-3">
                         <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
                              class="users__img">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"

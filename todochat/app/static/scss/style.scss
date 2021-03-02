@@ -311,7 +311,7 @@ div.groups__img, div.nav__server-logo {
 }
 .groups__li {
     margin: 0;
-    padding: 6px 6px 6px 15px;
+    padding: 6px 6px 6px 0;
     align-items: center;
     cursor: pointer;
     color: #fff;
@@ -320,7 +320,6 @@ div.groups__img, div.nav__server-logo {
     display: flex;
 
     &.base {
-        padding-left: 6px;
         display: none;
     }
     a.groups__li {
@@ -713,10 +712,11 @@ p.profile__description {
     color: #fff;
     padding: 0 0 4px 15px;
     margin: 2px 0 10px 0;
-    border-bottom: 3px solid var(--dark);
+    border-bottom: 2px solid var(--dark);
+    font-weight: 600;
 }
 .groups__h2--top-border {
-    border-top: 3px solid var(--dark);
+    border-top: 2px solid var(--dark);
     padding-top: 4px;
     margin-top: 10px;
 }
@@ -753,7 +753,7 @@ p.profile__description {
     margin-left: 3px;
 }
 .friends__ul .flex {
-    padding: 3px;
+    padding: 6px 6px 6px 0;
 }
 img.offline {
     border: 3px solid #95a5a6;
