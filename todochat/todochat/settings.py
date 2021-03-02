@@ -188,7 +188,6 @@ CKEDITOR_CONFIGS = {
             ['Bold', 'Italic', 'Underline'],
             ['NumberedList', 'BulletedList'],
             ['Link', 'Unlink'],
-            ['Image']
         ],
         'fillEmptyBlocks': False,
         'tabSpaces': 0,

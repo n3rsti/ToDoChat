@@ -30,6 +30,19 @@ default-character-set = utf8
 
 `sass --watch todochat/app/static/scss:css`
 
+### Collect static for django-ckeditor
+`python3 manage.py collectstatic`
+
+### Install ckeditor plugins
+* balloonpanel
+* balloontoolbar
+* cloudservices
+* button
+* imagebase
+* dialog
+* easyimage
+
+
 ### Migrate and start server
 
 `python3 manage.py migrate`

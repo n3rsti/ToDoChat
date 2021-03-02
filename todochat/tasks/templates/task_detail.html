@@ -1,4 +1,8 @@
 {% extends 'base.html' %} {% block title %}
+    {% block extrahead %}
+    <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+        {{ block.super }}
+    {% endblock %}
     <title>#{{ task.task_id }} {{ task.title }}</title>
 {% endblock title %} {% block content %} {% include "server_base.html" %}
     <main class="content task">

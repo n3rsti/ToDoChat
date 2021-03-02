@@ -5,7 +5,15 @@ from app.models import Server
 
 
 class TaskDescriptionForm(forms.Form):
-    description = forms.CharField(widget=CKEditorUploadingWidget())
+    description = forms.CharField(widget=CKEditorUploadingWidget(
+        extra_plugins=['easyimage'],
+        external_plugin_resources=[(
+            'easyimage',
+            '/static/ckeditor/ckeditor/easyimage/',
+            'plugin.js'
+        )]
+        )
+    )
 
     class Meta:
         fields = ['description']
@@ -19,7 +27,15 @@ class TaskUpdateForm(forms.ModelForm):
         'placeholder': 'For example: make an app',
         'required': 'true'
     }))
-    description = forms.CharField(widget=CKEditorUploadingWidget())
+    description = forms.CharField(widget=CKEditorUploadingWidget(
+        extra_plugins=['easyimage'],
+        external_plugin_resources=[(
+            'easyimage',
+            '/static/ckeditor/ckeditor/easyimage/',
+            'plugin.js'
+        )]
+    )
+    )
 
     class Meta:
         model = Task
@@ -27,7 +43,14 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class TaskCommentForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorUploadingWidget(config_name="comment"), min_length=1, label="")
+    content = forms.CharField(widget=CKEditorUploadingWidget(
+        config_name="comment",
+        extra_plugins=['easyimage'],
+        external_plugin_resources=[(
+            'easyimage',
+            '/static/ckeditor/ckeditor/easyimage/',
+            'plugin.js'
+        )]), min_length=1, label="")
 
     class Meta:
         model = TaskComment
@@ -50,7 +73,8 @@ class TaskFilterForm(forms.Form):
         user = kwargs.pop('user', None)
         super(TaskFilterForm, self).__init__(*args, **kwargs)
         if user is not None:
-            self.fields['server'].choices = [('All', 'All')] + [(server.id, server.name) for server in Server.objects.filter(users=user)]
+            self.fields['server'].choices = [('All', 'All')] + [(server.id, server.name) for server in
+                                                                Server.objects.filter(users=user)]
 
     class Meta:
         fields = ['title', 'status']
