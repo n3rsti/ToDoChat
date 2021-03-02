@@ -1041,7 +1041,7 @@ main.chat {
 main.tasks {
   align-items: center;
   margin-top: calc(65px + 55px);
-  min-height: calc(var(--vh, 1vh) * 100 - 65px);
+  min-height: calc(var(--vh, 1vh) * 100 - 65px - 55px);
   height: auto; }
 
 article.task {
