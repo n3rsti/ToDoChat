@@ -41,7 +41,7 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
         title = request.POST.get('title')
         new_channel = request.POST.get("name")
         server = Server.objects.get(id=server_id)
-        if title is not None:
+        if title is not None and len(title) <= 20:
             description = request.POST.get('description')
             assignments = request.POST.getlist('assignments')
             deadline = request.POST.get('deadline')

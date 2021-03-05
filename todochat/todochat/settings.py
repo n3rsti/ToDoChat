@@ -26,9 +26,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config["DEBUG"]
 
-ALLOWED_HOSTS = ['172.105.80.178']
+ALLOWED_HOSTS = [config["ALLOWED_HOSTS"]]
 
 # Application definition
 
@@ -84,7 +84,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 8001)],
+            "hosts": [('127.0.0.1', config["WS_PORT"])],
         },
     },
 }

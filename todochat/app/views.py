@@ -97,7 +97,7 @@ def invite_server_user(request, pk, username):
             invitation = ServerInvitation.objects.create(server=server, id=invitation_id, invited_user=invited_user)
             message_id = create_num_id(20)
             print(message_id)
-            chat = UsersChat.objects.filter(users=request.user).get(users=invited_user)
+            chat = UsersChat.objects.filter(users=request.user).filter(users=invited_user).first()
             if not chat:
                 chat = UsersChat.objects.create(id=f'{invited_user}_{request.user}')
                 chat.users.add(request.user)
