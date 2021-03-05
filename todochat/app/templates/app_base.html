@@ -37,14 +37,16 @@
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
-                    <li class="groups__li base ml-3 {% if forloop.counter <= 5 %}opened{% endif %}">
-                        {% if server.image == 'default.png' %}
-                            <div class="groups__img">{{ server.name.0 }}</div>
-                        {% else %}
-                            <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img">
-                        {% endif %}
+                    <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
                         <a href="{% url 'server_detail' server.id %}" class="groups__li"
-                           title="{{ server.name }} group">{{ server.name|shorter_name:12 }}</a>
+                           title="{{ server.name }} group">
+                            {% if server.image == 'default.png' %}
+                                <div class="groups__img mr-2">{{ server.name.0 }}</div>
+                            {% else %}
+                                <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
+                                     class="groups__img mr-2">
+                            {% endif %}
+                            {{ server.name|shorter_name:12 }}</a>
                     </li>
                 {% endfor %}
 
@@ -68,11 +70,12 @@
             <h2 class="groups__h2">Friends</h2>
             <ul class="groups__ul friends__ul">
                 {% for friend in user.profile.friends.all %}
-                    <li class="flex ml-3">
-                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                             class="users__img">
+                    <li class="flex pl-3 groups__li">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"
-                           title="{{ friend.username }} profile">{{ friend.username }}</a>
+                           title="{{ friend.username }} profile">
+                            <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                                 class="users__img">{{ friend.username }}
+                        </a>
                     </li>
 
                 {% endfor %}

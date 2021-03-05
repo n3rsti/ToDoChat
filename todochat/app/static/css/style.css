@@ -305,8 +305,6 @@ div.groups__img, div.nav__server-logo {
   display: flex; }
   .groups__li.base {
     display: none; }
-  .groups__li a.groups__li {
-    padding-left: 6px; }
   .groups__li.groups__li--server {
     padding: 0 0 0 6px; }
   .groups__li.base.opened {

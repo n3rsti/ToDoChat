@@ -14,9 +14,9 @@
 
     <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
             aria-controls="side-nav" tabindex="0">
-        <hr class="button__hr"/>
-        <hr class="button__hr"/>
-        <hr class="button__hr"/>
+        <span class="button__hr"/></span>
+        <span class="button__hr"/></span>
+        <span class="button__hr"/></span>
     </button>
 </header>
 <nav class="side__nav" name="side-nav">
@@ -32,18 +32,22 @@
             {% if server.image == 'default.png' %}
                 <div class="groups__img ml-1 p2">{{ server.name.0 }}</div>
             {% else %}
-                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img ml-3"/>
+                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img pl-3"/>
             {% endif %}
             <a href="{% url 'server_detail' server.id %}" class="groups__li h5" title="{{ server.name }} group">
                 {{ server.name }}</a>
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
-        <a href="{% url 'server_tasks' server.id %}?order=created" class="groups__li ml-3">All tasks <span class="badge bg-light text-dark">{{ server.server_tasks.count }}</span></a>
-        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=created" class="groups__li ml-3">My tasks <span class="badge bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
+        <a href="{% url 'server_tasks' server.id %}?order=created" class="groups__li pl-3">All tasks <span
+                class="badge bg-light text-dark">{{ server.server_tasks.count }}</span></a>
+        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=created"
+           class="groups__li pl-3">My tasks <span
+                class="badge bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
-                <a href="{% url 'room' server.id channel.name %}" class="groups__li ml-3" title="{{ channel.name }} channel">
+                <a href="{% url 'room' server.id channel.name %}" class="groups__li pl-3"
+                   title="{{ channel.name }} channel">
                     #{{ channel.name }}</a>
             {% endfor %}
         </ul>
@@ -52,15 +56,15 @@
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
                     {% if server != object %}
-                        <li class="groups__li base {% if forloop.counter <= 5 %}opened{% endif %} ml-3">
-                            {% if server.image == 'default.png' %}
-                                <div class="groups__img">{{ server.name.0 }}</div>
-                            {% else %}
-                                <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
-                                     class="groups__img">
-                            {% endif %}
+                        <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
                             <a href="{% url 'server_detail' server.id %}" class="groups__li"
                                title="{{ server.name }} group">
+                                {% if server.image == 'default.png' %}
+                                    <div class="groups__img mr-2">{{ server.name.0 }}</div>
+                                {% else %}
+                                    <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
+                                         class="groups__img mr-2">
+                                {% endif %}
                                 {{ server.name|shorter_name:12 }}</a>
                         </li>
                     {% endif %}
@@ -72,11 +76,12 @@
             <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
             <ul class="groups__ul friends__ul">
                 {% for friend in user.profile.friends.all %}
-                    <li class="flex ml-3">
-                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                             class="users__img">
+                    <li class="flex pl-3 groups__li">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"
-                           title="{{ friend.username }} profile">{{ friend.username }}</a>
+                           title="{{ friend.username }} profile">
+                            <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                                 class="users__img">{{ friend.username }}
+                        </a>
                     </li>
 
                 {% endfor %}
