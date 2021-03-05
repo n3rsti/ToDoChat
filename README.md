@@ -32,9 +32,9 @@ Create `/etc/config.json` file:
   "SECRET_KEY": "",
   "EMAIL_USER": "",
   "EMAIL_PASS": "",
-	"ALLOWED_HOSTS": "*",
-	"DEBUG" : true,
-	"WS_PORT": 6379
+  "ALLOWED_HOSTS": "*",
+  "DEBUG" : true,
+  "WS_PORT": 6379
 }
 ```
 EMAIL_USER, EMAIL_PASS are used for password reset with gmail smtp.
