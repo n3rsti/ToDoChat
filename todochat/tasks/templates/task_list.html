@@ -75,8 +75,8 @@
                 <div class="form_section show" name="form_title">
                     <label for="title" hidden>Title</label>
                     <input type="text" name="title" id="title" class="form-control"
-                           placeholder="For example: make an app" required>
-                    <small class="form-text text-muted">Description can be maximum 20 characters long.</small>
+                           placeholder="For example: make an app" maxlength="20" required>
+                    <small class="form-text text-muted">Title can be maximum 20 characters long.</small>
                 </div>
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
