@@ -28,7 +28,7 @@ SECRET_KEY = config["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config["DEBUG"]
 
-ALLOWED_HOSTS = [config["ALLOWED_HOSTS"]]
+ALLOWED_HOSTS = config["ALLOWED_HOSTS"]
 
 # Application definition
 
@@ -183,7 +183,9 @@ CKEDITOR_CONFIGS = {
                 'elementspath'
             ]),
         'autoGrow_maxHeight': 600,
-        'autoGrow_minHeight': 100
+        'autoGrow_minHeight': 100,
+	'cloudServices_tokenUrl': 'http://172.105.80.178/cs-token-endpoint',
+	'cloudServices_uploadUrl': 'https://172.105.80.178/media/uploads/'
 
     },
     'comment': {
