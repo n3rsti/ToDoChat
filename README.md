@@ -24,6 +24,21 @@ user = user
 password = mysql_password
 default-character-set = utf8
 ```
+
+### Create config
+Create `/etc/config.json` file:
+```
+{
+  "SECRET_KEY": "",
+  "EMAIL_USER": "",
+  "EMAIL_PASS": "",
+  "ALLOWED_HOSTS": "*",
+  "DEBUG" : true,
+  "WS_PORT": 6379
+}
+```
+EMAIL_USER, EMAIL_PASS are used for password reset with gmail smtp.
+
 ### Frontend
 
 `npm install sass`
@@ -41,6 +56,8 @@ default-character-set = utf8
 * imagebase
 * dialog
 * easyimage
+
+Plugins needs to be located in `todochat/static/ckeditor/ckeditor/plugins/`
 
 
 ### Migrate and start server
@@ -67,3 +84,5 @@ default-character-set = utf8
 * Redis
 * HTML / Css / JS
 * Bootstrap
+* Daphne (for WebSockets) on deployment
+* Apache2
