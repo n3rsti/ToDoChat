@@ -21,11 +21,6 @@ window.onload = function () {
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
     }
-    if(document.querySelector('.create_task')){
-        document.querySelector('.create_task').addEventListener("click", collapseTaskForm);
-        document.querySelector('.close_task').addEventListener("click", collapseTaskForm);
-        window.scrollTo(0,document.body.scrollHeight);
-    }
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     

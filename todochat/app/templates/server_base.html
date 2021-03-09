@@ -38,9 +38,9 @@
                 {{ server.name }}</a>
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
-        <a href="{% url 'server_tasks' server.id %}?order=created" class="groups__li pl-3">All tasks <span
+        <a href="{% url 'server_tasks' server.id %}?order=-deadline" class="groups__li pl-3">All tasks <span
                 class="badge bg-light text-dark">{{ server.server_tasks.count }}</span></a>
-        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=created"
+        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=-deadline"
            class="groups__li pl-3">My tasks <span
                 class="badge bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>

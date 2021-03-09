@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load templatetags %}
 {% block content %}
     {% block title %}
         <title>ToDoChat | {{ object.name }}</title>
@@ -69,9 +70,13 @@
                                             <img src="{{ friend.image.url }}" class="users__img"
                                                  alt="{{ friend.user }} profile image">
                                             {{ friend.user.username }}
+                                            {% if friend|get_server_invitation_status:server.id %}
                                             <a href="{% url 'invite_server_user' server.id friend.user %}"
-                                               class="btn btn-success" name="add_user"
-                                               value="{{ friend.user }}">Invite</a>
+                                               class="btn btn-success w-25">Invited</a>
+                                            {% else %}
+                                                <a href="{% url 'invite_server_user' server.id friend.user %}"
+                                               class="btn btn-success w-25">Invite</a>
+                                            {% endif %}
                                         {% endif %}
                                     </li>
                                 {% endfor %}

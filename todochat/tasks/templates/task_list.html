@@ -47,8 +47,12 @@
                             {% if task.description %}
                             {% endif %}
                             <section class="task__date">
-                                Created on
-                                {{ task.created|date:"d M, Y" }}
+                                {% if task.deadline %}
+                                Deadline:
+                                {{ task.deadline|date:"d M, Y" }},
+                                {% else %}
+                                No deadline,
+                                {% endif %}
                                 by
                                 <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
                             </section>

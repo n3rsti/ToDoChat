@@ -59,7 +59,7 @@
             </span>
             </a>
         {% endif %}
-        <a href="{% url 'user_tasks' %}?order=-created" class="groups__h2 groups__h2--top-border flex"
+        <a href="{% url 'user_tasks' %}?order=-deadline" class="groups__h2 groups__h2--top-border flex"
            title="All tasks">All tasks
             <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
         </a>
