@@ -292,7 +292,6 @@ h1.title {
     list-style: none;
     padding: 0;
     margin: 0;
-    overflow-x: hidden;
 }
 .groups__img {
     width: 30px;
@@ -317,7 +316,7 @@ div.groups__img, div.nav__server-logo {
     cursor: pointer;
     color: #fff;
     text-decoration: none;
-    font-weight: 600; 
+    font-weight: 600;
     display: flex;
 
     &.base {
@@ -977,26 +976,26 @@ main.chat {
     padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center; 
+    align-items: center;
 }
-  
+
 .search__li {
-    list-style: none; 
+    list-style: none;
 }
-  
+
 .search__li .user_search {
-    overflow: hidden; 
+    overflow: hidden;
 }
-  
+
 .search__li .card__description {
     width: 100%;
     height: 100px;
     background-size: cover;
     display: flex;
     align-items: center;
-    position: relative; 
+    position: relative;
 }
-  
+
 .search__li .card__description:before {
     width: 100%;
     height: 100px;
@@ -1006,51 +1005,51 @@ main.chat {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 0; 
+    z-index: 0;
 }
-  
+
 .search__li .card-img-top {
     width: 50px;
     height: 50px;
     margin-left: 10px;
     border-radius: 9999px;
     position: relative;
-    z-index: 0; 
+    z-index: 0;
 }
-  
+
 .search__li .card__title {
     color: #fff;
     font-size: 1.3rem;
     margin-left: 15px;
     position: relative;
     z-index: 1;
-    font-weight: 600; 
+    font-weight: 600;
 }
-  
+
 .user_search_list .search__li {
     width: 80%;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
-  
+
 .search__li .btn, .search_invite-form {
     width: 48%;
-    margin: 0 1%; 
+    margin: 0 1%;
 }
-  
+
 .search__li .card-body {
     display: flex;
-    padding: .8rem; 
+    padding: .8rem;
 }
-  
+
 .search_invite-form > .btn {
-    width: 100%; 
+    width: 100%;
 }
-  
+
 .not_found {
     font-size: 1.2rem;
     font-weight: 600;
     text-align: center;
-    margin-top: 30px; 
+    margin-top: 30px;
 }
 .task_section {
     position: fixed;
@@ -1110,8 +1109,10 @@ main.chat {
     margin: 5px;
 }
 .create_task {
-    margin-bottom: 20px;
-    width: 50%;
+    position: fixed;
+    width: 50px;
+    right: 5%;
+    bottom: 5%;
 }
 main.tasks {
     align-items: center;

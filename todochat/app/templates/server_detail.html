@@ -71,8 +71,7 @@
                                                  alt="{{ friend.user }} profile image">
                                             {{ friend.user.username }}
                                             {% if friend|get_server_invitation_status:server.id %}
-                                            <a href="{% url 'invite_server_user' server.id friend.user %}"
-                                               class="btn btn-success w-25">Invited</a>
+                                                <button class="btn btn-success w-25" disabled>Invited</button>
                                             {% else %}
                                                 <a href="{% url 'invite_server_user' server.id friend.user %}"
                                                class="btn btn-success w-25">Invite</a>

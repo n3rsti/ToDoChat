@@ -18,12 +18,16 @@ window.onload = function () {
     if(document.querySelector(".task_filter")){
         blankFormFilter();
     }
+    if(document.querySelector(".task_section")){
+        document.querySelector(".create_task").addEventListener("click", collapseTaskForm);
+        document.querySelector(".close_task").addEventListener("click", collapseTaskForm);
+    }
     if(document.querySelector('.load_more')){
         document.querySelector('.load_more').addEventListener("click", loadGroups);
     }
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
-    
+
 }
 window.addEventListener('resize', () => {
     // We execute the same script as before

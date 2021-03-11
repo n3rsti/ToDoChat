@@ -60,6 +60,69 @@
             </ul>
         {% endif %}
     </main>
+    <button class="create_task btn-primary btn"><i class="fas fa-plus"></i></button>
+        <div class="task_section">
+            <button class="close_task">
+                <i class="far fa-times-circle"></i>
+            </button>
+
+
+            <form method="POST" class="task__form">
+                {% csrf_token %}
+                <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
+                        data-controls="form_title">
+
+                    <i class="fas fa-minus"></i>Title
+                </button>
+                <div class="form_section show" name="form_title">
+                    <label for="title" hidden>Title</label>
+                    <input type="text" name="title" id="title" class="form-control"
+                           placeholder="For example: make an app" maxlength="20" required>
+                    <small class="form-text text-muted">Title can be maximum 20 characters long.</small>
+                </div>
+                <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
+                        data-controls="form_deadline">
+
+                    <i class="fas fa-plus"></i>Deadline (optional)
+                </button>
+                <div class="form_section collapse" name="form_deadline">
+                    <label for="deadline" hidden>Deadline</label>
+                    <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
+                </div>
+
+                <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
+                        data-controls="form_asigned">
+                    <i class="fas fa-plus"></i>Assigned for
+                </button>
+                <div class="form_section collapse" name="form_asigned">
+                    {% for user in server.users.all %}
+                        <div class="form-check">
+                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input"
+                                   value="{{ user.username }}">
+                            <label for="{{ user.username }}" class="form-check-label">{{ user.username }}</label>
+                        </div>
+                    {% endfor %}
+                    <small class="form-text text-muted">Assign the task to chosen users.</small>
+                </div>
+                <button class="btn" type="button"
+                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
+                        data-controls="form_description">
+                    <i class="fas fa-plus"></i>Description
+                </button>
+                <div class="form_section collapse" name="form_description">
+                    <label for="form_description" hidden>Description</label>
+                    {{ desc_form.description }}
+                    {{ desc_form.description.as_p }}
+                    <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
+                </div>
+            <div class="form_section">{{ desc_form.server|as_crispy_field }}</div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     <div class="sort_filter_section">
         <form method="GET" class="task_sort_filter_form">
             <div class="modal task_filter" tabindex="-1" role="dialog">
@@ -110,4 +173,5 @@
             </div>
         </form>
     </div>
+
 {% endblock content %}

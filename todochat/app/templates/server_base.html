@@ -32,7 +32,7 @@
             {% if server.image == 'default.png' %}
                 <div class="groups__img ml-1 p2">{{ server.name.0 }}</div>
             {% else %}
-                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img pl-3"/>
+                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img ml-2 mr-1"/>
             {% endif %}
             <a href="{% url 'server_detail' server.id %}" class="groups__li h5" title="{{ server.name }} group">
                 {{ server.name }}</a>

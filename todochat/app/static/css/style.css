@@ -1033,8 +1033,10 @@ main.chat {
   margin: 5px; }
 
 .create_task {
-  margin-bottom: 20px;
-  width: 50%; }
+  position: fixed;
+  width: 50px;
+  right: 5%;
+  bottom: 5%; }
 
 main.tasks {
   align-items: center;
