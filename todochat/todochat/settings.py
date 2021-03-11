@@ -184,8 +184,6 @@ CKEDITOR_CONFIGS = {
             ]),
         'autoGrow_maxHeight': 600,
         'autoGrow_minHeight': 100,
-	'cloudServices_tokenUrl': 'http://172.105.80.178/cs-token-endpoint',
-	'cloudServices_uploadUrl': 'https://172.105.80.178/media/uploads/'
 
     },
     'comment': {
