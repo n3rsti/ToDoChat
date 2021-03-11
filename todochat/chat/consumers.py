@@ -88,6 +88,16 @@ class ServerConsumer(ChatConsumer):
             self.channel_name
         )
 
-    # Receive message from WebSocket
+    def chat_message(self, event):
+        self.send(text_data=json.dumps({
+            'message': event['message'],
+        }))
+
     def receive(self, text_data):
-        print(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': text_data
+            }
+        )

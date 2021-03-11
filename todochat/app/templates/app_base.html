@@ -1,5 +1,8 @@
 {% load templatetags %}
 {% load static %}
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+{% endblock extra_head %}
 <header class="navbar header bg-primary">
     {% if taskbar_img %}
         <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
@@ -116,5 +119,33 @@
 
 </nav>
 
+<script>
 
+        function receive_websocket(e){
+            console.log(5);
+        }
+        function close_websocket(e){
+            console.error('Chat socket closed unexpectedly');
+        }
+        let wsStart = 'ws://'
+        if (window.location.protocol === 'https:') {
+            wsStart = 'wss://'
+        }
+        {% for server in request.user.server_set.all %}
+        const serverSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/server/'
+            + '{{ server.id }}/'
+        );
+        serverSocket{{ forloop.counter }}.onmessage = function(e){
+            console.log(e.data);
+        }
+
+
+        {% endfor %}
+
+
+
+    </script>
 <script src="{% static 'js/app.js' %}"></script>
