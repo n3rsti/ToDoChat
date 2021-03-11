@@ -74,11 +74,19 @@
         const chatSocket = new ReconnectingWebSocket(
             wsStart
             + window.location.host
-            + '/ws/server/'
+            + '/ws/server_chat/'
             + '{{ object.server.id }}/'
             + '{{ object.name }}' + '/'
         );
+        const chatSocket2 = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/server/'
+            + '{{ object.server.id }}/'
+        );
+        chatSocket2.onmessage = function (e){
 
+        }
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data); // data.message
             let messages = document.querySelectorAll('.chat__msg-author');
@@ -142,7 +150,9 @@
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}'
                 }));
+                chatSocket2.send(message);
             }
+
             messageInputDom.value = '';
             scrollBottom();
         };

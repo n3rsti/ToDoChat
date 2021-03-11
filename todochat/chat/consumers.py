@@ -67,3 +67,27 @@ class ChatConsumer(WebsocketConsumer):
         while not ChannelMessage.objects.filter(id=id).first() is None:
             id = create_num_id(20)
         return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)
+
+
+class ServerConsumer(ChatConsumer):
+    def connect(self):
+        self.server_id = self.scope['url_route']['kwargs']['id']
+        self.room_group_name = f'server_{self.server_id}'
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        print(text_data)

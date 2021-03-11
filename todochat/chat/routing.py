@@ -5,6 +5,7 @@ from users import consumers as users_consumers
 
 
 websocket_urlpatterns = [
-    re_path(r'ws/server/(?P<pk>\w+)/(?P<room_name>\w+)/$', consumers.ChatConsumer),
+    re_path(r'ws/server_chat/(?P<pk>\w+)/(?P<room_name>\w+)/$', consumers.ChatConsumer),
     re_path(r'ws/chat/(?P<id>\w+)/', users_consumers.ChatConsumer),
+    re_path(r'ws/server/(?P<id>\w+)/', consumers.ServerConsumer)
 ]
