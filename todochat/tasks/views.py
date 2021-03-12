@@ -202,10 +202,13 @@ class FilterTaskView(ListView):
         title = request.POST.get("title")
         description = request.POST.get("description")
         server_id = request.POST.get("server")
+        deadline = request.POST.get('deadline')
         server = Server.objects.get(id=server_id)
         task = Task.objects.create(server=server, author=request.user, task_id=server.server_tasks.count() + 1)
         task.assigned_for.clear()
         task.assigned_for.add(task.author)
+        if deadline != "":
+            task.deadline = deadline
         if len(title) <= 20:
             task.title = title
         if len(description) <= 4000:
