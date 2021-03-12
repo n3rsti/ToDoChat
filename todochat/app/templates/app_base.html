@@ -127,8 +127,9 @@
             // "" value for opacity is opacity 0
             if (server_badge.style.opacity === "") {
                 server_badge.style.opacity = 1;
-                server_badge.innerText = parseInt(server_badge.innerText) + 1;
+
             }
+            server_badge.innerText = parseInt(server_badge.innerText) + 1;
         }
         function close_websocket(e){
             console.error('Chat socket closed unexpectedly');
