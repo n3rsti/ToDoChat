@@ -101,7 +101,6 @@ function collapseTaskForm(){
 }
 function confirmTaskDelete(comment_id){
     let confirmDeleteDiv = $(`.confirm${comment_id}`);
-    console.log(confirmDeleteDiv)
     if(confirmDeleteDiv.css('z-index') === "-1"){
         confirmDeleteDiv.css('z-index', 1)
     }

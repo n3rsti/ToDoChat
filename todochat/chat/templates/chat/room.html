@@ -46,6 +46,14 @@
 
     {{ room_name|json_script:"room-name" }}
     <script>
+        // Reset notification counter for channel
+        if (localStorage["{{ channel.id }}_notifications"]) {
+            let lsChannelData = localStorage["{{ channel.id }}_notifications"];
+            let lsServerData = localStorage["{{ server.id }}_notifications"];
+            localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
+            localStorage.setItem("{{ channel.id }}_notifications", "0");
+
+        }
         const chatInput = document.querySelector(".chat-message-input");
         chatInput.addEventListener('input', () => {
             let button = document.querySelector(".chat-message-submit")
@@ -151,7 +159,8 @@
                     'message': message,
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}',
-                    'server': '{{ server.id }}'
+                    'server': '{{ server.id }}',
+                    'channel': '{{ channel.id }}'
                 }));
             }
 
