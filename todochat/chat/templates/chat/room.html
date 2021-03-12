@@ -147,7 +147,12 @@
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}'
                 }));
-                serverSocket.send(message);
+                serverSocket.send(JSON.stringify({
+                    'message': message,
+                    'author': '{{ user }}',
+                    'image': '{{ user.profile.image.url }}',
+                    'server': '{{ server.id }}'
+                }));
             }
 
             messageInputDom.value = '';

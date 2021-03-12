@@ -89,15 +89,31 @@ class ServerConsumer(ChatConsumer):
         )
 
     def chat_message(self, event):
+        message = event['message']
+        author = event['author']
+        image = event['image']
+        server = event['server']
+        # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'message': event['message'],
+            'message': message,
+            'author': author,
+            'image': image,
+            'server': server
         }))
 
     def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        author = text_data_json['author']
+        image = text_data_json['image']
+        server = text_data_json['server']
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': text_data
+                'message': message,
+                'author': author,
+                'image': image,
+                'server': server
             }
         )

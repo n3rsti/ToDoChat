@@ -40,8 +40,8 @@
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
-                    <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
-                        <a href="{% url 'server_detail' server.id %}" class="groups__li"
+                    <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}" data-server="{{ server.id }}">
+                        <a href="{% url 'server_detail' server.id %}" class="groups__li flex"
                            title="{{ server.name }} group">
                             {% if server.image == 'default.png' %}
                                 <div class="groups__img mr-2">{{ server.name.0 }}</div>
@@ -49,7 +49,9 @@
                                 <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
                                      class="groups__img mr-2">
                             {% endif %}
-                            {{ server.name|shorter_name:12 }}</a>
+                            {{ server.name|shorter_name:10 }}
+                            <span class="badge bg-light text-dark notification-badge">0</span>
+                        </a>
                     </li>
                 {% endfor %}
 
@@ -120,9 +122,13 @@
 </nav>
 
 <script>
-
-        function receive_websocket(e){
-            console.log(5);
+        function increment_notification_count(server_id){
+            let server_badge = document.querySelector(`.groups__li[data-server="${server_id}"] .badge`);
+            // "" value for opacity is opacity 0
+            if (server_badge.style.opacity === "") {
+                server_badge.style.opacity = 1;
+                server_badge.innerText = parseInt(server_badge.innerText) + 1;
+            }
         }
         function close_websocket(e){
             console.error('Chat socket closed unexpectedly');
@@ -139,7 +145,8 @@
             + '{{ server.id }}/'
         );
         serverSocket{{ forloop.counter }}.onmessage = function(e){
-            console.log(e.data);
+            let data = JSON.parse(e.data);
+            increment_notification_count(data.server);
         }
 
 
