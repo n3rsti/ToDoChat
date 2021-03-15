@@ -14,12 +14,12 @@
 
     <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
             aria-controls="side-nav" tabindex="0">
-        <span class="button__hr"/></span>
-        <span class="button__hr"/></span>
-        <span class="button__hr"/></span>
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
     </button>
 </header>
-<nav class="side__nav" name="side-nav">
+<nav class="side__nav" id="side-nav">
     <div class="hello__div">
         <a href="{% url 'profile' %}" title="Profile">
             <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo"/>
