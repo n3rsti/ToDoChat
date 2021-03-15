@@ -94,13 +94,15 @@ class ServerConsumer(ChatConsumer):
         image = event['image']
         server = event['server']
         channel = event['channel']
+        id = event['id']
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
             'author': author,
             'image': image,
             'server': server,
-            'channel': channel
+            'channel': channel,
+            'id': id
         }))
 
     def receive(self, text_data):
@@ -110,6 +112,7 @@ class ServerConsumer(ChatConsumer):
         image = text_data_json['image']
         server = text_data_json['server']
         channel = text_data_json['channel']
+        id = text_data_json['id']
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -118,6 +121,7 @@ class ServerConsumer(ChatConsumer):
                 'author': author,
                 'image': image,
                 'server': server,
-                'channel': channel
+                'channel': channel,
+                'id': id
             }
         )

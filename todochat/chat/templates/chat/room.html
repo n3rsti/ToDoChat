@@ -46,12 +46,26 @@
 
     {{ room_name|json_script:"room-name" }}
     <script>
+        function hideNotificationBadge(channel_id) {
+            document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
+        }
+
+        function hideBadges() {
+            {% for channel in server.channel_set.all %}
+                if (!localStorage["{{ channel.id }}_notifications"] || localStorage["{{ channel.id }}_notifications"] === "0") {
+                    hideNotificationBadge("{{ channel.id }}");
+                }
+
+            {% endfor %}
+        }
+
         // Reset notification counter for channel
         if (localStorage["{{ channel.id }}_notifications"]) {
             let lsChannelData = localStorage["{{ channel.id }}_notifications"];
             let lsServerData = localStorage["{{ server.id }}_notifications"];
             localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
             localStorage.setItem("{{ channel.id }}_notifications", "0");
+            hideBadges();
 
         }
         const chatInput = document.querySelector(".chat-message-input");
@@ -75,7 +89,6 @@
         }
 
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        let wsStart = 'ws://'
         if (window.location.protocol === 'https:') {
             wsStart = 'wss://'
         }
@@ -160,7 +173,8 @@
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}',
                     'server': '{{ server.id }}',
-                    'channel': '{{ channel.id }}'
+                    'channel': '{{ channel.id }}',
+                    'id': Date.now()
                 }));
             }
 

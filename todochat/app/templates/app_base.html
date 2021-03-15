@@ -1,8 +1,5 @@
 {% load templatetags %}
 {% load static %}
-{% block extra_head %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
-{% endblock extra_head %}
 <header class="navbar header bg-primary">
     {% if taskbar_img %}
         <a href="{% url 'user_detail' friend.username %}" class="header__server-link">
@@ -125,7 +122,7 @@
 <script>
     function showNotificationBadge(server_id) {
         document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).style.opacity = 1;
-        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).innerText = localStorage["{{ server.id }}_notifications"]
+        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).innerText = localStorage[`${server_id}_notifications`]
     }
 
     function checkNotificationCounter() {
@@ -159,7 +156,6 @@
             localStorage.setItem(`${channel_id}_notifications`, "1");
 
         }
-        server_badge.innerText = parseInt(server_badge.innerText) + 1;
     }
 
     function close_websocket(e) {
@@ -179,7 +175,12 @@
         );
         serverSocket{{ forloop.counter }}.onmessage = function (e) {
             let data = JSON.parse(e.data);
-            increment_notification_count(data.server, data.channel);
+            if(data.author !== "{{ request.user }}" && localStorage['last_msg_id'] !== String(data.id)){
+                localStorage.setItem('last_msg_id', data.id);
+                increment_notification_count(data.server, data.channel);
+            }
+            let server_badge = document.querySelector(`.groups__li[data-server="${data.server}"] .badge`);
+            server_badge.innerText = parseInt(server_badge.innerText) + 1;
         }
 
 
