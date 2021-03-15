@@ -57,7 +57,9 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
                 for username in assignments:
                     task.assigned_for.add(server.users.get(username=username))
             task.save()
-            return redirect("server_tasks", server_id)
+            response = redirect("server_tasks", server_id)
+            response['Location'] += '?order=-deadline'
+            return response
         elif (new_channel is not None and 0 < len(new_channel) <= 20
               and Channel.objects.filter(name=new_channel, server=server).first() is None):
             if server is not None:
