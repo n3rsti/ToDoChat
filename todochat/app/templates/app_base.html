@@ -118,45 +118,9 @@
     </div>
 
 </nav>
-
+{% include "notification_ws_base.html" %}
 <script>
-    function showNotificationBadge(server_id) {
-        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).style.opacity = 1;
-        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).innerText = localStorage[`${server_id}_notifications`]
-    }
-
-    function checkNotificationCounter() {
-        {% for server in user.server_set.all %}
-            if (localStorage["{{ server.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ server.id }}_notifications"])) {
-                showNotificationBadge("{{ server.id }}");
-            }
-        {% endfor %}
-    }
-
     checkNotificationCounter();
-
-    function increment_notification_count(server_id, channel_id) {
-        let server_badge = document.querySelector(`.groups__li[data-server="${server_id}"] .badge`);
-        // "" value for opacity is opacity 0
-        let LSNotificationsCounter = localStorage[`${server_id}_notifications`];
-        let LSChannelNotificationsCounter = localStorage[`${channel_id}_notifications`];
-        if (server_badge.style.opacity === "") {
-            server_badge.style.opacity = 1;
-        }
-        if (LSNotificationsCounter) {
-            localStorage.setItem(`${server_id}_notifications`, parseInt(LSNotificationsCounter) + 1);
-            if(LSChannelNotificationsCounter){
-                localStorage.setItem(`${channel_id}_notifications`, parseInt(LSChannelNotificationsCounter) + 1);
-            }
-            else {
-                localStorage.setItem(`${channel_id}_notifications`, "1");
-            }
-        } else {
-            localStorage.setItem(`${server_id}_notifications`, "1");
-            localStorage.setItem(`${channel_id}_notifications`, "1");
-
-        }
-    }
 
     function close_websocket(e) {
         console.error('Chat socket closed unexpectedly');

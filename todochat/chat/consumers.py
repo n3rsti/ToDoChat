@@ -69,7 +69,7 @@ class ChatConsumer(WebsocketConsumer):
         return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)
 
 
-class ServerConsumer(ChatConsumer):
+class ServerNotificationConsumer(ChatConsumer):
     def connect(self):
         self.server_id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = f'server_{self.server_id}'
@@ -88,19 +88,13 @@ class ServerConsumer(ChatConsumer):
             self.channel_name
         )
 
-    def chat_message(self, event):
-        message = event['message']
-        author = event['author']
-        image = event['image']
+    def notification(self, event):
         server_id = event['server']
         channel_id = event['channel']
         # msg_id is used to prevent websocket connection from receiving messages multiple times from multiple tabs
         msg_id = event['id']
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'message': message,
-            'author': author,
-            'image': image,
             'server': server_id,
             'channel': channel_id,
             'id': msg_id
@@ -108,9 +102,6 @@ class ServerConsumer(ChatConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        author = text_data_json['author']
-        image = text_data_json['image']
         server_id = text_data_json['server']
         channel_id = text_data_json['channel']
         # msg_id is used to prevent websocket connection from receiving messages multiple times from multiple tabs
@@ -118,10 +109,7 @@ class ServerConsumer(ChatConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message,
-                'author': author,
-                'image': image,
+                'type': 'notification',
                 'server': server_id,
                 'channel': channel_id,
                 'id': msg_id

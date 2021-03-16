@@ -49,7 +49,7 @@
                 <a href="{% url 'room' server.id channel.name %}" class="groups__li pl-3"
                    title="{{ channel.name }} channel" data-channel="{{ channel.id }}">
                     #{{ channel.name }}
-                <span class="badge bg-light text-dark notification-badge">0</span>
+                    <span class="badge bg-light text-dark notification-badge">0</span>
                 </a>
             {% endfor %}
         </ul>
@@ -58,7 +58,8 @@
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
                     {% if server != object %}
-                        <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
+                        <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}"
+                            data-server="{{ server.id }}">
                             <a href="{% url 'server_detail' server.id %}" class="groups__li"
                                title="{{ server.name }} group">
                                 {% if server.image == 'default.png' %}
@@ -68,6 +69,7 @@
                                          class="groups__img mr-2">
                                 {% endif %}
                                 {{ server.name|shorter_name:12 }}</a>
+                            <span class="badge bg-light text-dark notification-badge">0</span>
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -141,44 +143,18 @@
         </div>
     </div>
 </div>
+{% include "notification_ws_base.html" %}
 <script>
-    function showNotificationBadge(channel_id) {
-        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 1;
-        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).innerText = localStorage[`${channel_id}_notifications`]
-    }
 
     function checkServerCounter() {
         {% for channel in server.channel_set.all %}
             if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
-                showNotificationBadge("{{ channel.id }}");
+                showChannelNotificationBadge("{{ channel.id }}");
             }
         {% endfor %}
     }
-
+    checkNotificationCounter();
     checkServerCounter();
-
-    function increment_notification_count(server_id, channel_id) {
-        let server_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
-        // "" value for opacity is opacity 0
-        let LSNotificationsCounter = localStorage[`${server_id}_notifications`];
-        let LSChannelNotificationsCounter = localStorage[`${channel_id}_notifications`];
-        if (server_badge.style.opacity === "") {
-            server_badge.style.opacity = 1;
-        }
-        if (LSNotificationsCounter) {
-            localStorage.setItem(`${server_id}_notifications`, parseInt(LSNotificationsCounter) + 1);
-            if(LSChannelNotificationsCounter){
-                localStorage.setItem(`${channel_id}_notifications`, parseInt(LSChannelNotificationsCounter) + 1);
-            }
-            else {
-                localStorage.setItem(`${channel_id}_notifications`, "1");
-            }
-        } else {
-            localStorage.setItem(`${server_id}_notifications`, "1");
-            localStorage.setItem(`${channel_id}_notifications`, "1");
-
-        }
-    }
 
     function close_websocket(e) {
         console.error('Chat socket closed unexpectedly');
@@ -197,11 +173,14 @@
         );
         serverSocket{{ forloop.counter }}.onmessage = function (e) {
             let data = JSON.parse(e.data);
-            if(data.author !== "{{ request.user }}" && localStorage['last_msg_id'] != data.id){
+            if (data.author !== "{{ request.user }}" && localStorage['last_msg_id'] != data.id) {
                 localStorage.setItem('last_msg_id', data.id)
                 increment_notification_count(data.server, data.channel);
             }
             let channel_badge = document.querySelector(`.groups__li[data-channel="${data.channel}"] .badge`);
+            if(data.server !== "{{ object.id }}"){
+                channel_badge = document.querySelector(`.groups__li[data-server="${data.server}"] .badge`);
+            }
             channel_badge.innerText = parseInt(channel_badge.innerText) + 1;
 
         }
