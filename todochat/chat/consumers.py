@@ -6,6 +6,20 @@ from chat.models import ChannelMessage
 from app.views import create_num_id
 from django.contrib.auth.models import User
 
+"""
+There are 2 websocket connections for each message for performance reasons. 
+
+ChatConsumer is used to deliver messages
+with all details: content, author, author image. ChatConsumer is used only in room.html for specific text channel
+so message is not sent where it shouldn't be. 
+
+ServerNotificationConsumer is used in all app_based and server_based (html base files) views so notification counter
+can be updated everytime user gets message. It's only sending minimum required details: server_id, channel_id, msg_id.
+
+Websocket connections are separate so they won't send unnecessary details every message.
+
+"""
+
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
