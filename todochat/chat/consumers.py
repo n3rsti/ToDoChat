@@ -92,17 +92,18 @@ class ServerConsumer(ChatConsumer):
         message = event['message']
         author = event['author']
         image = event['image']
-        server = event['server']
-        channel = event['channel']
-        server_id = event['id']
+        server_id = event['server']
+        channel_id = event['channel']
+        # msg_id is used to prevent websocket connection from receiving messages multiple times from multiple tabs
+        msg_id = event['id']
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
             'author': author,
             'image': image,
-            'server': server,
-            'channel': channel,
-            'id': server_id
+            'server': server_id,
+            'channel': channel_id,
+            'id': msg_id
         }))
 
     def receive(self, text_data):
@@ -110,9 +111,10 @@ class ServerConsumer(ChatConsumer):
         message = text_data_json['message']
         author = text_data_json['author']
         image = text_data_json['image']
-        server = text_data_json['server']
-        channel = text_data_json['channel']
-        server_id = text_data_json['id']
+        server_id = text_data_json['server']
+        channel_id = text_data_json['channel']
+        # msg_id is used to prevent websocket connection from receiving messages multiple times from multiple tabs
+        msg_id = text_data_json['id']
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -120,8 +122,8 @@ class ServerConsumer(ChatConsumer):
                 'message': message,
                 'author': author,
                 'image': image,
-                'server': server,
-                'channel': channel,
-                'id': server_id
+                'server': server_id,
+                'channel': channel_id,
+                'id': msg_id
             }
         )

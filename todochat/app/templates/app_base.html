@@ -127,7 +127,7 @@
 
     function checkNotificationCounter() {
         {% for server in user.server_set.all %}
-            if (localStorage["{{ server.id }}_notifications"] && localStorage["{{ server.id }}_notifications"] !== "0") {
+            if (localStorage["{{ server.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ server.id }}_notifications"])) {
                 showNotificationBadge("{{ server.id }}");
             }
         {% endfor %}

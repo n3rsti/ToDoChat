@@ -149,7 +149,7 @@
 
     function checkServerCounter() {
         {% for channel in server.channel_set.all %}
-            if (localStorage["{{ channel.id }}_notifications"] && localStorage["{{ channel.id }}_notifications"] !== "0") {
+            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
                 showNotificationBadge("{{ channel.id }}");
             }
         {% endfor %}
@@ -178,7 +178,6 @@
             localStorage.setItem(`${channel_id}_notifications`, "1");
 
         }
-        server_badge.innerText = parseInt(server_badge.innerText) + 1;
     }
 
     function close_websocket(e) {
@@ -202,6 +201,8 @@
                 localStorage.setItem('last_msg_id', data.id)
                 increment_notification_count(data.server, data.channel);
             }
+            let channel_badge = document.querySelector(`.groups__li[data-channel="${data.channel}"] .badge`);
+            channel_badge.innerText = parseInt(channel_badge.innerText) + 1;
 
         }
 
