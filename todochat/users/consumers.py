@@ -64,3 +64,47 @@ class ChatConsumer(WebsocketConsumer):
         while not UsersMessage.objects.filter(id=id).first() is None:
             id = create_num_id(20)
         return UsersMessage.objects.create(id=id, chat=channel, content=message, author=author_obj)
+
+
+class ChatNotificationConsumer(WebsocketConsumer):
+    def connect(self):
+        self.chat_id = self.scope['url_route']['kwargs']['id']
+        self.room_group_name = f'chatnotifications_{self.chat_id}'
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    def notification(self, event):
+        channel_id = event['channel_id']
+        # msg_id is used to prevent websocket connection from receiving messages multiple times from multiple tabs
+        msg_id = event['msg_id']
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'channel_id': channel_id,
+            'msg_id': msg_id
+        }))
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        channel_id = text_data_json['channel_id']
+        msg_id = text_data_json['msg_id']
+
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'notification',
+                'channel_id': channel_id,
+                'msg_id': msg_id
+            }
+        )

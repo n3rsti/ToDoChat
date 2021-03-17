@@ -162,6 +162,7 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         friend = User.objects.get(username=self.kwargs['username'])
         context["taskbar_title"] = friend.username
         context["friend"] = friend
+        context["is_room_html"] = True
         chat = UsersChat.objects.filter(users=self.request.user)
         for chat_channel in chat:
             if friend in chat_channel.users.all():

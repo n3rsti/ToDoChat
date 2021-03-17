@@ -66,14 +66,16 @@
         }
 
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        let wsStart = 'ws://'
-        if (window.location.protocol === 'https:') {
-            wsStart = 'wss://'
-        }
         const chatSocket = new ReconnectingWebSocket(
             wsStart
             + window.location.host
             + '/ws/chat/'
+            + '{{ object.id }}/'
+        );
+        const chatNotificationSocket = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/chat_notifications/'
             + '{{ object.id }}/'
         );
 
@@ -140,6 +142,11 @@
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}'
                 }));
+                chatNotificationSocket.send(JSON.stringify({
+                    'channel_id': '{{ object.id }}',
+                    'msg_id': Date.now()
+                }));
+
             }
             messageInputDom.value = '';
             scrollBottom();

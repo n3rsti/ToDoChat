@@ -126,10 +126,6 @@
         console.error('Chat socket closed unexpectedly');
     }
 
-    let wsStart = 'ws://'
-    if (window.location.protocol === 'https:') {
-        wsStart = 'wss://'
-    }
     {% for server in request.user.server_set.all %}
         const serverSocket{{ forloop.counter }} = new ReconnectingWebSocket(
             wsStart

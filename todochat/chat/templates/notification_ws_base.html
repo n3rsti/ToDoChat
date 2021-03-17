@@ -1,24 +1,32 @@
 <script>
+    let wsStart = 'ws://'
+    if (window.location.protocol === 'https:') {
+        wsStart = 'wss://'
+    }
+
     function showChannelNotificationBadge(channel_id) {
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 1;
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).innerText = localStorage[`${channel_id}_notifications`]
     }
+
     function showServerNotificationBadge(server_id) {
         document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).style.opacity = 1;
         document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).innerText = localStorage[`${server_id}_notifications`]
     }
+
     function checkNotificationCounter() {
         {% for server in user.server_set.all %}
             {% if server != object %}
-            if (localStorage["{{ server.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ server.id }}_notifications"])) {
-                showServerNotificationBadge("{{ server.id }}");
-            }
+                if (localStorage["{{ server.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ server.id }}_notifications"])) {
+                    showServerNotificationBadge("{{ server.id }}");
+                }
             {% endif %}
         {% endfor %}
     }
+
     function increment_notification_count(server_id, channel_id) {
         let server_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
-        if(server_id !== "{{ server.id }}"){
+        if (server_id !== "{{ server.id }}") {
             server_badge = document.querySelector(`.groups__li[data-server="${server_id}"] .badge`);
         }
         // "" value for opacity is opacity 0
@@ -40,4 +48,31 @@
 
         }
     }
+    {% if is_room_html is not True %}
+        {% for channel in request.user.users_chat.all %}
+            const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + '/ws/chat_notifications/'
+                + '{{ channel.id }}/'
+            );
+            userServerSocket{{ forloop.counter }}.onmessage = function (e) {
+                console.log(1);
+            }
+        {% endfor %}
+    {% else %}
+        {% for channel in request.user.users_chat.all %}
+            {% if channel != object %}
+                const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + '/ws/chat_notifications/'
+                    + '{{ channel.id }}/'
+                );
+                userServerSocket{{ forloop.counter }}.onmessage = function (e) {
+                    console.log(1);
+                }
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 </script>

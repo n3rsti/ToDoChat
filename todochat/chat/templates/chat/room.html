@@ -89,9 +89,6 @@
         }
 
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        if (window.location.protocol === 'https:') {
-            wsStart = 'wss://'
-        }
         const chatSocket = new ReconnectingWebSocket(
             wsStart
             + window.location.host
@@ -169,9 +166,6 @@
                     'image': '{{ user.profile.image.url }}'
                 }));
                 serverSocket.send(JSON.stringify({
-                    'message': message,
-                    'author': '{{ user }}',
-                    'image': '{{ user.profile.image.url }}',
                     'server': '{{ server.id }}',
                     'channel': '{{ channel.id }}',
                     'id': Date.now()
