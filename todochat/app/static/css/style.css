@@ -171,6 +171,8 @@ h1.title {
   .side__nav .badge {
     margin-left: auto;
     margin-right: 10px; }
+  .side__nav .notification-badge {
+    opacity: 0; }
 
 .side__nav--open {
   transform: translateX(0); }
@@ -295,6 +297,7 @@ div.groups__img, div.nav__server-logo {
   font-weight: 500; }
 
 .groups__li {
+  width: 100%;
   margin: 0;
   padding: 6px 6px 6px 0;
   align-items: center;
@@ -1033,8 +1036,10 @@ main.chat {
   margin: 5px; }
 
 .create_task {
-  margin-bottom: 20px;
-  width: 50%; }
+  position: fixed;
+  width: 50px;
+  right: 5%;
+  bottom: 5%; }
 
 main.tasks {
   align-items: center;

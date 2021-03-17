@@ -105,7 +105,7 @@ def invite_server_user(request, pk, username):
                 chat.save()
             invitation_message = UsersMessage.objects.create(id=message_id,
                                                              chat=chat,
-                                                             content=f'todochat.com/i/{invitation_id}',
+                                                             content=f'tdchat.net/i/{invitation_id}',
                                                              author=request.user)
             invitation.save()
             invitation_message.save()

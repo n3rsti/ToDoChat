@@ -47,8 +47,12 @@
                             {% if task.description %}
                             {% endif %}
                             <section class="task__date">
-                                Created on
-                                {{ task.created|date:"d M, Y" }}
+                                {% if task.deadline %}
+                                Deadline:
+                                {{ task.deadline|date:"d M, Y" }},
+                                {% else %}
+                                No deadline,
+                                {% endif %}
                                 by
                                 <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
                             </section>
@@ -57,7 +61,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <button class="create_task btn-primary btn">Create task <i class="fas fa-plus"></i></button>
+        <button class="create_task btn-primary btn"><i class="fas fa-plus"></i></button>
         <div class="task_section">
             <button class="close_task">
                 <i class="far fa-times-circle"></i>
@@ -111,8 +115,8 @@
                 </button>
                 <div class="form_section collapse" name="form_description">
                     <label for="form_description" hidden>Description</label>
-                    {{ desc_form.media }}
-                    {{ desc_form.as_p }}
+                    {{ desc_form.description }}
+                    {{ desc_form.description.as_p }}
                     <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>

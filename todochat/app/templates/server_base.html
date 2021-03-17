@@ -14,12 +14,12 @@
 
     <button class="header__button" type="button" aria-label="Open navigation" aria-expanded="false"
             aria-controls="side-nav" tabindex="0">
-        <span class="button__hr"/></span>
-        <span class="button__hr"/></span>
-        <span class="button__hr"/></span>
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
+        <span class="button__hr"></span>
     </button>
 </header>
-<nav class="side__nav" name="side-nav">
+<nav class="side__nav" id="side-nav">
     <div class="hello__div">
         <a href="{% url 'profile' %}" title="Profile">
             <img src="{{ user.profile.image.url }}" alt="{{ user.username }} profile picture" class="profile__photo"/>
@@ -32,23 +32,25 @@
             {% if server.image == 'default.png' %}
                 <div class="groups__img ml-1 p2">{{ server.name.0 }}</div>
             {% else %}
-                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img pl-3"/>
+                <img src="{{ server.image.url }}" alt="{{ server.name }} server image" class="groups__img ml-2 mr-1"/>
             {% endif %}
             <a href="{% url 'server_detail' server.id %}" class="groups__li h5" title="{{ server.name }} group">
                 {{ server.name }}</a>
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
-        <a href="{% url 'server_tasks' server.id %}?order=created" class="groups__li pl-3">All tasks <span
+        <a href="{% url 'server_tasks' server.id %}?order=-deadline" class="groups__li pl-3">All tasks <span
                 class="badge bg-light text-dark">{{ server.server_tasks.count }}</span></a>
-        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=created"
+        <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=-deadline"
            class="groups__li pl-3">My tasks <span
                 class="badge bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel in server.channel_set.all %}
                 <a href="{% url 'room' server.id channel.name %}" class="groups__li pl-3"
-                   title="{{ channel.name }} channel">
-                    #{{ channel.name }}</a>
+                   title="{{ channel.name }} channel" data-channel="{{ channel.id }}">
+                    #{{ channel.name }}
+                    <span class="badge bg-light text-dark notification-badge">0</span>
+                </a>
             {% endfor %}
         </ul>
         {% if user.server_set.count > 1 %}
@@ -56,7 +58,8 @@
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
                     {% if server != object %}
-                        <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
+                        <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}"
+                            data-server="{{ server.id }}">
                             <a href="{% url 'server_detail' server.id %}" class="groups__li"
                                title="{{ server.name }} group">
                                 {% if server.image == 'default.png' %}
@@ -66,6 +69,7 @@
                                          class="groups__img mr-2">
                                 {% endif %}
                                 {{ server.name|shorter_name:12 }}</a>
+                            <span class="badge bg-light text-dark notification-badge">0</span>
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -75,12 +79,14 @@
         {% if user.profile.friends.count > 0 %}
             <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
             <ul class="groups__ul friends__ul">
-                {% for friend in user.profile.friends.all %}
-                    <li class="flex pl-3 groups__li">
+                {% for friend, chat_id in request.user|get_friends_chat_id %}
+                    <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"
                            title="{{ friend.username }} profile">
                             <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                                 class="users__img">{{ friend.username }}
+                                 class="users__img">
+                            {{ friend.username }}
+                            <span class="badge bg-light text-dark notification-badge">0</span>
                         </a>
                     </li>
 
@@ -139,5 +145,41 @@
         </div>
     </div>
 </div>
+{% include "notification_ws_base.html" %}
+<script>
 
+
+    checkNotificationCounter();
+    checkServerCounter();
+
+    function close_websocket(e) {
+        console.error('Chat socket closed unexpectedly');
+    }
+
+    {% for server in request.user.server_set.all %}
+        const serverSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/server/'
+            + '{{ server.id }}/'
+        );
+        serverSocket{{ forloop.counter }}.onmessage = function (e) {
+            let data = JSON.parse(e.data);
+            if (data.author !== "{{ request.user }}" && localStorage['last_msg_id'] != data.id) {
+                localStorage.setItem('last_msg_id', data.id)
+                increment_notification_count(data.server, data.channel);
+            }
+            let channel_badge = document.querySelector(`.groups__li[data-channel="${data.channel}"] .badge`);
+            if(data.server !== "{{ object.id }}"){
+                channel_badge = document.querySelector(`.groups__li[data-server="${data.server}"] .badge`);
+            }
+            channel_badge.innerText = parseInt(channel_badge.innerText) + 1;
+
+        }
+
+
+    {% endfor %}
+
+
+</script>
 <script src="{% static 'js/app.js' %}"></script>

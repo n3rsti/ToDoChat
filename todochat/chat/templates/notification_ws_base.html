@@ -1,0 +1,125 @@
+<script>
+    let wsStart = 'ws://'
+    if (window.location.protocol === 'https:') {
+        wsStart = 'wss://'
+    }
+    function resetChannelNotifications(channel_id){
+        localStorage.setItem(`${channel_id}_notifications`, "0");
+        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
+    }
+
+    function showChannelNotificationBadge(channel_id) {
+        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 1;
+        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).innerText = localStorage[`${channel_id}_notifications`]
+    }
+
+    function showServerNotificationBadge(server_id) {
+        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).style.opacity = 1;
+        document.querySelector(`.groups__li[data-server="${server_id}"] .badge`).innerText = localStorage[`${server_id}_notifications`]
+    }
+
+    function checkNotificationCounter() {
+        {% for server in user.server_set.all %}
+            {% if server != object %}
+                if (localStorage["{{ server.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ server.id }}_notifications"])) {
+                    showServerNotificationBadge("{{ server.id }}");
+                }
+            {% endif %}
+        {% endfor %}
+    }
+
+    function checkServerCounter() {
+        {% for channel in server.channel_set.all %}
+            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
+                showChannelNotificationBadge("{{ channel.id }}");
+            }
+        {% endfor %}
+    }
+    function checkUserNotificationsCounter() {
+        {% for channel in request.user.users_chat.all %}
+            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
+                showChannelNotificationBadge("{{ channel.id }}");
+            }
+        {% endfor %}
+    }
+    checkUserNotificationsCounter();
+    function increment_notification_count(server_id, channel_id) {
+        let server_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+        if (server_id !== "{{ server.id }}") {
+            server_badge = document.querySelector(`.groups__li[data-server="${server_id}"] .badge`);
+        }
+        // "" value for opacity is opacity 0
+        let LSNotificationsCounter = localStorage[`${server_id}_notifications`];
+        let LSChannelNotificationsCounter = localStorage[`${channel_id}_notifications`];
+        if (server_badge.style.opacity === "") {
+            server_badge.style.opacity = 1;
+        }
+        if (LSNotificationsCounter) {
+            localStorage.setItem(`${server_id}_notifications`, parseInt(LSNotificationsCounter) + 1);
+            if (LSChannelNotificationsCounter) {
+                localStorage.setItem(`${channel_id}_notifications`, parseInt(LSChannelNotificationsCounter) + 1);
+            } else {
+                localStorage.setItem(`${channel_id}_notifications`, "1");
+            }
+        } else {
+            localStorage.setItem(`${server_id}_notifications`, "1");
+            localStorage.setItem(`${channel_id}_notifications`, "1");
+
+        }
+    }
+
+    function incrementUserNotificationCount(channel_id) {
+        let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+        let LSChannelNotificationsCounter = localStorage[`${channel_id}_notifications`];
+        if (LSChannelNotificationsCounter) {
+            localStorage.setItem(`${channel_id}_notifications`, parseInt(localStorage[`${channel_id}_notifications`]) + 1);
+        } else {
+            localStorage.setItem(`${channel_id}_notifications`, "1");
+        }
+        if (profile_badge.style.opacity === "") {
+            profile_badge.style.opacity = 1;
+        }
+    }
+    {% if is_room_html is not True %}
+        {% for channel in request.user.users_chat.all %}
+            const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + '/ws/chat_notifications/'
+                + '{{ channel.id }}/'
+            );
+            userServerSocket{{ forloop.counter }}.onmessage = function (e) {
+                let data = JSON.parse(e.data);
+                let channel_id = data.channel_id
+                if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
+                    localStorage.setItem('last_msg_id', data.msg_id);
+                    incrementUserNotificationCount(channel_id);
+                }
+
+                let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+                profile_badge.innerText = Number(profile_badge.innerText) + 1;
+            }
+        {% endfor %}
+    {% else %}
+        {% for channel in request.user.users_chat.all %}
+            {% if channel != object %}
+                const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + '/ws/chat_notifications/'
+                    + '{{ channel.id }}/'
+                );
+                userServerSocket{{ forloop.counter }}.onmessage = function (e) {
+                    let data = JSON.parse(e.data);
+                    let channel_id = data.channel_id
+                    if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
+                        localStorage.setItem('last_msg_id', data.msg_id);
+                        incrementUserNotificationCount(channel_id);
+                    }
+                    let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+                    profile_badge.innerText = Number(profile_badge.innerText) + 1;
+                }
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>

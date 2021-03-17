@@ -5,18 +5,20 @@ from app.models import Server
 
 
 class TaskDescriptionForm(forms.Form):
-    description = forms.CharField(widget=CKEditorUploadingWidget(
-        extra_plugins=['easyimage'],
-        external_plugin_resources=[(
-            'easyimage',
-            '/static/ckeditor/ckeditor/easyimage/',
-            'plugin.js'
-        )]
-        )
-    )
+    description = forms.CharField(widget=CKEditorUploadingWidget(), required=False)
+    server = forms.ChoiceField(choices=[
+        (server.id, server.name) for server in Server.objects.all()
+    ], required=False)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(TaskDescriptionForm, self).__init__(*args, **kwargs)
+        if user is not None:
+            self.fields['server'].choices = [(server.id, server.name) for server in
+                                                                                   Server.objects.filter(users=user)]
 
     class Meta:
-        fields = ['description']
+        fields = ['description', 'server']
 
 
 class TaskUpdateForm(forms.ModelForm):
@@ -27,15 +29,7 @@ class TaskUpdateForm(forms.ModelForm):
         'placeholder': 'For example: make an app',
         'required': 'true'
     }))
-    description = forms.CharField(widget=CKEditorUploadingWidget(
-        extra_plugins=['easyimage'],
-        external_plugin_resources=[(
-            'easyimage',
-            '/static/ckeditor/ckeditor/easyimage/',
-            'plugin.js'
-        )]
-    )
-    )
+    description = forms.CharField(widget=CKEditorUploadingWidget())
 
     class Meta:
         model = Task
@@ -43,14 +37,7 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class TaskCommentForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorUploadingWidget(
-        config_name="comment",
-        extra_plugins=['easyimage'],
-        external_plugin_resources=[(
-            'easyimage',
-            '/static/ckeditor/ckeditor/easyimage/',
-            'plugin.js'
-        )]), min_length=1, label="")
+    content = forms.CharField(widget=CKEditorUploadingWidget(), min_length=1, label="")
 
     class Meta:
         model = TaskComment

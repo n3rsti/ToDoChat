@@ -57,7 +57,9 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
                 for username in assignments:
                     task.assigned_for.add(server.users.get(username=username))
             task.save()
-            return redirect("server_tasks", server_id)
+            response = redirect("server_tasks", server_id)
+            response['Location'] += '?order=-deadline'
+            return response
         elif (new_channel is not None and 0 < len(new_channel) <= 20
               and Channel.objects.filter(name=new_channel, server=server).first() is None):
             if server is not None:
@@ -193,9 +195,28 @@ class FilterTaskView(ListView):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = TaskFilterForm(self.request.GET, user=self.request.user)
         context['sort_form'] = TaskSortForm(self.request.GET)
+        context['desc_form'] = TaskDescriptionForm(self.request.GET, user=self.request.user)
         context['tasks'] = filter_tasks(self.request, self.request.user.users_tasks)
         context['taskbar_title'] = "All tasks"
         return context
+
+    def post(self, request):
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        server_id = request.POST.get("server")
+        deadline = request.POST.get('deadline')
+        server = Server.objects.get(id=server_id)
+        task = Task.objects.create(server=server, author=request.user, task_id=server.server_tasks.count() + 1)
+        task.assigned_for.clear()
+        task.assigned_for.add(task.author)
+        if deadline != "":
+            task.deadline = deadline
+        if len(title) <= 20:
+            task.title = title
+        if len(description) <= 4000:
+            task.description = description
+        task.save()
+        return redirect("task_detail", server_id, task.id)
 
 
 def filter_tasks(request, tasks):

@@ -37,8 +37,9 @@
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
                 {% for server in user.server_set.all %}
-                    <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}">
-                        <a href="{% url 'server_detail' server.id %}" class="groups__li"
+                    <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}"
+                        data-server="{{ server.id }}">
+                        <a href="{% url 'server_detail' server.id %}" class="groups__li flex"
                            title="{{ server.name }} group">
                             {% if server.image == 'default.png' %}
                                 <div class="groups__img mr-2">{{ server.name.0 }}</div>
@@ -46,7 +47,9 @@
                                 <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
                                      class="groups__img mr-2">
                             {% endif %}
-                            {{ server.name|shorter_name:12 }}</a>
+                            {{ server.name|shorter_name:10 }}
+                            <span class="badge bg-light text-dark notification-badge">0</span>
+                        </a>
                     </li>
                 {% endfor %}
 
@@ -59,22 +62,24 @@
             </span>
             </a>
         {% endif %}
-        <a href="{% url 'user_tasks' %}?order=-created" class="groups__h2 groups__h2--top-border flex"
-           title="All tasks">All tasks
-            <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
-        </a>
         {% if user.server_set.all.count > 5 %}
             <button class="load_more" aria-expanded="false" aria-label="Show additional groups">Load more</button>
         {% endif %}
+        <a href="{% url 'user_tasks' %}?order=-deadline" class="groups__h2 groups__h2--top-border flex"
+           title="All tasks">All tasks
+            <span class="badge bg-light text-dark">{{ user.users_tasks.count }}</span>
+        </a>
         {% if user.profile.friends.count > 0 %}
             <h2 class="groups__h2">Friends</h2>
             <ul class="groups__ul friends__ul">
-                {% for friend in user.profile.friends.all %}
-                    <li class="flex pl-3 groups__li">
+                {% for friend, chat_id in request.user|get_friends_chat_id %}
+                    <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"
                            title="{{ friend.username }} profile">
                             <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                                 class="users__img">{{ friend.username }}
+                                 class="users__img">
+                            {{ friend.username }}
+                            <span class="badge bg-light text-dark notification-badge">0</span>
                         </a>
                     </li>
 
@@ -115,6 +120,34 @@
     </div>
 
 </nav>
+{% include "notification_ws_base.html" %}
+<script>
+    checkNotificationCounter();
+
+    function close_websocket(e) {
+        console.error('Chat socket closed unexpectedly');
+    }
+
+    {% for server in request.user.server_set.all %}
+        const serverSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/server/'
+            + '{{ server.id }}/'
+        );
+        serverSocket{{ forloop.counter }}.onmessage = function (e) {
+            let data = JSON.parse(e.data);
+            if(data.author !== "{{ request.user }}" && localStorage['last_msg_id'] !== String(data.id)){
+                localStorage.setItem('last_msg_id', data.id);
+                increment_notification_count(data.server, data.channel);
+            }
+            let server_badge = document.querySelector(`.groups__li[data-server="${data.server}"] .badge`);
+            server_badge.innerText = parseInt(server_badge.innerText) + 1;
+        }
 
 
+    {% endfor %}
+
+
+</script>
 <script src="{% static 'js/app.js' %}"></script>
