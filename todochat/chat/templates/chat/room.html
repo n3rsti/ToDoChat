@@ -64,7 +64,11 @@
             let lsChannelData = localStorage["{{ channel.id }}_notifications"];
             let lsServerData = localStorage["{{ server.id }}_notifications"];
             localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
-            localStorage.setItem("{{ channel.id }}_notifications", "0");
+            document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).innerText = localStorage["{{ server.id }}_notifications"];
+            if(localStorage["{{ server.id }}_notifications"] == 0){
+                document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).style.opacity = 0;
+            }
+            resetChannelNotifications("{{ channel.id }}");
             hideBadges();
 
         }

@@ -41,6 +41,7 @@
 
     {{ room_name|json_script:"room-name" }}
     <script>
+        resetChannelNotifications("{{ object.id }}");
         const chatInput = document.querySelector(".chat-message-input");
         chatInput.addEventListener('input', () => {
             let button = document.querySelector(".chat-message-submit")

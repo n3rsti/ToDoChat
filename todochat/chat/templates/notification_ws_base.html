@@ -3,6 +3,10 @@
     if (window.location.protocol === 'https:') {
         wsStart = 'wss://'
     }
+    function resetChannelNotifications(channel_id){
+        localStorage.setItem(`${channel_id}_notifications`, "0");
+        document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
+    }
 
     function showChannelNotificationBadge(channel_id) {
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 1;
@@ -24,6 +28,21 @@
         {% endfor %}
     }
 
+    function checkServerCounter() {
+        {% for channel in server.channel_set.all %}
+            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
+                showChannelNotificationBadge("{{ channel.id }}");
+            }
+        {% endfor %}
+    }
+    function checkUserNotificationsCounter() {
+        {% for channel in request.user.users_chat.all %}
+            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
+                showChannelNotificationBadge("{{ channel.id }}");
+            }
+        {% endfor %}
+    }
+    checkUserNotificationsCounter();
     function increment_notification_count(server_id, channel_id) {
         let server_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
         if (server_id !== "{{ server.id }}") {
@@ -48,6 +67,19 @@
 
         }
     }
+
+    function incrementUserNotificationCount(channel_id) {
+        let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+        let LSChannelNotificationsCounter = localStorage[`${channel_id}_notifications`];
+        if (LSChannelNotificationsCounter) {
+            localStorage.setItem(`${channel_id}_notifications`, parseInt(localStorage[`${channel_id}_notifications`]) + 1);
+        } else {
+            localStorage.setItem(`${channel_id}_notifications`, "1");
+        }
+        if (profile_badge.style.opacity === "") {
+            profile_badge.style.opacity = 1;
+        }
+    }
     {% if is_room_html is not True %}
         {% for channel in request.user.users_chat.all %}
             const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
@@ -57,7 +89,15 @@
                 + '{{ channel.id }}/'
             );
             userServerSocket{{ forloop.counter }}.onmessage = function (e) {
-                console.log(1);
+                let data = JSON.parse(e.data);
+                let channel_id = data.channel_id
+                if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
+                    localStorage.setItem('last_msg_id', data.msg_id);
+                    incrementUserNotificationCount(channel_id);
+                }
+
+                let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+                profile_badge.innerText = Number(profile_badge.innerText) + 1;
             }
         {% endfor %}
     {% else %}
@@ -70,7 +110,14 @@
                     + '{{ channel.id }}/'
                 );
                 userServerSocket{{ forloop.counter }}.onmessage = function (e) {
-                    console.log(1);
+                    let data = JSON.parse(e.data);
+                    let channel_id = data.channel_id
+                    if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
+                        localStorage.setItem('last_msg_id', data.msg_id);
+                        incrementUserNotificationCount(channel_id);
+                    }
+                    let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+                    profile_badge.innerText = Number(profile_badge.innerText) + 1;
                 }
             {% endif %}
         {% endfor %}

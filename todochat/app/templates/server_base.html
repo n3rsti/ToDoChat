@@ -79,12 +79,14 @@
         {% if user.profile.friends.count > 0 %}
             <h2 class="groups__h2 groups__h2--top-border">Friends</h2>
             <ul class="groups__ul friends__ul">
-                {% for friend in user.profile.friends.all %}
-                    <li class="flex pl-3 groups__li">
+                {% for friend, chat_id in request.user|get_friends_chat_id %}
+                    <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
                         <a href="{% url 'user_detail' friend.username %}" class="groups__li"
                            title="{{ friend.username }} profile">
                             <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                                 class="users__img">{{ friend.username }}
+                                 class="users__img">
+                            {{ friend.username }}
+                            <span class="badge bg-light text-dark notification-badge">0</span>
                         </a>
                     </li>
 
@@ -146,13 +148,7 @@
 {% include "notification_ws_base.html" %}
 <script>
 
-    function checkServerCounter() {
-        {% for channel in server.channel_set.all %}
-            if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
-                showChannelNotificationBadge("{{ channel.id }}");
-            }
-        {% endfor %}
-    }
+
     checkNotificationCounter();
     checkServerCounter();
 

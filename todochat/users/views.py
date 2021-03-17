@@ -162,6 +162,8 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         friend = User.objects.get(username=self.kwargs['username'])
         context["taskbar_title"] = friend.username
         context["friend"] = friend
+        # is_room_html is used for creating websocket connections so 1 connection is not repeated 2 times in room.html
+        # this variable in used in notification_ws_base.html
         context["is_room_html"] = True
         chat = UsersChat.objects.filter(users=self.request.user)
         for chat_channel in chat:

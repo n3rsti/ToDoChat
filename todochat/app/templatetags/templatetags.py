@@ -35,3 +35,11 @@ def get_user_task_count(user, server_id):
 def get_server_invitation_status(user, server_id):
     server = Server.objects.get(id=server_id)
     return ServerInvitation.objects.filter(server=server, invited_user=user.user).first() is not None
+
+
+@register.filter
+def get_friends_chat_id(user):
+    friends = user.profile.friends.all()
+    users_chat = user.users_chat.all()
+
+    return zip(friends, users_chat)
