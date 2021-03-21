@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponseForbidden
 from .models import Server, ServerInvitation
 from tasks.models import Task
 from users.models import UsersMessage, UsersChat
@@ -90,6 +91,8 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 def invite_server_user(request, pk, username):
     server = Server.objects.get(pk=pk)
+    if request.user != server.owner:
+        return HttpResponseForbidden()
     invited_user = User.objects.get(username=username)
     if invited_user in request.user.profile.friends.all():
         if invited_user not in server.users.all():
