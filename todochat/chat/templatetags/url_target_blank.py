@@ -37,20 +37,15 @@ def author_filter(id, index):
         return False
 
 
-@register.filter
-def chat_author_filter(id, index):
-    if index == 1:
-        return False
-    channel = UsersChat.objects.get(id=id)
-    messages = UsersMessage.objects.filter(chat=channel).order_by('created')
-    if messages.count() > 50:
-        messages = messages[messages.count() - 50:messages.count()]
-    message = messages[index-1]
-    previous = messages[index-2]
-    if message.author == previous.author:
-        return True
-    else:
-        return False
+@register.filter()
+def chat_author_filter(messages):
+    is_same_author = [False]  # First messages should be always displayed with image
+    for count in range(1, len(messages)):
+        if messages[count].author == messages[count - 1].author:
+            is_same_author.append(True)
+        else:
+            is_same_author.append(False)
+    return zip(messages, is_same_author)
 
 
 @register.filter

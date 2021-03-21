@@ -1,21 +1,28 @@
 from django.shortcuts import redirect
 from app.models import Server
 from django.views.generic import DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from app.views import Channel, create_num_id
 from chat.models import ChannelMessage
 from django.contrib.auth.models import User
 
 
-class ChannelDetailView(LoginRequiredMixin, DetailView):
+class ChannelDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Channel
     template_name = 'chat/room.html'
+
+    def test_func(self):
+        user = self.request.user
+        server = Server.objects.get(id=self.kwargs['pk'])
+        if user in server.users.all():
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         channel = Channel.objects.filter(name=self.kwargs['room_name'],
                                          server=Server.objects.get(id=self.kwargs['pk'])).first()
         server = Server.objects.get(id=self.kwargs['pk'])
-        messages = ChannelMessage.objects.filter(channel=channel).order_by('created')
+        messages = ChannelMessage.objects.filter(channel=channel).order_by('-created')[:100][::-1]
         context = super().get_context_data(**kwargs)
         context['chat_messages'] = messages
         context['server'] = server
@@ -48,3 +55,5 @@ class ChannelDetailView(LoginRequiredMixin, DetailView):
 
         else:
             return redirect("room", pk=pk, room_name=room_name)
+
+

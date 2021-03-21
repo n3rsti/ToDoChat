@@ -8,9 +8,9 @@
     {% include "app_base.html" %}
     <main class="chat content">
         <ul class="chat-log">
-            {% for message in messages|get_last_messages:50 %}
-                <li class="chat-log__li {% if object.id|author_filter:forloop.counter is False %}margin-top{% endif %} {% if message.author == request.user %}author{% endif %}">
-                    {% if object.id|chat_author_filter:forloop.counter is False %}
+            {% for message, is_same_author in messages|chat_author_filter %}
+                <li class="chat-log__li {% if is_same_author is False %}margin-top{% endif %}">
+                    {% if is_same_author is False %}
                         <a href="{% url 'user_detail' message.author.username %}" class="chat-log__link"
                            title="{{ message.author.username }} profile">
                             <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image"
