@@ -10,10 +10,10 @@
     {% include "server_base.html" %}
     <main class="chat content">
         <ul class="chat-log">
-            {% for message in chat_messages|get_last_messages:50 %}
+            {% for message, is_same_author in chat_messages|chat_author_filter %}
                 <li
-                        class="chat-log__li {% if object.id|author_filter:forloop.counter is False %}margin-top{% endif %} {% if message.author == request.user %}author{% endif %}">
-                    {% if object.id|author_filter:forloop.counter is False %}
+                        class="chat-log__li {% if is_same_author is False %}margin-top{% endif %}">
+                    {% if is_same_author is False %}
                         <a href="{% url 'user_detail' message.author.username %}" class="chat-log__link"
                            title="{{ message.author.username }} profile">
                             <img src="{{ message.author.profile.image.url }}" alt="{{ message.author }} profile image"
@@ -65,7 +65,7 @@
             let lsServerData = localStorage["{{ server.id }}_notifications"];
             localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
             document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).innerText = localStorage["{{ server.id }}_notifications"];
-            if(localStorage["{{ server.id }}_notifications"] == 0){
+            if (localStorage["{{ server.id }}_notifications"] == 0) {
                 document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).style.opacity = 0;
             }
             resetChannelNotifications("{{ channel.id }}");
