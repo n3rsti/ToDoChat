@@ -139,6 +139,7 @@
             const message = messageInputDom.value;
             if (message.length !== 0) {
                 chatSocket.send(JSON.stringify({
+                    'type': 'chat_message',
                     'message': message,
                     'author': '{{ user }}',
                     'image': '{{ user.profile.image.url }}'

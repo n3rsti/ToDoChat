@@ -2,8 +2,9 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from users.models import UsersChat, UsersMessage
-from app.views import create_num_id
+from app.views import create_num_id, create_random_id
 from django.contrib.auth.models import User
+from app.models import ServerInvitation, Server
 
 
 class ChatConsumer(WebsocketConsumer):
@@ -29,20 +30,30 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        ws_type = text_data_json['type']
         author = text_data_json['author']
         image = text_data_json['image']
+        if ws_type == "server_invitation":
+            server_id = text_data_json['server_id']
+            invited_user = text_data_json['invited_user']
+            invitation_id = create_random_id(10)
+            message = f'tdchat.net/i/{invitation_id}'
+            async_to_sync(self.create_server_invitation(server_id, invited_user, invitation_id))
+        else:
+            message = text_data_json['message']
+
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type': 'chat_message',
+                'type': "chat_message",
                 'message': message,
                 'author': author,
                 'image': image
             }
         )
+
         async_to_sync(self.create_chat_message(message, author))
 
     # Receive message from room group
@@ -64,6 +75,12 @@ class ChatConsumer(WebsocketConsumer):
         while not UsersMessage.objects.filter(id=id).first() is None:
             id = create_num_id(20)
         return UsersMessage.objects.create(id=id, chat=channel, content=message, author=author_obj)
+
+    def create_server_invitation(self, server_id, invited_user, invitation_id):
+        if ServerInvitation.objects.filter(id=invitation_id).first() is None:
+            server = Server.objects.get(pk=server_id)
+            invited = User.objects.get(username=invited_user)
+            return ServerInvitation.objects.create(server=server, id=invitation_id, invited_user=invited)
 
 
 class ChatNotificationConsumer(WebsocketConsumer):

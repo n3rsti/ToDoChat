@@ -43,3 +43,12 @@ def get_friends_chat_id(user):
     users_chat = user.users_chat.all()
 
     return zip(friends, users_chat)
+
+@register.filter
+def get_userschat_objects(request_user):
+    chat_obj_list = []
+    chat_objects = request_user.users_chat.all()
+    friends = request_user.friends_set.all()
+    for friend in friends:
+        chat_obj_list.append(chat_objects.filter(users=request_user).filter(users=friend.user).first().id)
+    return zip(friends, chat_obj_list)

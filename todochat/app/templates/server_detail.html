@@ -64,7 +64,7 @@
                         </div>
                         <div class="modal-body d-flex flex-column">
                             <ul class="server_invite__ul">
-                                {% for friend in request.user.friends_set.all %}
+                                {% for friend, chat in request.user|get_userschat_objects %}
                                     <li class="server_invite__li">
                                         {% if not friend.user in server.users.all %}
                                             <img src="{{ friend.image.url }}" class="users__img"
@@ -73,8 +73,10 @@
                                             {% if friend|get_server_invitation_status:server.id %}
                                                 <button class="btn btn-success w-25" disabled>Invited</button>
                                             {% else %}
-                                                <a href="{% url 'invite_server_user' server.id friend.user %}"
-                                               class="btn btn-success w-25">Invite</a>
+                                                <button type="button" class="btn btn-success w-25 invite_btn"
+                                                        onclick="inviteUser('{{ chat }}', '{{ friend.user.username }}')"
+                                                        data-chat="{{ chat }}">Invite
+                                                </button>
                                             {% endif %}
                                         {% endif %}
                                     </li>
@@ -147,5 +149,43 @@
                 </div>
             </div>
         </div>
+    {% endif %}
+    {% if request.user == server.owner %}
+        <script>
+            function inviteUser(chat, user) {
+                const chatSocket = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + '/ws/chat/'
+                    + `${chat}/`)
+                const chatNotificationSocket = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + '/ws/chat_notifications/'
+                    + `${chat}/`
+                );
+                chatNotificationSocket.onopen = function (e) {
+                    chatNotificationSocket.send(JSON.stringify({
+                        'channel_id': chat,
+                        'msg_id': Date.now()
+                    }));
+                    chatNotificationSocket.close();
+                }
+                chatSocket.onopen = function (e) {
+                    chatSocket.send(JSON.stringify({
+                        'type': 'server_invitation',
+                        'server_id': "{{ object.id }}",
+                        'invited_user': user,
+                        'author': '{{ user }}',
+                        'image': '{{ user.profile.image.url }}'
+                    }));
+                    chatSocket.close();
+                }
+                let btn = document.querySelector(`.invite_btn[data-chat="${chat}"]`)
+                btn.disabled = true;
+                btn.innerText = "Invited";
+            }
+
+        </script>
     {% endif %}
 {% endblock content %}
