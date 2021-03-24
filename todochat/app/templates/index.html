@@ -42,11 +42,12 @@
                 $day.append(a);
                 let currentRenderedDayDate = new Date(`${d.getUTCMonth() + 1}/${i}/${d.getUTCFullYear()}`).toLocaleDateString() // MM/DD/YYYY - for checking if there are tasks for each day
                 for (let z = tasks_counter; z < tasks.length; z++) {
-
-                    let task_date = new Date(tasks[z].fields.deadline).toLocaleDateString()
-                    if (task_date === currentRenderedDayDate) {
-                        $day.addClass('task__td');
-                        tasks_counter++;
+                    if (tasks[z]["deadline"] !== null) {
+                        let task_date = new Date(tasks[z]["deadline"]).toLocaleDateString()
+                        if (task_date === currentRenderedDayDate) {
+                            $day.addClass('task__td');
+                            tasks_counter++;
+                        }
                     }
                 }
                 if (i === currentDate) {
@@ -154,34 +155,36 @@
             </table>
         </div>
         <h2 class="text-center">Tasks ending today</h2>
-        <ul class="task__list">
-            {% for task in today_tasks %}
-                <li class="task__li">
-                    <article class="task">
-                        <section class="task__top">
-                            <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}
-                            </a>
-                            <div class="top__users task_status_section task_status_section--center">
-                                {% if task.status == "open" %}
-                                    <span class="badge open">Open</span>
-                                {% elif task.status == "approved" %}
-                                    <span class="badge bg-success">Approved</span>
-                                {% elif task.status == "need_more_work" %}
-                                    <span class="badge bg-warning">Need more work</span>
-                                {% elif task.status == "submitted_for_review" %}
-                                    <span class="badge bg-success">Submitted</span>
-                                {% endif %}
-                            </div>
-                        </section>
-                        <section class="task__date">
-                            Created on
-                            {{ task.created|date:"d M, Y" }}
-                            by
-                            <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
-                        </section>
-                    </article>
-                </li>
-            {% endfor %}
-        </ul>
+        {% if today_tasks.count > 0 %}
+            <ul class="task__list">
+                {% for task in today_tasks %}
+                    <li class="task__li">
+                        <article class="task">
+                            <section class="task__top">
+                                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}
+                                </a>
+                                <div class="top__users task_status_section task_status_section--center">
+                                    {% if task.status == "open" %}
+                                        <span class="badge open">Open</span>
+                                    {% elif task.status == "approved" %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif task.status == "need_more_work" %}
+                                        <span class="badge bg-warning">Need more work</span>
+                                    {% elif task.status == "submitted_for_review" %}
+                                        <span class="badge bg-success">Submitted</span>
+                                    {% endif %}
+                                </div>
+                            </section>
+                            <section class="task__date">
+                                Created on
+                                {{ task.created|date:"d M, Y" }}
+                                by
+                                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+                            </section>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </main>
 {% endblock content %}

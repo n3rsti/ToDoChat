@@ -13,6 +13,8 @@ from django.core import serializers
 from chat.models import Channel
 from app.forms import ServerUpdateForm, ServerCreateForm
 from django.contrib.auth.models import User
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 
 def create_num_id(length):
@@ -29,9 +31,9 @@ def create_random_id(length):
 
 @login_required
 def main_view(request):
-    tasks = request.user.users_tasks.all().order_by('created')
+    tasks = request.user.users_tasks.all().order_by('created').values('deadline')
     context = {
-        "tasks_json": serializers.serialize('json', tasks),
+        "tasks_json": json.dumps(list(tasks), cls=DjangoJSONEncoder),
         "today_tasks": Task.filter_by_date(datetime.today(), request.user)
     }
     return render(request, 'index.html', context)
