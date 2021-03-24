@@ -1,8 +1,6 @@
 import re
 from django import template
-from chat.models import Channel, ChannelMessage
 from app.models import ServerInvitation
-from users.models import UsersChat, UsersMessage
 register = template.Library()
 
 
