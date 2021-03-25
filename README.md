@@ -86,3 +86,8 @@ Plugins needs to be located in `todochat/static/ckeditor/ckeditor/plugins/`
 * Bootstrap
 * Daphne (for WebSockets) on deployment
 * Apache2
+
+
+## ToDo
+* HTML and CSS needs to be rewritten or at least refactored (app is not accessible yet and css has a lot of unused styles)
+* RWD for larger devices (now working on mobile devices only for testing backend functionality)
