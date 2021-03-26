@@ -148,6 +148,7 @@ class PersonalConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        invitation_status = text_data_json['type']
         invited = text_data_json['invited']
         invited_img = text_data_json['invited_img']
         inviting = text_data_json['inviting']
@@ -155,13 +156,16 @@ class PersonalConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type': 'invitation',
+                'type': invitation_status,
                 'invited': invited,
                 'invited_img': invited_img,
                 'inviting': inviting
             }
         )
-        async_to_sync(self.create_invitation(inviting, invited))
+        if invitation_status == "invitation":
+            async_to_sync(self.create_invitation(inviting, invited))
+        elif invitation_status == "cancel_invitation":
+            async_to_sync(self.delete_invitation(inviting, invited))
 
     def invitation(self, event):
         invited = event['invited']
@@ -169,6 +173,19 @@ class PersonalConsumer(WebsocketConsumer):
         inviting = event['inviting']
 
         self.send(text_data=json.dumps({
+            'type': 'invitation',
+            'invited': invited,
+            'invited_img': invited_img,
+            'inviting': inviting
+        }))
+
+    def cancel_invitation(self, event):
+        invited = event['invited']
+        invited_img = event['invited_img']
+        inviting = event['inviting']
+
+        self.send(text_data=json.dumps({
+            'type': 'cancel_invitation',
             'invited': invited,
             'invited_img': invited_img,
             'inviting': inviting
@@ -180,4 +197,9 @@ class PersonalConsumer(WebsocketConsumer):
             inviting_user = User.objects.get(username=inviting)
             invited_user = User.objects.get(username=invited)
             return UserInvitation.objects.create(inviting=inviting_user, invited=invited_user)
+
+    def delete_invitation(self, inviting, invited):
+        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+        if invitation is not None:
+            return invitation.delete()
 

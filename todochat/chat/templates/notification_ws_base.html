@@ -10,12 +10,6 @@
             + window.location.host
             + '/ws/{{ request.user }}/'
         );
-        personalWS.onopen = function () {
-            console.log("Personal websocket connection open");
-        }
-        personalWS.onmessage = function (e) {
-            console.log("Message received");
-        }
     }
 
     connectToPersonalWS();
@@ -30,6 +24,7 @@
         );
         inviteWS.onopen = function(){
             inviteWS.send(JSON.stringify({
+                'type': 'invitation',
                 'invited': invited,
                 'invited_img': invited_img,
                 'inviting': '{{ request.user }}'
@@ -39,12 +34,52 @@
         btn.innerText = "Cancel";
         btn.classList.remove("btn-primary");
         btn.classList.add("btn-danger");
+        let old_element = btn;
+        let new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        new_element.addEventListener("click", function(){
+            cancelFriendInvitation(new_element);
+        });
+    }
+    function cancelFriendInvitation(btn){
+        let invited = btn.dataset.user;
+        let invited_img = btn.dataset.user_img;
+
+        const inviteWS = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + `/ws/${invited}/`
+        );
+        inviteWS.onopen = function(){
+            inviteWS.send(JSON.stringify({
+                'type': 'cancel_invitation',
+                'invited': invited,
+                'invited_img': invited_img,
+                'inviting': '{{ request.user }}'
+            }))
+            inviteWS.close();
+        }
+        btn.innerText = "Invite";
+        btn.classList.remove("btn-danger");
+        btn.classList.add("btn-primary");
+        let old_element = btn;
+        let new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+        new_element.addEventListener("click", function(){
+            inviteFriend(new_element);
+        });
     }
     // Used in user_search.html
     function searchEventListeners(){
         $('.invite_friend_button').click(function(event){
             event.preventDefault();
             inviteFriend(this);
+        })
+    }
+    function cancelSearchEventListeners(){
+        $('.cancel_invite_friend_button').click(function(event){
+            event.preventDefault();
+            cancelFriendInvitation(this);
         })
     }
 

@@ -51,8 +51,10 @@
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-danger" value="cancel"
-                                                    name="invite_button">Cancel
+                                            <button type="submit" class="btn btn-danger cancel_invite_friend_button"
+                                                    value="cancel"
+                                                    name="invite_button" data-user="{{ result.username }}"
+                                                    data-user_img="{{ result.profile.image.url }}">Cancel
                                             </button>
                                         </form>
                                     {% elif result in request.user.profile.friends.all %}
@@ -62,8 +64,10 @@
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-primary invite_friend_button" value="invite"
-                                                    name="invite_button" data-user="{{ result.username }}" data-user_img="{{ result.profile.image.url }}">Invite
+                                            <button type="submit" class="btn btn-primary invite_friend_button"
+                                                    value="invite"
+                                                    name="invite_button" data-user="{{ result.username }}"
+                                                    data-user_img="{{ result.profile.image.url }}">Invite
                                             </button>
                                         </form>
                                     {% endif %}
@@ -81,5 +85,8 @@
 
 
     </main>
-    <script>searchEventListeners()</script>
+    <script>
+        searchEventListeners();
+        cancelSearchEventListeners();
+    </script>
 {% endblock content %}
