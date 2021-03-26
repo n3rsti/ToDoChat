@@ -9,4 +9,5 @@ websocket_urlpatterns = [
     re_path(r'ws/chat/(?P<id>\w+)/', users_consumers.ChatConsumer),
     re_path(r'ws/server/(?P<id>\w+)/', consumers.ServerNotificationConsumer),
     re_path(r'ws/chat_notifications/(?P<id>\w+)/', users_consumers.ChatNotificationConsumer),
+    re_path(r'ws/(?P<username>\w+)/', users_consumers.PersonalConsumer)
 ]

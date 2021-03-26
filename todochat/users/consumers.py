@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from users.models import UsersChat, UsersMessage
+from users.models import UsersChat, UsersMessage, UserInvitation
 from app.views import create_num_id, create_random_id
 from django.contrib.auth.models import User
 from app.models import ServerInvitation, Server
@@ -41,7 +41,6 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.create_server_invitation(server_id, invited_user, invitation_id))
         else:
             message = text_data_json['message']
-
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
@@ -125,3 +124,60 @@ class ChatNotificationConsumer(WebsocketConsumer):
                 'msg_id': msg_id
             }
         )
+
+
+class PersonalConsumer(WebsocketConsumer):
+    def connect(self):
+        self.username = self.scope['url_route']['kwargs']['username']
+        self.room_group_name = self.username
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Receive message from WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        invited = text_data_json['invited']
+        invited_img = text_data_json['invited_img']
+        inviting = text_data_json['inviting']
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'invitation',
+                'invited': invited,
+                'invited_img': invited_img,
+                'inviting': inviting
+            }
+        )
+        async_to_sync(self.create_invitation(inviting, invited))
+
+    def invitation(self, event):
+        invited = event['invited']
+        invited_img = event['invited_img']
+        inviting = event['inviting']
+
+        self.send(text_data=json.dumps({
+            'invited': invited,
+            'invited_img': invited_img,
+            'inviting': inviting
+        }))
+
+    def create_invitation(self, inviting, invited):
+        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+        if invitation is None:
+            inviting_user = User.objects.get(username=inviting)
+            invited_user = User.objects.get(username=invited)
+            return UserInvitation.objects.create(inviting=inviting_user, invited=invited_user)
+

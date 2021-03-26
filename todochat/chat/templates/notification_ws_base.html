@@ -3,7 +3,52 @@
     if (window.location.protocol === 'https:') {
         wsStart = 'wss://'
     }
-    function resetChannelNotifications(channel_id){
+
+    function connectToPersonalWS() {
+        const personalWS = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/{{ request.user }}/'
+        );
+        personalWS.onopen = function () {
+            console.log("Personal websocket connection open");
+        }
+        personalWS.onmessage = function (e) {
+            console.log("Message received");
+        }
+    }
+
+    connectToPersonalWS();
+    function inviteFriend(btn){
+        let invited = btn.dataset.user;
+        let invited_img = btn.dataset.user_img;
+
+        const inviteWS = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + `/ws/${invited}/`
+        );
+        inviteWS.onopen = function(){
+            inviteWS.send(JSON.stringify({
+                'invited': invited,
+                'invited_img': invited_img,
+                'inviting': '{{ request.user }}'
+            }))
+            inviteWS.close();
+        }
+        btn.innerText = "Cancel";
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-danger");
+    }
+    // Used in user_search.html
+    function searchEventListeners(){
+        $('.invite_friend_button').click(function(event){
+            event.preventDefault();
+            inviteFriend(this);
+        })
+    }
+
+    function resetChannelNotifications(channel_id) {
         localStorage.setItem(`${channel_id}_notifications`, "0");
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
     }
@@ -35,6 +80,7 @@
             }
         {% endfor %}
     }
+
     function checkUserNotificationsCounter() {
         {% for channel in request.user.users_chat.all %}
             if (localStorage["{{ channel.id }}_notifications"] !== "0" && !isNaN(localStorage["{{ channel.id }}_notifications"])) {
@@ -42,7 +88,9 @@
             }
         {% endfor %}
     }
+
     checkUserNotificationsCounter();
+
     function increment_notification_count(server_id, channel_id) {
         let server_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
         if (server_id !== "{{ server.id }}") {
