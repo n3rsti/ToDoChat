@@ -33,7 +33,7 @@
                                 <a href="{% url 'user_detail' result %}" class="btn btn-primary">Profile</a>
                                 {% if not result == request.user %}
                                     {% if result|get_invitation_status:request.user == "invited" %}
-                                        <form method="POST" class="search_invite-form">
+                                        <form method="POST" class="search_invite-form accept">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
                                             <button type="submit" class="btn btn-success" value="invite"
@@ -42,8 +42,11 @@
                                         </form>
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
-                                            <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-danger" value="reject"
+                                            <input type="hidden" name="inviting" value="{{ result }}">
+                                            <button type="submit"
+                                                    class="btn btn-danger cancel_invite_friend_button reject_button"
+                                                    value="reject" data-user="{{ result.username }}"
+                                                    data-user_img="{{ result.profile.image.url }}"
                                                     name="invite_button">Reject
                                             </button>
                                         </form>

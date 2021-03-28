@@ -44,6 +44,11 @@
     function cancelFriendInvitation(btn){
         let invited = btn.dataset.user;
         let invited_img = btn.dataset.user_img;
+        let inviting = "{{ request.user }}";
+        if(btn.classList.contains("reject_button")){
+            [invited, inviting] = [inviting, invited]
+            btn.parentNode.parentNode.querySelector(".accept").style.display="none";
+        }
 
         const inviteWS = new ReconnectingWebSocket(
             wsStart
@@ -55,7 +60,7 @@
                 'type': 'cancel_invitation',
                 'invited': invited,
                 'invited_img': invited_img,
-                'inviting': '{{ request.user }}'
+                'inviting': inviting
             }))
             inviteWS.close();
         }
