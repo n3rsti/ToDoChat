@@ -73,7 +73,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
                         invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
                         user.profile.friends.add(invited_user)
                         invited_user.profile.friends.add(user)
-                        invitation.delete()
+                        invitation.accept(invited_user, user)
                         return redirect('user_detail', invited_user.username)
 
                 invitation = UserInvitation(inviting=user, invited=invited_user)
@@ -121,9 +121,7 @@ class UserInvitations(LoginRequiredMixin, ListView):
         inviting = User.objects.filter(username=request.POST.get('inviting')).first()
         invitation = UserInvitation.objects.filter(inviting=inviting, invited=user).first()
         if request.POST.get('button') == 'accept':
-            user.profile.friends.add(inviting)
-            inviting.profile.friends.add(user)
-            invitation.delete()
+            invitation.accept(inviting, user)
             messages.success(request, 'Added friend!')
             return redirect('user_detail', request.POST.get('inviting'))
         else:
@@ -201,9 +199,7 @@ class UserSearchView(LoginRequiredMixin, ListView):
                 if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
                     if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
                         invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
-                        user.profile.friends.add(invited_user)
-                        invited_user.profile.friends.add(user)
-                        invitation.delete()
+                        invitation.accept(invited_user, user)
                         return redirect(f'/search?user={prev_search}')
 
                 invitation = UserInvitation(inviting=user, invited=invited_user)

@@ -31,6 +31,11 @@ class UserInvitation(models.Model):
     inviting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inviting_set')
     invited = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invited_user')
 
+    def accept(self, inviting, invited):
+        inviting.profile.friends.add(invited)
+        invited.profile.friends.add(inviting)
+        return self.delete()
+
 
 class UsersChat(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
