@@ -36,11 +36,13 @@
                                         <form method="POST" class="search_invite-form accept">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-success" value="invite"
-                                                    name="invite_button">Accept
+                                            <button type="submit" class="btn btn-success accept_invite_friend_button"
+                                                    value="invite"
+                                                    name="invite_button" data-user="{{ result.username }}"
+                                                    data-user_img="{{ result.profile.image.url }}">Accept
                                             </button>
                                         </form>
-                                        <form method="POST" class="search_invite-form">
+                                        <form method="POST" class="search_invite-form reject">
                                             {% csrf_token %}
                                             <input type="hidden" name="inviting" value="{{ result }}">
                                             <button type="submit"
@@ -91,5 +93,6 @@
     <script>
         searchEventListeners();
         cancelSearchEventListeners();
+        acceptSearchEventListeners();
     </script>
 {% endblock content %}

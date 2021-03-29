@@ -10,6 +10,9 @@
             + window.location.host
             + '/ws/{{ request.user }}/'
         );
+        personalWS.onmessage = function(e){
+            console.log(e.data);
+        }
     }
 
     connectToPersonalWS();
@@ -43,6 +46,7 @@
     }
     function cancelFriendInvitation(btn){
         let invited = btn.dataset.user;
+        let friend = invited;
         let invited_img = btn.dataset.user_img;
         let inviting = "{{ request.user }}";
         if(btn.classList.contains("reject_button")){
@@ -53,7 +57,7 @@
         const inviteWS = new ReconnectingWebSocket(
             wsStart
             + window.location.host
-            + `/ws/${invited}/`
+            + `/ws/${friend}/`
         );
         inviteWS.onopen = function(){
             inviteWS.send(JSON.stringify({
@@ -74,6 +78,35 @@
             inviteFriend(new_element);
         });
     }
+    function acceptFriendInvitation(btn){
+        let inviting = btn.dataset.user;
+        let invited_img = btn.dataset.user_img;
+        let invited = "{{ request.user }}";
+
+        const inviteWS = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + `/ws/${inviting}/`
+        );
+        inviteWS.onopen = function(){
+            inviteWS.send(JSON.stringify({
+                'type': 'accept_invitation',
+                'invited': invited,
+                'invited_img': invited_img,
+                'inviting': inviting
+            }))
+            inviteWS.close();
+        }
+        let profile_link = document.createElement("a");
+        profile_link.innerText = "Message";
+        profile_link.classList.add("btn");
+        profile_link.classList.add("btn-primary");
+        profile_link.href = `/profile/${inviting}/chat`;
+        btn.parentNode.parentNode.append(profile_link);
+        btn.parentNode.parentNode.removeChild(document.querySelector(".reject"));
+        btn.parentNode.parentNode.removeChild(document.querySelector(".accept"));
+
+    }
     // Used in user_search.html
     function searchEventListeners(){
         $('.invite_friend_button').click(function(event){
@@ -85,6 +118,12 @@
         $('.cancel_invite_friend_button').click(function(event){
             event.preventDefault();
             cancelFriendInvitation(this);
+        })
+    }
+    function acceptSearchEventListeners(){
+        $('.accept_invite_friend_button').click(function(event){
+            event.preventDefault();
+            acceptFriendInvitation(this);
         })
     }
 

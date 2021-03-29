@@ -166,6 +166,8 @@ class PersonalConsumer(WebsocketConsumer):
             async_to_sync(self.create_invitation(inviting, invited))
         elif invitation_status == "cancel_invitation":
             async_to_sync(self.delete_invitation(inviting, invited))
+        elif invitation_status == "accept_invitation":
+            async_to_sync(self.add_friend(inviting, invited))
 
     def invitation(self, event):
         invited = event['invited']
@@ -191,6 +193,18 @@ class PersonalConsumer(WebsocketConsumer):
             'inviting': inviting
         }))
 
+    def accept_invitation(self, event):
+        invited = event['invited']
+        invited_img = event['invited_img']
+        inviting = event['inviting']
+
+        self.send(text_data=json.dumps({
+            'type': 'accept_invitation',
+            'invited': invited,
+            'invited_img': invited_img,
+            'inviting': inviting
+        }))
+
     def create_invitation(self, inviting, invited):
         invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
         if invitation is None:
@@ -203,3 +217,11 @@ class PersonalConsumer(WebsocketConsumer):
         if invitation is not None:
             return invitation.delete()
 
+    def add_friend(self, inviting, invited):
+        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+        inviting_user = User.objects.get(username=inviting)
+        invited_user = User.objects.get(username=invited)
+        if (inviting_user not in invited_user.friends_set.all()) and invitation is not None:
+            inviting_user.profile.friends.add(invited_user)
+            invited_user.profile.friends.add(inviting_user)
+            return invitation.delete()
