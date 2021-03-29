@@ -126,6 +126,16 @@ class ChatNotificationConsumer(WebsocketConsumer):
         )
 
 
+def add_friend(inviting, invited):
+    invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+    inviting_user = User.objects.get(username=inviting)
+    invited_user = User.objects.get(username=invited)
+    if (inviting_user not in invited_user.friends_set.all()) and invitation is not None:
+        inviting_user.profile.friends.add(invited_user)
+        invited_user.profile.friends.add(inviting_user)
+        return invitation.delete()
+
+
 class PersonalConsumer(WebsocketConsumer):
     def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
@@ -167,7 +177,7 @@ class PersonalConsumer(WebsocketConsumer):
         elif invitation_status == "cancel_invitation":
             async_to_sync(self.delete_invitation(inviting, invited))
         elif invitation_status == "accept_invitation":
-            async_to_sync(self.add_friend(inviting, invited))
+            async_to_sync(add_friend(inviting, invited))
 
     def invitation(self, event):
         invited = event['invited']
@@ -215,13 +225,4 @@ class PersonalConsumer(WebsocketConsumer):
     def delete_invitation(self, inviting, invited):
         invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
         if invitation is not None:
-            return invitation.delete()
-
-    def add_friend(self, inviting, invited):
-        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
-        inviting_user = User.objects.get(username=inviting)
-        invited_user = User.objects.get(username=invited)
-        if (inviting_user not in invited_user.friends_set.all()) and invitation is not None:
-            inviting_user.profile.friends.add(invited_user)
-            invited_user.profile.friends.add(inviting_user)
             return invitation.delete()
