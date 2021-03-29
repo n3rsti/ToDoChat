@@ -1,0 +1,15 @@
+<section class="friend__buttons">
+    <a type="button" class="btn btn-primary" href="{% url 'user_chat' object.username %}">Send
+        message</a>
+    <div class="friend__info">
+        <button type="button" class="btn btn-light invite__button friends"><i
+                class="fas fa-user-check"></i></button>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="removed" value="{{ object.username }}">
+            <button type="submit" class="btn btn-danger invite__button remove" name="invite_button"
+                    value="remove">Remove friend
+            </button>
+        </form>
+    </div>
+</section>
