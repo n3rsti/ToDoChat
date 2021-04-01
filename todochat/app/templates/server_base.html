@@ -81,7 +81,7 @@
             <ul class="groups__ul friends__ul">
                 {% for friend, chat_id in request.user|get_friends_chat_id %}
                     <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
-                        <a href="{% url 'user_detail' friend.username %}" class="groups__li"
+                        <a href="{% url 'user_chat' friend.username %}" class="groups__li"
                            title="{{ friend.username }} profile">
                             <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
                                  class="users__img">
