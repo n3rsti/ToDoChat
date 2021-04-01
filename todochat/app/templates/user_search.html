@@ -56,7 +56,7 @@
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-danger cancel_invite_friend_button"
+                                            <button type="button" class="btn btn-danger cancel_invite_friend_button"
                                                     value="cancel"
                                                     name="invite_button" data-user="{{ result.username }}"
                                                     data-user_img="{{ result.profile.image.url }}">Cancel
@@ -69,7 +69,7 @@
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="submit" class="btn btn-primary invite_friend_button"
+                                            <button type="button" class="btn btn-primary invite_friend_button"
                                                     value="invite"
                                                     name="invite_button" data-user="{{ result.username }}"
                                                     data-user_img="{{ result.profile.image.url }}">Invite
@@ -91,8 +91,8 @@
 
     </main>
     <script>
-        searchEventListeners();
-        cancelSearchEventListeners();
-        acceptSearchEventListeners();
+        user_searchListeners.invitationEventListeners();
+        user_searchListeners.cancelInvitationEventListeners();
+        user_searchListeners.acceptInvitationEventListeners();
     </script>
 {% endblock content %}

@@ -10,168 +10,188 @@
             + window.location.host
             + '/ws/{{ request.user }}/'
         );
-        personalWS.onmessage = function(e){
+        personalWS.onmessage = function (e) {
             console.log(e.data);
         }
     }
 
     connectToPersonalWS();
-    function inviteFriendBase(btn){
-        let invited = btn.dataset.user;
-        let invited_img = btn.dataset.user_img;
 
-        const inviteWS = new ReconnectingWebSocket(
-            wsStart
-            + window.location.host
-            + `/ws/${invited}/`
-        );
-        inviteWS.onopen = function(){
-            inviteWS.send(JSON.stringify({
-                'type': 'invitation',
-                'invited': invited,
-                'invited_img': invited_img,
-                'inviting': '{{ request.user }}'
-            }))
-            inviteWS.close();
+
+    // Base for every view using these functions. Contains websocket connection + websocket.send
+    let invitationBase = {
+        invite: function (btn) {
+            let invited = btn.dataset.user;
+            let invited_img = btn.dataset.user_img;
+
+            const inviteWS = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + `/ws/${invited}/`
+            );
+            inviteWS.onopen = function () {
+                inviteWS.send(JSON.stringify({
+                    'type': 'invitation',
+                    'invited': invited,
+                    'invited_img': invited_img,
+                    'inviting': '{{ request.user }}'
+                }))
+                inviteWS.close();
+            }
+        },
+        cancel: function (btn) {
+            let invited = btn.dataset.user;
+            let friend = invited;
+            let invited_img = btn.dataset.user_img;
+            let inviting = "{{ request.user }}";
+            if (btn.classList.contains("reject_button")) {
+                [invited, inviting] = [inviting, invited]
+                btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
+            }
+
+            const inviteWS = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + `/ws/${friend}/`
+            );
+            inviteWS.onopen = function () {
+                inviteWS.send(JSON.stringify({
+                    'type': 'cancel_invitation',
+                    'invited': invited,
+                    'invited_img': invited_img,
+                    'inviting': inviting
+                }))
+                inviteWS.close();
+            }
+        },
+        accept: function (btn) {
+            let inviting = btn.dataset.user;
+            let invited_img = btn.dataset.user_img;
+            let invited = "{{ request.user }}";
+
+            const inviteWS = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + `/ws/${inviting}/`
+            );
+            inviteWS.onopen = function () {
+                inviteWS.send(JSON.stringify({
+                    'type': 'accept_invitation',
+                    'invited': invited,
+                    'invited_img': invited_img,
+                    'inviting': inviting
+                }))
+                inviteWS.close();
+            }
         }
     }
-    function inviteFriend(btn){
-        inviteFriendBase(btn);
-        btn.innerText = "Cancel";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-danger");
-        let old_element = btn;
-        let new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-        new_element.addEventListener("click", function(){
-            cancelFriendInvitation(new_element);
-        });
-    }
-    function cancelFriendInvitationBase(btn){
-        let invited = btn.dataset.user;
-        let friend = invited;
-        let invited_img = btn.dataset.user_img;
-        let inviting = "{{ request.user }}";
-        if(btn.classList.contains("reject_button")){
-            [invited, inviting] = [inviting, invited]
-            btn.parentNode.parentNode.querySelector(".accept").style.display="none";
-        }
 
-        const inviteWS = new ReconnectingWebSocket(
-            wsStart
-            + window.location.host
-            + `/ws/${friend}/`
-        );
-        inviteWS.onopen = function(){
-            inviteWS.send(JSON.stringify({
-                'type': 'cancel_invitation',
-                'invited': invited,
-                'invited_img': invited_img,
-                'inviting': inviting
-            }))
-            inviteWS.close();
-        }
-    }
-    function cancelFriendInvitation(btn){
-        cancelFriendInvitationBase(btn);
-        btn.innerText = "Invite";
-        btn.classList.remove("btn-danger");
-        btn.classList.add("btn-primary");
-        let old_element = btn;
-        let new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-        new_element.addEventListener("click", function(){
-            inviteFriend(new_element);
-        });
-    }
-    function cancelFriendInvitation_profile(btn){
-        cancelFriendInvitationBase(btn);
-        btn.innerText = "Add friend"
-        btn.classList.add("btn-primary");
-        btn.classList.remove("btn-danger");
-        let old_element = btn;
-        let new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-        new_element.addEventListener("click", function(){
-            inviteFriendProfile(new_element);
-        });
-    }
-    function acceptFriendInvitationBase(btn){
-        let inviting = btn.dataset.user;
-        let invited_img = btn.dataset.user_img;
-        let invited = "{{ request.user }}";
 
-        const inviteWS = new ReconnectingWebSocket(
-            wsStart
-            + window.location.host
-            + `/ws/${inviting}/`
-        );
-        inviteWS.onopen = function(){
-            inviteWS.send(JSON.stringify({
-                'type': 'accept_invitation',
-                'invited': invited,
-                'invited_img': invited_img,
-                'inviting': inviting
-            }))
-            inviteWS.close();
+    let searchInvitationFunctions = {
+        invite: function (btn) {
+            invitationBase.invite(btn);
+            btn.innerText = "Cancel";
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-danger");
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+            new_element.addEventListener("click", function () {
+                searchInvitationFunctions.cancel(new_element);
+            });
+        },
+        cancel: function (btn) {
+            invitationBase.cancel(btn);
+            btn.innerText = "Invite";
+            btn.classList.remove("btn-danger");
+            btn.classList.add("btn-primary");
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+            new_element.addEventListener("click", function () {
+                searchInvitationFunctions.invite(new_element);
+            });
+        },
+        accept: function (btn) {
+            invitationBase.accept(btn);
+            let profile_link = document.createElement("a");
+            let inviting = btn.dataset.user;
+            profile_link.innerText = "Message";
+            profile_link.classList.add("btn");
+            profile_link.classList.add("btn-primary");
+            profile_link.href = `/profile/${inviting}/chat`;
+            btn.parentNode.parentNode.append(profile_link);
+            btn.parentNode.parentNode.removeChild(document.querySelector(".reject"));
+            btn.parentNode.parentNode.removeChild(document.querySelector(".accept"));
+
         }
     }
-    function acceptFriendInvitation(btn){
-        acceptFriendInvitationBase(btn);
-        let profile_link = document.createElement("a");
-        profile_link.innerText = "Message";
-        profile_link.classList.add("btn");
-        profile_link.classList.add("btn-primary");
-        profile_link.href = `/profile/${inviting}/chat`;
-        btn.parentNode.parentNode.append(profile_link);
-        btn.parentNode.parentNode.removeChild(document.querySelector(".reject"));
-        btn.parentNode.parentNode.removeChild(document.querySelector(".accept"));
 
+    let profileInvitation = {
+        cancel: function (btn) {
+            invitationBase.cancel(btn);
+            btn.innerText = "Add friend"
+            btn.classList.add("btn-primary");
+            btn.classList.remove("btn-danger");
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+            new_element.addEventListener("click", function () {
+                profileInvitation.invite(new_element);
+            });
+        },
+        invite: function (btn) {
+            invitationBase.invite(btn);
+            btn.innerText = "Cancel invitation";
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-danger");
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+            new_element.addEventListener("click", function () {
+                profileInvitation.cancel(new_element);
+            });
+        }
     }
-    function inviteFriendProfile(btn){
-        inviteFriendBase(btn);
-        btn.innerText = "Cancel invitation";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-danger");
-        let old_element = btn;
-        let new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-        new_element.addEventListener("click", function(){
-            cancelFriendInvitation_profile(new_element);
-        });
 
-    }
+
     // Used in user_search.html
-    function searchEventListeners(){
-        $('.invite_friend_button').click(function(event){
-            event.preventDefault();
-            inviteFriend(this);
-        })
+    let user_searchListeners = {
+        invitationEventListeners: function () {
+            $('.invite_friend_button').click(function (event) {
+                event.preventDefault();
+                searchInvitationFunctions.invite(this);
+            })
+        },
+        cancelInvitationEventListeners: function () {
+            $('.cancel_invite_friend_button').click(function (event) {
+                event.preventDefault();
+                searchInvitationFunctions.cancel(this);
+            })
+        },
+        acceptInvitationEventListeners: function () {
+            $('.accept_invite_friend_button').click(function (event) {
+                event.preventDefault();
+                searchInvitationFunctions.accept(this);
+            })
+        }
     }
-    function addFriendEventListeners_profile(){
-        $('.invite_friend_button').click(function(event){
-            event.preventDefault();
-            inviteFriendProfile(this);
-        })
+
+    let profileListeners = {
+        addFriendEventListeners: function () {
+            $('.invite_friend_button').click(function (event) {
+                event.preventDefault();
+                profileInvitation.invite(this);
+            })
+        },
+        cancelInvitationEventListeners: function () {
+            $('.cancel_invite_friend_button').click(function (event) {
+                event.preventDefault();
+                profileInvitation.cancel(this);
+            })
+        }
     }
-    function cancelSearchEventListeners(){
-        $('.cancel_invite_friend_button').click(function(event){
-            event.preventDefault();
-            cancelFriendInvitation(this);
-        })
-    }
-    function cancelFriendInvitationEventListeners_profile(){
-        $('.cancel_invite_friend_button').click(function(event){
-            event.preventDefault();
-            cancelFriendInvitation_profile(this);
-        })
-    }
-    function acceptSearchEventListeners(){
-        $('.accept_invite_friend_button').click(function(event){
-            event.preventDefault();
-            acceptFriendInvitation(this);
-        })
-    }
+
 
     function resetChannelNotifications(channel_id) {
         localStorage.setItem(`${channel_id}_notifications`, "0");

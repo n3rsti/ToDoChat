@@ -71,8 +71,8 @@
         }
     </style>
     <script>
-        addFriendEventListeners_profile();
-        cancelFriendInvitationEventListeners_profile();
+        profileListeners.addFriendEventListeners();
+        profileListeners.cancelInvitationEventListeners();
         const profile_friend_section = `{% include "profile_friend_base.html" %}`;
     </script>
 {% endblock content %}
