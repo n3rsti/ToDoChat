@@ -22,7 +22,9 @@
                     <form method="POST" class="user_detail_form">
                         {% csrf_token %}
                         <input type="hidden" name="invited" value="{{ object.username }}">
-                        <button type="submit" class="btn btn-danger" value="cancel" name="invite_button">Cancel
+                        <button type="submit" class="btn btn-danger cancel_invite_friend_button" value="cancel"
+                                name="invite_button" data-user="{{ object.username }}"
+                                data-user_img="{{ object.profile.image.url }}">Cancel
                             invitation
                         </button>
                     </form>
@@ -33,14 +35,16 @@
                                value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
                         <button type="submit" class="btn btn-success" value="invite" name="invite_button">Accept
                         </button>
-                        <button type="submit" class="btn btn-danger ml-1" name="invite_button" value="reject">Reject</button>
+                        <button type="submit" class="btn btn-danger ml-1" name="invite_button" value="reject">Reject
+                        </button>
                     </form>
                 {% else %}
                     <form method="POST" class="user_detail_form">
                         {% csrf_token %}
                         <input type="hidden" name="invited" value="{{ object.username }}">
-                        <button type="submit" class="btn btn-primary invite" value="invite" name="invite_button"><i
-                                class="fas fa-user-plus"></i>Add
+                        <button type="submit" class="btn btn-primary invite invite_friend_button" value="invite"
+                                name="invite_button" data-user="{{ object.username }}"
+                                data-user_img="{{ object.profile.image.url }}">Add friend
                         </button>
                     </form>
                 {% endif %}
@@ -67,6 +71,8 @@
         }
     </style>
     <script>
+        addFriendEventListeners_profile();
+        cancelFriendInvitationEventListeners_profile();
         const profile_friend_section = `{% include "profile_friend_base.html" %}`;
     </script>
 {% endblock content %}

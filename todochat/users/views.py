@@ -70,18 +70,16 @@ class UserDetailView(LoginRequiredMixin, DetailView):
             if invited_user is not None:
                 if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
                     if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
-                        invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
-                        user.profile.friends.add(invited_user)
-                        invited_user.profile.friends.add(user)
+                        invitation = UserInvitation.objects.get(inviting=invited_user, invited=user)
                         invitation.accept(invited_user, user)
                         return redirect('user_detail', invited_user.username)
 
                 invitation = UserInvitation(inviting=user, invited=invited_user)
                 invitation.save()
-                return redirect('user_detail', invited_user.username)
+            return redirect('user_detail', invited_user.username)
 
         elif request.POST.get('invite_button') == 'reject':
-            inviting_user = User.objects.get(username=self.request.POST.get('inviting'))
+            inviting_user = User.objects.get(username=self.request.POST.get('invited'))
             invitation = UserInvitation.objects.get(invited=self.request.user, inviting=inviting_user)
             invitation.delete()
             return redirect('user_detail', inviting_user.username)
