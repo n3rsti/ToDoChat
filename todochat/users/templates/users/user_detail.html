@@ -33,11 +33,13 @@
                         {% csrf_token %}
                         <input type="hidden" name="invited"
                                value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
-                        <button type="submit" class="btn btn-success accept_invite_friend_button" value="invite"
+                        <button type="submit" class="btn btn-success accept_invite_friend_button accept" value="invite"
                                 name="invite_button" data-user="{{ object.username }}"
                                 data-user_img="{{ object.profile.image.url }}">Accept
                         </button>
-                        <button type="submit" class="btn btn-danger ml-1" name="invite_button" value="reject">Reject
+                        <button type="submit" class="btn btn-danger ml-1 cancel_invite_friend_button reject_button"
+                                name="invite_button" value="reject" data-user="{{ object.username }}"
+                                data-user_img="{{ object.profile.image.url }}">Reject
                         </button>
                     </form>
                 {% else %}
@@ -81,6 +83,7 @@
         This function is created here, not in notification_ws_base.html, because it's using other html file: profile_friend_base.html
         so we want it to only be rendered in this file.
         {% endcomment %}
+
         function acceptInvitation(btn) {
             invitationBase.accept(btn);
             let form = btn.parentNode;
