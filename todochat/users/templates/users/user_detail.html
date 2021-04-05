@@ -16,7 +16,9 @@
         <h1 class="title--thin profile_invited">{{ object.username }}</h1>
         {% if not object == user %}
             {% if object in user.profile.friends.all %}
-                {% include "profile_friend_base.html" %}
+                <section class="friend__buttons">
+                    {% include "profile_friend_base.html" %}
+                </section>
             {% else %}
                 {% if invitation == 'waiting' %}
                     <form method="POST" class="user_detail_form">

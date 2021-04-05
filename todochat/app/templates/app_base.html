@@ -71,6 +71,7 @@
         </a>
         {% if user.profile.friends.count > 0 %}
             <h2 class="groups__h2">Friends</h2>
+        {% endif %}
             <ul class="groups__ul friends__ul">
                 {% for friend, chat_id in request.user|get_friends_chat_id %}
                     <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
@@ -85,7 +86,6 @@
 
                 {% endfor %}
             </ul>
-        {% endif %}
     </section>
     <div class="add__li">
         <a href="{% url 'user_search' %}" class="nav__add-button nav__add-button--friend" title="Create server">

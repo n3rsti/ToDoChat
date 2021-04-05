@@ -12,6 +12,32 @@
         );
         personalWS.onmessage = function (e) {
             console.log(e.data);
+            let data = JSON.parse(e.data);
+            if (data.type === "accept_invitation") {
+                let username = data.invited;
+                let user_img = data.invited_img;
+                let chat_id = "123";
+                let friend_li = document.createElement("li");
+                friend_li.classList.add("flex", "pl-3", "groups__li");
+                friend_li.dataset.channel = chat_id;
+                let link = document.createElement("a");
+                link.classList.add("groups__li");
+                link.title = `${username} profile`;
+                link.href = `/profile/${username}`;
+                let img = document.createElement("img");
+                img.classList.add("users__img");
+                img.src = user_img;
+                img.alt = `${username} profile picture`;
+                let span = document.createElement("span");
+                span.classList.add("badge", "bg-light", "text-dark", "notification-badge");
+                span.innerText = "0";
+
+                link.appendChild(img);
+                link.innerHTML += username;
+                link.appendChild(span);
+                friend_li.appendChild(link);
+                document.querySelector(".friends__ul").appendChild(friend_li);
+            }
         }
     }
 
@@ -48,7 +74,7 @@
                 [invited, inviting] = [inviting, invited]
                 btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
             }
-            if(btn.classList.contains("swap")){
+            if (btn.classList.contains("swap")) {
                 [invited, inviting] = [inviting, invited];
             }
 
@@ -232,6 +258,7 @@
             })
         }
     }
+
     function resetChannelNotifications(channel_id) {
         localStorage.setItem(`${channel_id}_notifications`, "0");
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
