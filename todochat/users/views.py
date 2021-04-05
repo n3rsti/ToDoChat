@@ -118,9 +118,9 @@ class UserInvitations(LoginRequiredMixin, ListView):
         user = request.user
         inviting = User.objects.filter(username=request.POST.get('inviting')).first()
         invitation = UserInvitation.objects.filter(inviting=inviting, invited=user).first()
-        if request.POST.get('button') == 'accept':
+
+        if request.POST.get('invite_button') == 'accept':
             invitation.accept(inviting, user)
-            messages.success(request, 'Added friend!')
             return redirect('user_detail', request.POST.get('inviting'))
         else:
             invitation.delete()

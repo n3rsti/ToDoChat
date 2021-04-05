@@ -12,28 +12,42 @@
         {% if object_list.count == 0 %}
             <h2 class="title--thin">No invitations.</h2>
         {% endif %}
-        {% for invitation in object_list %}
+    <ul class="user_search_list">
+                {% for invitation in object_list %}
+                    <li class="search__li">
+                        <div class="card user_search">
+                            <div class="card__description"
+                                 style="background-image: url('{{ invitation.inviting.profile.background.url }}')">
+                                <img src="{{ invitation.inviting.profile.image.url }}" class="card-img-top"
+                                     alt="{{ invitation.inviting }} profile picture">
+                                <a class="card__title" href="{% url 'user_detail' invitation.inviting %}">{{ invitation.inviting.username }}</a>
+                            </div>
+                            <div class="card-body">
+                                        <form method="POST" class="search_invite-form accept flex w-100">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="inviting" value="{{ invitation.inviting.username }}">
+                                            <button type="submit" class="btn btn-success accept_invite_friend_button"
+                                                    value="accept"
+                                                    name="invite_button" data-user="{{ invitation.inviting.username }}"
+                                                    data-user_img="{{ invitation.inviting.profile.image.url }}">Accept
+                                            </button>
+                                            <button type="submit"
+                                                    class="btn btn-danger reject_friend_button swap"
+                                                    value="reject" data-user="{{ invitation.inviting.username }}"
+                                                    data-user_img="{{ invitation.inviting.profile.image.url }}"
+                                                    name="invite_button">Reject
+                                            </button>
+                                        </form>
 
-            <article class="invitation {% if forloop.first %}invitation--first{% endif %}">
-                <a href="{% url 'user_detail' invitation.inviting.username %}" class="invitation__top"
-                   title="{{ invitation.inviting.username }} profile">
-                    <img src="{{ invitation.inviting.profile.image.url }}"
-                         alt="{{ invitation.inviting.username }} image" class="profile__photo">
-                    <h2 class="invitation__inviting">{{ invitation.inviting }}</h2>
-                </a>
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="inviting" value="{{ invitation.inviting.username }}">
-                    <input type="hidden" name="invited" value="{{ invitation.invited.username }}">
-                    <button name="button" type="submit" value="accept" class="invitation__button btn btn-primary"><i
-                            class="fas fa-check"></i>Accept
-                    </button>
-                    <button type="submit" name="button" value="reject" class="invitation__button btn btn-danger">
-                        Reject
-                    </button>
-                </form>
-            </article>
-        {% endfor %}
-        {{ object }}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+
     </main>
+    <script>
+        invitationsListListeners.accept();
+        invitationsListListeners.reject();
+    </script>
 {% endblock content %}

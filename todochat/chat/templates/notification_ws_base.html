@@ -48,6 +48,9 @@
                 [invited, inviting] = [inviting, invited]
                 btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
             }
+            if(btn.classList.contains("swap")){
+                [invited, inviting] = [inviting, invited];
+            }
 
             const inviteWS = new ReconnectingWebSocket(
                 wsStart
@@ -153,7 +156,30 @@
             });
         }
     }
-
+    let invitationsListFunctions = {
+        reject: function (btn) {
+            invitationBase.cancel(btn);
+            btn.innerText = "Rejected";
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-danger");
+            btn.disabled = true;
+            document.querySelector('.accept_invite_friend_button').remove();
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+        },
+        accept: function (btn) {
+            invitationBase.accept(btn);
+            btn.innerText = "Accepted";
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-success");
+            btn.disabled = true;
+            document.querySelector('.reject_invite_friend_button').remove();
+            let old_element = btn;
+            let new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+        }
+    }
 
     // Used in user_search.html
     let user_searchListeners = {
@@ -192,7 +218,20 @@
         }
     }
 
-
+    let invitationsListListeners = {
+        reject: function () {
+            $('.reject_friend_button').click(function (event) {
+                event.preventDefault();
+                invitationsListFunctions.reject(this);
+            })
+        },
+        accept: function () {
+            $('.accept_invite_friend_button').click(function (event) {
+                event.preventDefault();
+                invitationsListFunctions.accept(this);
+            })
+        }
+    }
     function resetChannelNotifications(channel_id) {
         localStorage.setItem(`${channel_id}_notifications`, "0");
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
