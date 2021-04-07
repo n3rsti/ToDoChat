@@ -12,13 +12,16 @@ class ChatConsumer(WebsocketConsumer):
         self.chat_id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = f'chat_{self.chat_id}'
         self.channel = UsersChat.objects.get(id=self.chat_id)
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
+        self.user = User.objects.get(username=self.scope['user'])
 
-        self.accept()
+        if self.user in self.channel.users.all():
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
+
+            self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -53,7 +56,7 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-        async_to_sync(self.create_chat_message(message, author))
+        async_to_sync(self.create_chat_message(message))
 
     # Receive message from room group
     def chat_message(self, event):
@@ -67,13 +70,12 @@ class ChatConsumer(WebsocketConsumer):
             'image': image
         }))
 
-    def create_chat_message(self, message, author):
-        channel = self.channel
-        id = create_num_id(20)
-        author_obj = User.objects.get(username=author)
-        while not UsersMessage.objects.filter(id=id).first() is None:
-            id = create_num_id(20)
-        return UsersMessage.objects.create(id=id, chat=channel, content=message, author=author_obj)
+    def create_chat_message(self, message):
+        msg_id = create_num_id(20)
+        author_obj = self.user
+        while not UsersMessage.objects.filter(id=msg_id).first() is None:
+            msg_id = create_num_id(20)
+        return UsersMessage.objects.create(id=msg_id, chat=self.channel, content=message, author=author_obj)
 
     def create_server_invitation(self, server_id, invited_user, invitation_id):
         if ServerInvitation.objects.filter(id=invitation_id).first() is None:
