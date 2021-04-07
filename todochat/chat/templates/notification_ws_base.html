@@ -46,6 +46,14 @@
                     form.parentNode.replaceChild(section, form);
                     document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
                 }
+                if(document.querySelector("#user_search")){
+                    let btn = document.querySelector("#cancel_button");
+                    let link = document.createElement("a");
+                    link.classList.add("btn", "btn-primary");
+                    link.href = `/profile/${username}/chat`;
+                    link.innerText = "Message";
+                    btn.parentNode.replaceChild(link, btn);
+                }
             }
         }
     }
@@ -131,6 +139,7 @@
             btn.innerText = "Cancel";
             btn.classList.remove("btn-primary");
             btn.classList.add("btn-danger");
+            btn.id = "cancel_button";
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);

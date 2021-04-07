@@ -3,7 +3,7 @@
 {% block title %}<title>Search | ToDoChat</title>{% endblock title %}
 {% block content %}
     {% include "app_base.html" %}
-    <main class="content content--profile">
+    <main class="content content--profile" id="user_search">
         <h1 class="title--thin margin">Search for users</h1>
         <form class="search_form form-inline" method="GET">
             <div class="input-group">
@@ -56,14 +56,14 @@
                                         <form method="POST" class="search_invite-form">
                                             {% csrf_token %}
                                             <input type="hidden" name="invited" value="{{ result }}">
-                                            <button type="button" class="btn btn-danger cancel_invite_friend_button"
+                                            <button type="button" id="cancel_button" class="btn btn-danger cancel_invite_friend_button"
                                                     value="cancel"
                                                     name="invite_button" data-user="{{ result.username }}"
                                                     data-user_img="{{ result.profile.image.url }}">Cancel
                                             </button>
                                         </form>
                                     {% elif result in request.user.profile.friends.all %}
-                                        <a type="submit" href="{% url 'user_chat' result.username %}"
+                                        <a href="{% url 'user_chat' result.username %}"
                                            class="btn btn-primary">Message</a>
                                     {% else %}
                                         <form method="POST" class="search_invite-form">
