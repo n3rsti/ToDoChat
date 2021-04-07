@@ -37,6 +37,15 @@
                 link.appendChild(span);
                 friend_li.appendChild(link);
                 document.querySelector(".friends__ul").appendChild(friend_li);
+                if (document.querySelector("#user_detail_form")) {
+                    let form = document.querySelector("#user_detail_form");
+                    let section = document.createElement("section");
+                    section.classList.add("friend__buttons");
+                    section.id = "friend__buttons";
+                    section.innerHTML = profile_friend_section;
+                    form.parentNode.replaceChild(section, form);
+                    document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
+                }
             }
         }
     }

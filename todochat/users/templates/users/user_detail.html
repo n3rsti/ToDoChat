@@ -16,12 +16,12 @@
         <h1 class="title--thin profile_invited">{{ object.username }}</h1>
         {% if not object == user %}
             {% if object in user.profile.friends.all %}
-                <section class="friend__buttons">
+                <section class="friend__buttons" id="friend__buttons">
                     {% include "profile_friend_base.html" %}
                 </section>
             {% else %}
                 {% if invitation == 'waiting' %}
-                    <form method="POST" class="user_detail_form">
+                    <form method="POST" class="user_detail_form" id="user_detail_form">
                         {% csrf_token %}
                         <input type="hidden" name="invited" value="{{ object.username }}">
                         <button type="submit" class="btn btn-danger cancel_invite_friend_button" value="cancel"
@@ -45,7 +45,7 @@
                         </button>
                     </form>
                 {% else %}
-                    <form method="POST" class="user_detail_form">
+                    <form method="POST" class="user_detail_form" id="user_detail_form">
                         {% csrf_token %}
                         <input type="hidden" name="invited" value="{{ object.username }}">
                         <button type="submit" class="btn btn-primary invite invite_friend_button" value="invite"
@@ -79,7 +79,7 @@
     <script>
         profileListeners.addFriendEventListeners();
         profileListeners.cancelInvitationEventListeners();
-        const profile_friend_section = `{% include "profile_friend_base.html" %}`;
+        let profile_friend_section = `{% include "profile_friend_base.html" %}`;
 
         {% comment %}
         This function is created here, not in notification_ws_base.html, because it's using other html file: profile_friend_base.html
@@ -91,6 +91,7 @@
             let form = btn.parentNode;
             let section = document.createElement("section");
             section.classList.add("friend__buttons");
+            section.id = "friend__buttons";
             section.innerHTML = profile_friend_section;
             form.parentNode.replaceChild(section, form);
             document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
