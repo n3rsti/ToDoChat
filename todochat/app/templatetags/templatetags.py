@@ -41,8 +41,10 @@ def get_server_invitation_status(user, server_id):
 def get_friends_chat_id(user):
     friends = user.profile.friends.all()
     users_chat = user.users_chat.all()
-
-    return zip(friends, users_chat)
+    chats = []
+    for friend in friends:
+        chats.append(users_chat.filter(users=user).filter(users=friend).first())
+    return zip(friends, chats)
 
 @register.filter
 def get_userschat_objects(request_user):
