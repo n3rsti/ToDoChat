@@ -22,19 +22,21 @@ Websocket connections are separate so they won't send unnecessary details every 
 
 
 class ChatConsumer(WebsocketConsumer):
-    def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.server_id = self.scope['url_route']['kwargs']['pk']
-        self.room_group_name = f'chat_{self.server_id}_{self.room_name}'
-        self.channel = Channel.objects.get(server=Server.objects.get(id=self.server_id), name=self.room_name)
-        author = self.scope['user']
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
 
-        self.accept()
+    def connect(self):
+        room_name = self.scope['url_route']['kwargs']['room_name']
+        server_id = self.scope['url_route']['kwargs']['pk']
+        self.room_group_name = f'chat_{server_id}_{room_name}'
+        self.channel = Channel.objects.get(server=Server.objects.get(id=server_id), name=room_name)
+        self.user = User.objects.get(username=self.scope['user'])
+        if self.user in self.channel.server.users.all():
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
+
+            self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -60,7 +62,7 @@ class ChatConsumer(WebsocketConsumer):
                 'image': image
             }
         )
-        async_to_sync(self.create_chat_message(message, author))
+        async_to_sync(self.create_chat_message(message))
 
     # Receive message from room group
     def chat_message(self, event):
@@ -74,26 +76,29 @@ class ChatConsumer(WebsocketConsumer):
             'image': image
         }))
 
-    def create_chat_message(self, message, author):
+    def create_chat_message(self, message):
         channel = self.channel
-        id = create_num_id(20)
-        author_obj = User.objects.get(username=author)
-        while not ChannelMessage.objects.filter(id=id).first() is None:
-            id = create_num_id(20)
-        return ChannelMessage.objects.create(id=id, channel=channel, content=message, author=author_obj)
+        msg_id = create_num_id(20)
+        author_obj = self.user
+        while not ChannelMessage.objects.filter(id=msg_id).first() is None:
+            msg_id = create_num_id(20)
+        return ChannelMessage.objects.create(id=msg_id, channel=channel, content=message, author=author_obj)
 
 
 class ServerNotificationConsumer(ChatConsumer):
     def connect(self):
-        self.server_id = self.scope['url_route']['kwargs']['id']
-        self.room_group_name = f'server_{self.server_id}'
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
+        server_id = self.scope['url_route']['kwargs']['id']
+        self.room_group_name = f'server_{server_id}'
+        server = Server.objects.get(id=server_id)
+        user = User.objects.get(username=self.scope['user'])
+        if user in server.users.all():
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
 
-        self.accept()
+            self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
