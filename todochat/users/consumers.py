@@ -88,12 +88,15 @@ class ChatNotificationConsumer(WebsocketConsumer):
     def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = f'chatnotifications_{self.chat_id}'
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
-        self.accept()
+        channel = UsersChat.objects.get(id=self.chat_id)
+        user = self.scope['user']
+        if user in channel.users.all():
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
+            self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -132,6 +135,7 @@ class PersonalConsumer(WebsocketConsumer):
     def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
         self.room_group_name = self.username
+        self.user = self.scope['user']
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -164,12 +168,17 @@ class PersonalConsumer(WebsocketConsumer):
                 'inviting': inviting
             }
         )
-        if invitation_status == "invitation":
-            async_to_sync(self.create_invitation(inviting, invited))
-        elif invitation_status == "cancel_invitation":
-            async_to_sync(self.delete_invitation(inviting, invited))
-        elif invitation_status == "accept_invitation":
-            async_to_sync(self.add_friend(inviting, invited))
+        if self.user.username == inviting:
+            if invitation_status == "invitation":
+                async_to_sync(self.create_invitation(invited))
+            elif invitation_status == "cancel_invitation":
+                async_to_sync(self.delete_invitation(inviting, invited))
+
+        elif self.user.username == invited:
+            if invitation_status == "cancel_invitation":
+                async_to_sync(self.delete_invitation(inviting, invited))
+            elif invitation_status == "accept_invitation":
+                async_to_sync(self.add_friend(inviting))
 
     def invitation(self, event):
         invited = event['invited']
@@ -207,21 +216,19 @@ class PersonalConsumer(WebsocketConsumer):
             'inviting': inviting
         }))
 
-    def create_invitation(self, inviting, invited):
-        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+    def create_invitation(self, invited):
+        invitation = UserInvitation.objects.filter(inviting=self.user, invited__username=invited).first()
         if invitation is None:
-            inviting_user = User.objects.get(username=inviting)
             invited_user = User.objects.get(username=invited)
-            return UserInvitation.objects.create(inviting=inviting_user, invited=invited_user)
+            return UserInvitation.objects.create(inviting=self.user, invited=invited_user)
 
     def delete_invitation(self, inviting, invited):
         invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
         if invitation is not None:
             return invitation.delete()
 
-    def add_friend(self, inviting, invited):
-        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited__username=invited).first()
+    def add_friend(self, inviting):
+        invitation = UserInvitation.objects.filter(inviting__username=inviting, invited=self.user).first()
         inviting_user = User.objects.get(username=inviting)
-        invited_user = User.objects.get(username=invited)
-        if (inviting_user not in invited_user.friends_set.all()) and invitation is not None:
-            return invitation.accept(inviting_user, invited_user)
+        if (inviting_user not in self.user.friends_set.all()) and invitation is not None:
+            return invitation.accept(inviting_user, self.user)

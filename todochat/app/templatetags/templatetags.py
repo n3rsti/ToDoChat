@@ -1,5 +1,5 @@
 from django import template
-from users.models import User, UserInvitation
+from users.models import UserInvitation
 from app.models import Server, ServerInvitation
 
 register = template.Library()
@@ -18,9 +18,9 @@ def shorter_name(value, length):
 @register.filter
 def get_invitation_status(user, me):
     if UserInvitation.objects.filter(invited=user, inviting=me).first() is not None:
-        return "inviting" # I am inviting
+        return "inviting"  # I am inviting
     elif UserInvitation.objects.filter(invited=me, inviting=user).first() is not None:
-        return "invited" # I got invited
+        return "invited"  # I got invited
     else:
         return "no_invitation"
 
@@ -45,6 +45,7 @@ def get_friends_chat_id(user):
     for friend in friends:
         chats.append(users_chat.filter(users=user).filter(users=friend).first())
     return zip(friends, chats)
+
 
 @register.filter
 def get_userschat_objects(request_user):
