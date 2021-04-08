@@ -97,16 +97,6 @@
                         aria-controls="form_assigned">
                     <i class="fas fa-plus"></i>Assigned for
                 </button>
-                <div class="form_section collapse" id="form_assigned">
-                    {% for user in server.users.all %}
-                        <div class="form-check">
-                            <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input"
-                                   value="{{ user.username }}">
-                            <label for="{{ user.username }}" class="form-check-label">{{ user.username }}</label>
-                        </div>
-                    {% endfor %}
-                    <small class="form-text text-muted">Assign the task to chosen users.</small>
-                </div>
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         aria-controls="form_description">
