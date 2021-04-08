@@ -71,11 +71,11 @@
                 {% csrf_token %}
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
-                        data-controls="form_title">
+                        aria-controls="form_title">
 
                     <i class="fas fa-minus"></i>Title
                 </button>
-                <div class="form_section show" name="form_title">
+                <div class="form_section show" id="form_title">
                     <label for="title" hidden>Title</label>
                     <input type="text" name="title" id="title" class="form-control"
                            placeholder="For example: make an app" maxlength="20" required>
@@ -83,21 +83,21 @@
                 </div>
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
-                        data-controls="form_deadline">
+                        aria-controls="form_deadline">
 
                     <i class="fas fa-plus"></i>Deadline (optional)
                 </button>
-                <div class="form_section collapse" name="form_deadline">
+                <div class="form_section collapse" id="form_deadline">
                     <label for="deadline" hidden>Deadline</label>
                     <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
 
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
-                        data-controls="form_asigned">
+                        aria-controls="form_assigned">
                     <i class="fas fa-plus"></i>Assigned for
                 </button>
-                <div class="form_section collapse" name="form_asigned">
+                <div class="form_section collapse" id="form_assigned">
                     {% for user in server.users.all %}
                         <div class="form-check">
                             <input type="checkbox" name="assignments" id="{{ user.username }}" class="form-check-input"
@@ -109,10 +109,10 @@
                 </div>
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
-                        data-controls="form_description">
+                        aria-controls="form_description">
                     <i class="fas fa-plus"></i>Description
                 </button>
-                <div class="form_section collapse" name="form_description">
+                <div class="form_section collapse" id="form_description">
                     <label for="form_description" hidden>Description</label>
                     {{ desc_form.description }}
                     {{ desc_form.description.as_p }}

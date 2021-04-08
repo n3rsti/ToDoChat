@@ -223,6 +223,7 @@ def filter_tasks(request, tasks):
     field_names = []
     for field_name in Task._meta.get_fields():
         field_names.append(field_name.name)
+    field_names += ['title__contains']  # It's += array, not .append in case I'd like to add more filtering
     sort_fields = ['created', '-created', 'deadline', '-deadline']
     if request.GET.get("server"):
         if request.GET['server'] == "All":

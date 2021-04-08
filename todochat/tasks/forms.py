@@ -15,7 +15,7 @@ class TaskDescriptionForm(forms.Form):
         super(TaskDescriptionForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['server'].choices = [(server.id, server.name) for server in
-                                                                                   Server.objects.filter(users=user)]
+                                             Server.objects.filter(users=user)]
 
     class Meta:
         fields = ['description', 'server']
@@ -45,7 +45,7 @@ class TaskCommentForm(forms.ModelForm):
 
 
 class TaskFilterForm(forms.Form):
-    title = forms.CharField(required=False)
+    title__contains = forms.CharField(required=False)
     status = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[
         ("open", "Open"),
         ("approved", "Approved"),
@@ -62,9 +62,10 @@ class TaskFilterForm(forms.Form):
         if user is not None:
             self.fields['server'].choices = [('All', 'All')] + [(server.id, server.name) for server in
                                                                 Server.objects.filter(users=user)]
+        self.fields['title__contains'].label = "Title"
 
     class Meta:
-        fields = ['title', 'status']
+        fields = ['title__contains', 'status']
 
 
 class TaskSortForm(forms.Form):

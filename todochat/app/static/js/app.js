@@ -81,7 +81,8 @@ function hideGroups(){
     }
 }
 function collapseFormSection(button, aria_expanded){
-    $(`[name=${button.dataset.controls}]`).collapse('toggle');
+
+    $(`#${button.getAttribute('aria-controls')}`).collapse('toggle');
     let btnIcon = button.querySelector('.fas');
     if(aria_expanded==="true"){
         btnIcon.classList.remove('fa-minus');
