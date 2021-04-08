@@ -4,7 +4,6 @@ from channels.generic.websocket import WebsocketConsumer
 from app.models import Channel, Server
 from chat.models import ChannelMessage
 from app.views import create_num_id
-from django.contrib.auth.models import User
 
 """
 There are 2 websocket connections for each message for performance reasons. 
@@ -28,7 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         server_id = self.scope['url_route']['kwargs']['pk']
         self.room_group_name = f'chat_{server_id}_{room_name}'
         self.channel = Channel.objects.get(server=Server.objects.get(id=server_id), name=room_name)
-        self.user = User.objects.get(username=self.scope['user'])
+        self.user = self.scope['user']
         if self.user in self.channel.server.users.all():
             # Join room group
             async_to_sync(self.channel_layer.group_add)(
@@ -90,7 +89,7 @@ class ServerNotificationConsumer(ChatConsumer):
         server_id = self.scope['url_route']['kwargs']['id']
         self.room_group_name = f'server_{server_id}'
         server = Server.objects.get(id=server_id)
-        user = User.objects.get(username=self.scope['user'])
+        user = self.scope['user']
         if user in server.users.all():
             # Join room group
             async_to_sync(self.channel_layer.group_add)(
