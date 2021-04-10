@@ -36,14 +36,13 @@ class UserInvitation(models.Model):
         invited.profile.friends.add(inviting)
         chat = UsersChat.objects.filter(users=inviting).filter(users=invited).first()
         if chat is None:
-            chat = UsersChat.objects.create(id=f"{inviting}_{invited}")
+            chat = UsersChat.objects.create()
             chat.users.add(inviting)
             chat.users.add(invited)
         return self.delete()
 
 
 class UsersChat(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
     users = models.ManyToManyField(User, related_name="users_chat")
 
 
