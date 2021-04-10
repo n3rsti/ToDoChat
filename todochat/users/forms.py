@@ -9,7 +9,7 @@ from django.core import validators
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=20)
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,

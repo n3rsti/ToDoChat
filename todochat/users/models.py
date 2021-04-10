@@ -34,6 +34,11 @@ class UserInvitation(models.Model):
     def accept(self, inviting, invited):
         inviting.profile.friends.add(invited)
         invited.profile.friends.add(inviting)
+        chat = UsersChat.objects.filter(users=inviting).filter(users=invited).first()
+        if chat is None:
+            chat = UsersChat.objects.create(id=f"{inviting}_{invited}")
+            chat.users.add(inviting)
+            chat.users.add(invited)
         return self.delete()
 
 

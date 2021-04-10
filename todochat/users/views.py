@@ -142,10 +142,9 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_object(self):
         friend = User.objects.get(username=self.kwargs['username'])
-        chat = UsersChat.objects.filter(users=self.request.user)
-        for chat_channel in chat:
-            if friend in chat_channel.users.all():
-                return chat_channel
+        chat = UsersChat.objects.filter(users=self.request.user).filter(users=friend).first()
+        if chat is not None:
+            return chat
 
         chat = UsersChat.objects.create(id=f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
