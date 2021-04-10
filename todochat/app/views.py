@@ -17,7 +17,7 @@ import json
 
 
 def create_num_id(length):
-    letters = string.digits
+    letters = string.digits[1:]
     id = ''.join(random.choice(letters) for i in range(length))
     return id
 
