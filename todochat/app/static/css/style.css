@@ -1346,4 +1346,7 @@ main.task {
     .tasks__filter .btn:first-child {
       border-right: 1px solid var(--primary); }
 
+.invitation_counter--hidden {
+  display: none; }
+
 /*# sourceMappingURL=style.css.map */

@@ -29,10 +29,10 @@
         </h2>
     </div>
     <section class="nav__groups">
-        {% if user.invited_user.count > 0 %}
-            <a href="{% url 'user_invitations' %}" class="groups__h2 flex" title="Invitations">Invitations
-                <span class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
-        {% endif %}
+
+        <a href="{% url 'user_invitations' %}"
+           class="groups__h2 flex {% if user.invited_user.count > 0 %}invitation_counter--hidden{% endif %}" title="Invitations">Invitations
+            <span id="invitation_counter" class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         <h2 class="groups__h2">Groups</h2>
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
@@ -72,19 +72,19 @@
         {% if user.profile.friends.count > 0 %}
             <h2 class="groups__h2">Friends</h2>
         {% endif %}
-            <ul class="groups__ul friends__ul">
-                {% for friend, chat_id in request.user|get_friends_chat_id %}
-                    <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
-                        <a href="{% url 'user_chat' friend.username %}" class="groups__li"
-                           title="{{ friend.username }} profile">
-                            <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
-                                 class="users__img">
-                            {{ friend.username }}
-                            <span class="badge bg-light text-dark notification-badge">0</span>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+        <ul class="groups__ul friends__ul">
+            {% for friend, chat_id in request.user|get_friends_chat_id %}
+                <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
+                    <a href="{% url 'user_chat' friend.username %}" class="groups__li"
+                       title="{{ friend.username }} profile">
+                        <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
+                             class="users__img">
+                        {{ friend.username }}
+                        <span class="badge bg-light text-dark notification-badge">0</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </section>
     <div class="add__li">
         <a href="{% url 'user_search' %}" class="nav__add-button nav__add-button--friend" title="Create server">
@@ -136,7 +136,7 @@
         );
         serverSocket{{ forloop.counter }}.onmessage = function (e) {
             let data = JSON.parse(e.data);
-            if(data.author !== "{{ request.user }}" && localStorage['last_msg_id'] !== String(data.id)){
+            if (data.author !== "{{ request.user }}" && localStorage['last_msg_id'] !== String(data.id)) {
                 localStorage.setItem('last_msg_id', data.id);
                 increment_notification_count(data.server, data.channel);
             }

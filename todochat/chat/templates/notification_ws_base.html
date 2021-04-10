@@ -4,6 +4,32 @@
         wsStart = 'wss://'
     }
 
+    // username = nick of user who accepted our friend request
+    function addToFriendSection(username, user_img) {
+        let chat_id = `{{ request.user }}_${username}`;
+        connectFriendConsumer(chat_id);
+        let friend_li = document.createElement("li");
+        friend_li.classList.add("flex", "pl-3", "groups__li");
+        friend_li.dataset.channel = chat_id;
+        let link = document.createElement("a");
+        link.classList.add("groups__li");
+        link.title = `${username} profile`;
+        link.href = `/profile/${username}`;
+        let img = document.createElement("img");
+        img.classList.add("users__img");
+        img.src = user_img;
+        img.alt = `${username} profile picture`;
+        let span = document.createElement("span");
+        span.classList.add("badge", "bg-light", "text-dark", "notification-badge");
+        span.innerText = "0";
+
+        link.appendChild(img);
+        link.innerHTML += username;
+        link.appendChild(span);
+        friend_li.appendChild(link);
+        document.querySelector(".friends__ul").appendChild(friend_li);
+    }
+
     function connectToPersonalWS() {
         const personalWS = new ReconnectingWebSocket(
             wsStart
@@ -16,27 +42,7 @@
             if (data.type === "accept_invitation") {
                 let username = data.invited;
                 let user_img = data.invited_img;
-                let chat_id = "123";
-                let friend_li = document.createElement("li");
-                friend_li.classList.add("flex", "pl-3", "groups__li");
-                friend_li.dataset.channel = chat_id;
-                let link = document.createElement("a");
-                link.classList.add("groups__li");
-                link.title = `${username} profile`;
-                link.href = `/profile/${username}`;
-                let img = document.createElement("img");
-                img.classList.add("users__img");
-                img.src = user_img;
-                img.alt = `${username} profile picture`;
-                let span = document.createElement("span");
-                span.classList.add("badge", "bg-light", "text-dark", "notification-badge");
-                span.innerText = "0";
-
-                link.appendChild(img);
-                link.innerHTML += username;
-                link.appendChild(span);
-                friend_li.appendChild(link);
-                document.querySelector(".friends__ul").appendChild(friend_li);
+                addToFriendSection(username, user_img);
                 if (document.querySelector("#user_detail_form")) {
                     let form = document.querySelector("#user_detail_form");
                     let section = document.createElement("section");
@@ -46,7 +52,7 @@
                     form.parentNode.replaceChild(section, form);
                     document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
                 }
-                if(document.querySelector("#user_search")){
+                if (document.querySelector("#user_search")) {
                     let btn = document.querySelector("#cancel_button");
                     let link = document.createElement("a");
                     link.classList.add("btn", "btn-primary");
@@ -279,6 +285,7 @@
 
     function resetChannelNotifications(channel_id) {
         localStorage.setItem(`${channel_id}_notifications`, "0");
+        console.log(channel_id)
         document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`).style.opacity = 0;
     }
 
@@ -357,15 +364,14 @@
             profile_badge.style.opacity = 1;
         }
     }
-    {% if is_room_html is not True %}
-        {% for channel in request.user.users_chat.all %}
-            const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
+    function connectFriendConsumer(channel_id){
+        const userServerSocket = new ReconnectingWebSocket(
                 wsStart
                 + window.location.host
                 + '/ws/chat_notifications/'
-                + '{{ channel.id }}/'
+                + `${channel_id}/`
             );
-            userServerSocket{{ forloop.counter }}.onmessage = function (e) {
+            userServerSocket.onmessage = function (e) {
                 let data = JSON.parse(e.data);
                 let channel_id = data.channel_id
                 if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
@@ -376,26 +382,15 @@
                 let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
                 profile_badge.innerText = Number(profile_badge.innerText) + 1;
             }
+    }
+    {% if is_room_html is not True %}
+        {% for channel in request.user.users_chat.all %}
+            connectFriendConsumer("{{ channel.id }}");
         {% endfor %}
     {% else %}
         {% for channel in request.user.users_chat.all %}
             {% if channel != object %}
-                const userServerSocket{{ forloop.counter }} = new ReconnectingWebSocket(
-                    wsStart
-                    + window.location.host
-                    + '/ws/chat_notifications/'
-                    + '{{ channel.id }}/'
-                );
-                userServerSocket{{ forloop.counter }}.onmessage = function (e) {
-                    let data = JSON.parse(e.data);
-                    let channel_id = data.channel_id
-                    if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
-                        localStorage.setItem('last_msg_id', data.msg_id);
-                        incrementUserNotificationCount(channel_id);
-                    }
-                    let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
-                    profile_badge.innerText = Number(profile_badge.innerText) + 1;
-                }
+                connectFriendConsumer("{{ channel.id }}");
             {% endif %}
         {% endfor %}
     {% endif %}
