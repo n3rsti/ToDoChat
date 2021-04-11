@@ -1,4 +1,10 @@
 <script>
+    let scheduled_functions = {
+        'invite': false,
+        'accept': false,
+        'cancel': false
+    }
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -105,71 +111,91 @@
     // Base for every view using these functions. Contains websocket connection + websocket.send
     let invitationBase = {
         invite: function (btn) {
-            let invited = btn.dataset.user;
-            let invited_img = btn.dataset.user_img;
-
-            const inviteWS = new ReconnectingWebSocket(
-                wsStart
-                + window.location.host
-                + `/ws/${invited}/`
-            );
-            inviteWS.onopen = function () {
-                inviteWS.send(JSON.stringify({
-                    'type': 'invitation',
-                    'invited': invited,
-                    'invited_img': invited_img,
-                    'inviting': '{{ request.user }}'
-                }))
-                inviteWS.close();
+            if (scheduled_functions.invite) {
+                clearTimeout(scheduled_functions.invite)
             }
+
+            // setTimeout returns the ID of the function to be executed
+            scheduled_functions.invite = setTimeout(function () {
+                let invited = btn.dataset.user;
+                let invited_img = btn.dataset.user_img;
+
+                const inviteWS = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + `/ws/${invited}/`
+                );
+                inviteWS.onopen = function () {
+                    inviteWS.send(JSON.stringify({
+                        'type': 'invitation',
+                        'invited': invited,
+                        'invited_img': invited_img,
+                        'inviting': '{{ request.user }}'
+                    }))
+                    inviteWS.close();
+                }
+            }, 1500)
+
         },
         cancel: function (btn) {
-            let invited = btn.dataset.user;
-            let friend = invited;
-            let invited_img = btn.dataset.user_img;
-            let inviting = "{{ request.user }}";
-            if (btn.classList.contains("reject_button")) {
-                [invited, inviting] = [inviting, invited]
-                btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
+            if (scheduled_functions.cancel) {
+                clearTimeout(scheduled_functions.cancel)
             }
-            if (btn.classList.contains("swap")) {
-                [invited, inviting] = [inviting, invited];
-            }
+            scheduled_functions.cancel = setTimeout(function () {
+                let invited = btn.dataset.user;
+                let friend = invited;
+                let invited_img = btn.dataset.user_img;
+                let inviting = "{{ request.user }}";
+                if (btn.classList.contains("reject_button")) {
+                    [invited, inviting] = [inviting, invited]
+                    btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
+                }
+                if (btn.classList.contains("swap")) {
+                    [invited, inviting] = [inviting, invited];
+                }
 
-            const inviteWS = new ReconnectingWebSocket(
-                wsStart
-                + window.location.host
-                + `/ws/${friend}/`
-            );
-            inviteWS.onopen = function () {
-                inviteWS.send(JSON.stringify({
-                    'type': 'cancel_invitation',
-                    'invited': invited,
-                    'invited_img': invited_img,
-                    'inviting': inviting
-                }))
-                inviteWS.close();
-            }
+                const inviteWS = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + `/ws/${friend}/`
+                );
+                inviteWS.onopen = function () {
+                    inviteWS.send(JSON.stringify({
+                        'type': 'cancel_invitation',
+                        'invited': invited,
+                        'invited_img': invited_img,
+                        'inviting': inviting
+                    }))
+                    inviteWS.close();
+                }
+            }, 1500)
+
         },
         accept: function (btn) {
-            let inviting = btn.dataset.user;
-            let invited_img = btn.dataset.user_img;
-            let invited = "{{ request.user }}";
-
-            const inviteWS = new ReconnectingWebSocket(
-                wsStart
-                + window.location.host
-                + `/ws/${inviting}/`
-            );
-            inviteWS.onopen = function () {
-                inviteWS.send(JSON.stringify({
-                    'type': 'accept_invitation',
-                    'invited': invited,
-                    'invited_img': invited_img,
-                    'inviting': inviting
-                }))
-                inviteWS.close();
+            if (scheduled_functions.accept) {
+                clearTimeout(scheduled_functions.accept)
             }
+            scheduled_functions.accept = setTimeout(function () {
+                let inviting = btn.dataset.user;
+                let invited_img = btn.dataset.user_img;
+                let invited = "{{ request.user }}";
+
+                const inviteWS = new ReconnectingWebSocket(
+                    wsStart
+                    + window.location.host
+                    + `/ws/${inviting}/`
+                );
+                inviteWS.onopen = function () {
+                    inviteWS.send(JSON.stringify({
+                        'type': 'accept_invitation',
+                        'invited': invited,
+                        'invited_img': invited_img,
+                        'inviting': inviting
+                    }))
+                    inviteWS.close();
+                }
+            }, 1500);
+
         }
     }
 
