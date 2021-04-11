@@ -12,7 +12,7 @@
         {% if object_list.count == 0 %}
             <h2 class="title--thin">No invitations.</h2>
         {% endif %}
-    <ul class="user_search_list">
+    <ul class="user_search_list" id="invitations_list">
                 {% for invitation in object_list %}
                     <li class="search__li">
                         <div class="card user_search">

@@ -1,4 +1,20 @@
 <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     let wsStart = 'ws://'
     if (window.location.protocol === 'https:') {
         wsStart = 'wss://'
@@ -60,12 +76,31 @@
                     link.innerText = "Message";
                     btn.parentNode.replaceChild(link, btn);
                 }
+            } else if (data.type === "invitation") {
+                let notificationCounter = document.querySelector("#invitation_counter");
+                if (Number(notificationCounter.innerText === "0")) {
+                    notificationCounter.parentNode.classList.remove("invitation_counter--hidden");
+                }
+                notificationCounter.innerText = Number(notificationCounter.innerText) + 1;
+                let invitationList = document.querySelector("#invitations_list");
+                if (invitationList) {
+                    let ajax_call = function (endpoint) {
+                        $.getJSON(endpoint)
+                            .done(response => {
+                                invitationList.innerHTML += response['html_from_view'];
+                                // Add csrf_token value to input in form
+                                document.querySelector(`[data-inviting="${data.inviting}"] input[name="csrfmiddlewaretoken"]`).value = getCookie('csrftoken');
+                            })
+                    }
+                    ajax_call(`/components/invitation_card/${data.inviting}`);
+                    invitationsListListeners.accept();
+                    invitationsListListeners.reject();
+                }
             }
         }
     }
 
     connectToPersonalWS();
-
 
     // Base for every view using these functions. Contains websocket connection + websocket.send
     let invitationBase = {
@@ -364,24 +399,25 @@
             profile_badge.style.opacity = 1;
         }
     }
-    function connectFriendConsumer(channel_id){
-        const userServerSocket = new ReconnectingWebSocket(
-                wsStart
-                + window.location.host
-                + '/ws/chat_notifications/'
-                + `${channel_id}/`
-            );
-            userServerSocket.onmessage = function (e) {
-                let data = JSON.parse(e.data);
-                let channel_id = data.channel_id
-                if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
-                    localStorage.setItem('last_msg_id', data.msg_id);
-                    incrementUserNotificationCount(channel_id);
-                }
 
-                let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
-                profile_badge.innerText = Number(profile_badge.innerText) + 1;
+    function connectFriendConsumer(channel_id) {
+        const userServerSocket = new ReconnectingWebSocket(
+            wsStart
+            + window.location.host
+            + '/ws/chat_notifications/'
+            + `${channel_id}/`
+        );
+        userServerSocket.onmessage = function (e) {
+            let data = JSON.parse(e.data);
+            let channel_id = data.channel_id
+            if (data.author !== "{{ request.user }}" && Number(localStorage['last_msg_id']) !== data.msg_id) {
+                localStorage.setItem('last_msg_id', data.msg_id);
+                incrementUserNotificationCount(channel_id);
             }
+
+            let profile_badge = document.querySelector(`.groups__li[data-channel="${channel_id}"] .badge`);
+            profile_badge.innerText = Number(profile_badge.innerText) + 1;
+        }
     }
     {% if is_room_html is not True %}
         {% for channel in request.user.users_chat.all %}
