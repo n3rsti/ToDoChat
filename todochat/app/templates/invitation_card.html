@@ -1,0 +1,28 @@
+<li class="search__li">
+    <div class="card user_search">
+        <div class="card__description"
+             style="background-image: url('{{ object.profile.background.url }}')">
+            <img src="{{ object.profile.image.url }}" class="card-img-top"
+                 alt="{{ object }} profile picture">
+            <a class="card__title"
+               href="{% url 'user_detail' object %}">{{ object.username }}</a>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="search_invite-form accept flex w-100" data-inviting="{{ object }}">
+                <input type="hidden" name="csrfmiddlewaretoken">
+                <input type="hidden" name="inviting" value="{{ object.username }}">
+                <button type="submit" class="btn btn-success accept_invite_friend_button"
+                        value="accept"
+                        name="invite_button" data-user="{{ object.username }}"
+                        data-user_img="{{ object.profile.image.url }}">Accept
+                </button>
+                <button type="submit"
+                        class="btn btn-danger reject_friend_button swap"
+                        value="reject" data-user="{{ object.username }}"
+                        data-user_img="{{ object.profile.image.url }}"
+                        name="invite_button">Reject
+                </button>
+            </form>
+        </div>
+    </div>
+</li>

@@ -22,3 +22,17 @@ function is executed to check if message wasn't already received on the other ta
 * channel
 
 After localStorage update, notification badge for the specific server will be incremented as well.
+
+## Personal consumer
+### Description
+Personal consumer is used to receive data from other users, for example invitation (invitation, cancel, accept, decline). For example if User1 wants to
+invite User2, he will connect to User2 personal consumer and send him data with type: **invitation**.
+
+### Data sent:
+* type:
+    * invitation
+    * cancel_invitation (for reject invitation and cancel invitation)
+    * accept_invitation
+* invited: user who is invited
+* invited_img: invited user's profile img
+* inviting: user who is inviting

@@ -17,7 +17,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, \
     InvitationView
-from users.views import register, UserInvitations, UserSearchView
+from users.views import register, UserInvitations, UserSearchView, invitation_card
 from tasks.views import FilterTaskView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -59,7 +59,8 @@ urlpatterns = [
     path('i/<slug:pk>/', InvitationView.as_view(), name="server_invitation"),
     path('tasks/', FilterTaskView.as_view(), name="user_tasks"),
     path('profile/', include('users.urls')),
-    path('search/', UserSearchView.as_view(), name="user_search")
+    path('search/', UserSearchView.as_view(), name="user_search"),
+    path('components/invitation_card/<str:username>', invitation_card, name="invitation_card")
     
 ]
 

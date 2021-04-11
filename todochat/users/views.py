@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
 from users.models import User, UserInvitation, UsersChat
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 
 
 def register(request):
@@ -217,3 +219,22 @@ class UserSearchView(LoginRequiredMixin, ListView):
             return redirect(f'/search?user={prev_search}')
 
         return redirect('user_search')
+
+
+def invitation_card(request, username):
+    ctx = {}
+    user_obj = User.objects.get(username=username)
+
+    ctx["object"] = user_obj
+
+    if request.is_ajax():
+        html = render_to_string(
+            template_name="invitation_card.html",
+            context={"object": user_obj}
+        )
+
+        data_dict = {"html_from_view": html}
+
+        return JsonResponse(data=data_dict, safe=False)
+
+    return render(request, "invitation_card.html", context=ctx)
