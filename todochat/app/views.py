@@ -14,6 +14,16 @@ from app.forms import ServerUpdateForm, ServerCreateForm
 from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+from django.http import HttpResponseRedirect
+
+
+def filter_by_date(date, user):
+    return Task.objects.filter(
+        deadline__year=date.year,
+        deadline__month=date.month,
+        deadline__day=date.day,
+        assigned_for=user
+    )
 
 
 def create_num_id(length):
@@ -33,7 +43,7 @@ def main_view(request):
     tasks = request.user.users_tasks.all().order_by('created').values('deadline')
     context = {
         "tasks_json": json.dumps(list(tasks), cls=DjangoJSONEncoder),
-        "today_tasks": Task.filter_by_date(date=datetime.today(), user=request.user)
+        "today_tasks": filter_by_date(date=datetime.today(), user=request.user)
     }
     return render(request, 'index.html', context)
 
@@ -150,4 +160,5 @@ class InvitationView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             server = invitation.server
             server.users.add(request.user)
             invitation.delete()
-        return redirect("server_detail", server.id)
+            return redirect("server_detail", server.id)
+        return HttpResponseRedirect(self.request.path_info)

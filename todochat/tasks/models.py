@@ -47,13 +47,6 @@ class Task(models.Model):
                 TaskStatusChange.objects.create(task=self, status=status, author=user)
         return super(Task, self).save(*args, **kwargs)
 
-    def filter_by_date(date, user):
-        return Task.objects.filter(
-            deadline__year=date.year,
-            deadline__month=date.month,
-            deadline__day=date.day
-        ).filter(assigned_for=user)
-
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'server_id': self.server.id, 'id': self.id})
 
