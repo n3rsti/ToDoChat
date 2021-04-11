@@ -28,6 +28,10 @@
         <h2 class="hello">{{ user.username }}</h2>
     </div>
     <section class="nav__groups">
+        <a href="{% url 'user_invitations' %}"
+           class="groups__h2 flex {% if user.invited_user.count < 1 %}invitation_counter--hidden{% endif %}"
+           title="Invitations">Invitations
+            <span id="invitation_counter" class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         <section class="groups__li groups__li--server">
             {% if server.image == 'default.png' %}
                 <div class="groups__img ml-1 p2">{{ server.name.0 }}</div>
@@ -170,7 +174,7 @@
                 increment_notification_count(data.server, data.channel);
             }
             let channel_badge = document.querySelector(`.groups__li[data-channel="${data.channel}"] .badge`);
-            if(data.server !== "{{ object.id }}"){
+            if (data.server !== "{{ object.id }}") {
                 channel_badge = document.querySelector(`.groups__li[data-server="${data.server}"] .badge`);
             }
             channel_badge.innerText = parseInt(channel_badge.innerText) + 1;

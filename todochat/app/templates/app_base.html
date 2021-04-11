@@ -31,7 +31,7 @@
     <section class="nav__groups">
 
         <a href="{% url 'user_invitations' %}"
-           class="groups__h2 flex {% if user.invited_user.count > 0 %}invitation_counter--hidden{% endif %}" title="Invitations">Invitations
+           class="groups__h2 flex {% if user.invited_user.count < 1 %}invitation_counter--hidden{% endif %}" title="Invitations">Invitations
             <span id="invitation_counter" class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
         <h2 class="groups__h2">Groups</h2>
         {% if user.server_set.count > 0 %}
