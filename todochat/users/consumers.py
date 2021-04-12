@@ -209,11 +209,20 @@ class PersonalConsumer(WebsocketConsumer):
         invited_img = event['invited_img']
         inviting = event['inviting']
 
+        """
+        If users were friends before, UsersChat object is already created, so we can send its id and users can
+        automatically connect to ws chat connection. Otherwise users will be connected after first refresh.
+        """
+        chat_obj = UsersChat.objects.filter(users=User.objects.get(username=invited)).filter(users=self.user).first()
+        if chat_obj is not None:
+            chat_obj = chat_obj.id
+
         self.send(text_data=json.dumps({
             'type': 'accept_invitation',
             'invited': invited,
             'invited_img': invited_img,
-            'inviting': inviting
+            'inviting': inviting,
+            'chat': chat_obj
         }))
 
     def create_invitation(self, invited):

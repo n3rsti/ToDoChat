@@ -77,8 +77,9 @@
         }
     </style>
     <script>
-        profileListeners.addFriendEventListeners();
-        profileListeners.cancelInvitationEventListeners();
+        profileListeners.invite();
+        profileListeners.cancel();
+        profileListeners.accept();
         let profile_friend_section = `{% include "profile_friend_base.html" %}`;
 
         {% comment %}
@@ -97,9 +98,6 @@
             document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
         }
 
-        $('.accept_invite_friend_button').click(function (event) {
-            event.preventDefault();
-            acceptInvitation(this);
-        })
+
     </script>
 {% endblock content %}

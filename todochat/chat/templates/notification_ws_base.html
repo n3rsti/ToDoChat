@@ -28,9 +28,11 @@
     }
 
     // username = nick of user who accepted our friend request
-    function addToFriendSection(username, user_img) {
-        let chat_id = `{{ request.user }}_${username}`;
-        connectFriendConsumer(chat_id);
+    function addToFriendSection(username, user_img, chat_id) {
+        if(chat_id !== null){
+            // If users were friends before, they will connect automatically because their UsersChat object is already created
+            connectFriendConsumer(chat_id);
+        }
         let friend_li = document.createElement("li");
         friend_li.classList.add("flex", "pl-3", "groups__li");
         friend_li.dataset.channel = chat_id;
@@ -65,7 +67,8 @@
             if (data.type === "accept_invitation") {
                 let username = data.invited;
                 let user_img = data.invited_img;
-                addToFriendSection(username, user_img);
+                let chat_id = data.chat;
+                addToFriendSection(username, user_img, chat_id);
                 if (document.querySelector("#user_detail_form")) {
                     let form = document.querySelector("#user_detail_form");
                     let section = document.createElement("section");
@@ -103,6 +106,26 @@
                     }
                     ajax_call(`/components/invitation_card/${data.inviting}`);
 
+                }
+                let userDetailSection = document.querySelector("#user_detail_form");
+                if (userDetailSection) {
+                    // Accept button
+                    let addFriendBtn = userDetailSection.querySelector(".invite_friend_button")
+                    addFriendBtn.innerText = "Accept";
+                    addFriendBtn.classList.remove("btn-primary", "invite_friend_button", "invite");
+                    let rejectBtn = addFriendBtn.cloneNode(true);
+                    addFriendBtn.classList.add("btn-success", "accept_invite_friend_button", "accept");
+                    let newAddBtn = addFriendBtn.cloneNode(true);
+
+
+                    // Reject button
+                    rejectBtn.innerText = "Reject";
+                    rejectBtn.classList.add("btn-danger", "ml-1", "cancel_invite_friend_button");
+                    addFriendBtn.parentNode.append(rejectBtn);
+                    addFriendBtn.parentNode.replaceChild(newAddBtn, addFriendBtn);
+                    profileListeners.invite();
+                    profileListeners.cancel();
+                    profileListeners.accept();
                 }
             }
         }
@@ -314,16 +337,22 @@
     }
 
     let profileListeners = {
-        addFriendEventListeners: function () {
+        invite: function () {
             $('.invite_friend_button').click(function (event) {
                 event.preventDefault();
                 profileInvitation.invite(this);
             })
         },
-        cancelInvitationEventListeners: function () {
+        cancel: function () {
             $('.cancel_invite_friend_button').click(function (event) {
                 event.preventDefault();
                 profileInvitation.cancel(this);
+            })
+        },
+        accept: function () {
+            $('.accept_invite_friend_button').click(function (event) {
+                event.preventDefault();
+                acceptInvitation(this);
             })
         }
     }
