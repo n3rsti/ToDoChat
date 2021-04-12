@@ -197,7 +197,7 @@ class UserSearchView(LoginRequiredMixin, ListView):
             if invited_user is not None:
                 if UserInvitation.objects.filter(inviting=user, invited=invited_user).first() is None:
                     if UserInvitation.objects.filter(inviting=invited_user, invited=user).first():
-                        invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user)
+                        invitation = UserInvitation.objects.filter(inviting=invited_user, invited=user).first()
                         invitation.accept(invited_user, user)
                         return redirect(f'/search?user={prev_search}')
 

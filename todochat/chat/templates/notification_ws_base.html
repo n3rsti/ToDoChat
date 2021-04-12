@@ -1,9 +1,10 @@
 <script>
-    let scheduled_functions = {
-        'invite': false,
-        'accept': false,
-        'cancel': false
+    let scheduled_functions_time = {
+        'invite': 0,
+        'accept': 0,
+        'cancel': 0
     }
+    let interval = 1500;
 
     function getCookie(name) {
         let cookieValue = null;
@@ -96,11 +97,12 @@
                                 invitationList.innerHTML += response['html_from_view'];
                                 // Add csrf_token value to input in form
                                 document.querySelector(`[data-inviting="${data.inviting}"] input[name="csrfmiddlewaretoken"]`).value = getCookie('csrftoken');
+                                invitationsListListeners.accept();
+                                invitationsListListeners.reject();
                             })
                     }
                     ajax_call(`/components/invitation_card/${data.inviting}`);
-                    invitationsListListeners.accept();
-                    invitationsListListeners.reject();
+
                 }
             }
         }
@@ -111,12 +113,10 @@
     // Base for every view using these functions. Contains websocket connection + websocket.send
     let invitationBase = {
         invite: function (btn) {
-            if (scheduled_functions.invite) {
-                clearTimeout(scheduled_functions.invite)
-            }
-
-            // setTimeout returns the ID of the function to be executed
-            scheduled_functions.invite = setTimeout(function () {
+            let date = new Date();
+            let milliseconds = date.getTime();
+            if ((milliseconds - scheduled_functions_time.invite) > interval) {
+                scheduled_functions_time.invite = milliseconds;
                 let invited = btn.dataset.user;
                 let invited_img = btn.dataset.user_img;
 
@@ -134,14 +134,13 @@
                     }))
                     inviteWS.close();
                 }
-            }, 1500)
-
+            }
         },
         cancel: function (btn) {
-            if (scheduled_functions.cancel) {
-                clearTimeout(scheduled_functions.cancel)
-            }
-            scheduled_functions.cancel = setTimeout(function () {
+            let date = new Date();
+            let milliseconds = date.getTime();
+            if ((milliseconds - scheduled_functions_time.cancel) > interval) {
+                scheduled_functions_time.cancel = milliseconds;
                 let invited = btn.dataset.user;
                 let friend = invited;
                 let invited_img = btn.dataset.user_img;
@@ -168,14 +167,14 @@
                     }))
                     inviteWS.close();
                 }
-            }, 1500)
+            }
 
         },
         accept: function (btn) {
-            if (scheduled_functions.accept) {
-                clearTimeout(scheduled_functions.accept)
-            }
-            scheduled_functions.accept = setTimeout(function () {
+            let date = new Date();
+            let milliseconds = date.getTime();
+            if ((milliseconds - scheduled_functions_time.accept) > interval) {
+                scheduled_functions_time.accept = milliseconds;
                 let inviting = btn.dataset.user;
                 let invited_img = btn.dataset.user_img;
                 let invited = "{{ request.user }}";
@@ -194,8 +193,8 @@
                     }))
                     inviteWS.close();
                 }
-            }, 1500);
 
+            }
         }
     }
 
@@ -285,7 +284,7 @@
             btn.classList.remove("btn-primary");
             btn.classList.add("btn-success");
             btn.disabled = true;
-            document.querySelector('.reject_invite_friend_button').remove();
+            document.querySelector('.reject_friend_button').remove();
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
