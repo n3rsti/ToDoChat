@@ -79,7 +79,7 @@
                     document.querySelector('.invite__button.friends').addEventListener("click", openFriendInfo);
                 }
                 if (document.querySelector("#user_search")) {
-                    let btn = document.querySelector("#cancel_button");
+                    let btn = document.querySelector(`#cancel_button[data-user="${username}"]`);
                     let link = document.createElement("a");
                     link.classList.add("btn", "btn-primary");
                     link.href = `/profile/${username}/chat`;
@@ -87,6 +87,8 @@
                     btn.parentNode.replaceChild(link, btn);
                 }
             } else if (data.type === "invitation") {
+                // in app_base and server_base
+                let username = data.inviting;
                 let notificationCounter = document.querySelector("#invitation_counter");
                 if (Number(notificationCounter.innerText === "0")) {
                     notificationCounter.parentNode.classList.remove("invitation_counter--hidden");
@@ -107,6 +109,7 @@
                     ajax_call(`/components/invitation_card/${data.inviting}`);
 
                 }
+                // user_detail view
                 let userDetailSection = document.querySelector("#user_detail_form");
                 if (userDetailSection) {
                     // Accept button
@@ -127,6 +130,34 @@
                     profileListeners.cancel();
                     profileListeners.accept();
                 }
+                // user_search view
+
+                let invBtn = document.querySelector(`.invite_friend_button[data-user="${username}"]`);
+                if(invBtn){
+                    invBtn.innerText = "Accept";
+                    invBtn.classList.remove("btn-primary", "invite_friend_button");
+                    invBtn.classList.add("btn-success", "accept_invite_friend_button");
+
+
+                    let rejectForm = invBtn.parentNode.cloneNode(true);
+                    invBtn.parentNode.classList.add("accept");
+                    rejectForm.classList.add("reject");
+                    let rejectBtn = rejectForm.querySelector(".btn");
+                    rejectBtn.innerText = "Reject";
+                    rejectBtn.classList.remove("btn-success");
+                    rejectBtn.classList.add("btn-danger", "cancel_invite_friend_button", "reject_button");
+
+                    invBtn.parentNode.parentNode.append(rejectForm);
+
+                    // Replace form elements with their clone so we can remove eventListeners
+                    invBtn.parentNode.parentNode.replaceChild(invBtn.parentNode.cloneNode(true), invBtn.parentNode);
+                    rejectForm.parentNode.replaceChild(rejectForm.cloneNode(true), rejectForm);
+
+                    // Add event listeners to new replaced forms
+                    user_searchListeners.cancelInvitationEventListeners();
+                    user_searchListeners.acceptInvitationEventListeners();
+                }
+
             }
         }
     }
