@@ -159,6 +159,23 @@
                 }
 
             }
+            else if(data.type === "cancel_invitation"){
+                let invitationList = document.querySelector("#invitations_list");
+                if (invitationList) {
+                    let invitationCard = document.querySelector(`.search__li[data-user="${data.inviting}"]`);
+                    if(invitationCard){
+                        // Remove invitation card for user who canceled invitation
+                        invitationCard.remove();
+                    }
+                }
+                if(data.invited === "{{ request.user }}"){
+                    let notificationCounter = document.querySelector("#invitation_counter");
+                    notificationCounter.innerText = Number(notificationCounter.innerText) - 1;
+                    if (Number(notificationCounter.innerText === "0")) {
+                        notificationCounter.parentNode.classList.add("invitation_counter--hidden");
+                    }
+                }
+            }
         }
     }
 

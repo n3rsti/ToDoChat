@@ -14,7 +14,7 @@
         {% endif %}
     <ul class="user_search_list" id="invitations_list">
                 {% for invitation in object_list %}
-                    <li class="search__li">
+                    <li class="search__li" data-user="{{ invitation.inviting }}">
                         <div class="card user_search">
                             <div class="card__description"
                                  style="background-image: url('{{ invitation.inviting.profile.background.url }}')">
