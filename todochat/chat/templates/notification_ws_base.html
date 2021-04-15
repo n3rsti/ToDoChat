@@ -1,10 +1,5 @@
 <script>
-    let scheduled_functions_time = {
-        'invite': 0,
-        'accept': 0,
-        'cancel': 0
-    }
-    let interval = 1500;
+    const interval = 1500;
 
     function getCookie(name) {
         let cookieValue = null;
@@ -29,7 +24,7 @@
 
     // username = nick of user who accepted our friend request
     function addToFriendSection(username, user_img, chat_id) {
-        if(chat_id !== null){
+        if (chat_id !== null) {
             // If users were friends before, they will connect automatically because their UsersChat object is already created
             connectFriendConsumer(chat_id);
         }
@@ -63,12 +58,20 @@
         );
         personalWS.onmessage = function (e) {
             console.log(e.data);
+            let notificationCounter = document.querySelector("#invitation_counter");
             let data = JSON.parse(e.data);
             if (data.type === "accept_invitation") {
                 let username = data.invited;
                 let user_img = data.invited_img;
                 let chat_id = data.chat;
+                // Add to friend section in left nav
                 addToFriendSection(username, user_img, chat_id);
+
+                // Decrement notification counter and hide it if counter = 0
+                notificationCounter.innerText = Number(notificationCounter.innerText) - 1;
+                if (Number(notificationCounter.innerText === "0")) {
+                    notificationCounter.parentNode.classList.add("invitation_counter--hidden");
+                }
                 if (document.querySelector("#user_detail_form")) {
                     let form = document.querySelector("#user_detail_form");
                     let section = document.createElement("section");
@@ -89,13 +92,14 @@
             } else if (data.type === "invitation") {
                 // in app_base and server_base
                 let username = data.inviting;
-                let notificationCounter = document.querySelector("#invitation_counter");
                 if (Number(notificationCounter.innerText === "0")) {
                     notificationCounter.parentNode.classList.remove("invitation_counter--hidden");
                 }
+                // Increment notification counter
                 notificationCounter.innerText = Number(notificationCounter.innerText) + 1;
                 let invitationList = document.querySelector("#invitations_list");
                 if (invitationList) {
+                    // Get invitation card for user who invited us
                     let ajax_call = function (endpoint) {
                         $.getJSON(endpoint)
                             .done(response => {
@@ -131,9 +135,8 @@
                     profileListeners.accept();
                 }
                 // user_search view
-
                 let invBtn = document.querySelector(`.invite_friend_button[data-user="${username}"]`);
-                if(invBtn){
+                if (invBtn) {
                     invBtn.innerText = "Accept";
                     invBtn.classList.remove("btn-primary", "invite_friend_button");
                     invBtn.classList.add("btn-success", "accept_invite_friend_button");
@@ -158,22 +161,35 @@
                     user_searchListeners.acceptInvitationEventListeners();
                 }
 
-            }
-            else if(data.type === "cancel_invitation"){
-                let invitationList = document.querySelector("#invitations_list");
-                if (invitationList) {
-                    let invitationCard = document.querySelector(`.search__li[data-user="${data.inviting}"]`);
-                    if(invitationCard){
-                        // Remove invitation card for user who canceled invitation
-                        invitationCard.remove();
-                    }
-                }
-                if(data.invited === "{{ request.user }}"){
-                    let notificationCounter = document.querySelector("#invitation_counter");
+            } else if (data.type === "cancel_invitation") {
+                // Decrement notification counter and hide it if counter = 0
+                if (data.invited === "{{ request.user }}") {
                     notificationCounter.innerText = Number(notificationCounter.innerText) - 1;
                     if (Number(notificationCounter.innerText === "0")) {
                         notificationCounter.parentNode.classList.add("invitation_counter--hidden");
                     }
+                }
+
+                // user_invitations view
+                let invitationList = document.querySelector("#invitations_list");
+                if (invitationList) {
+                    let invitationCard = document.querySelector(`.search__li[data-user="${data.inviting}"]`);
+                    if (invitationCard) {
+                        // Remove invitation card for user who canceled invitation
+                        invitationCard.remove();
+                    }
+                }
+                // user_detail view
+                let userDetailForm = document.querySelector("#user_detail_form");
+                if (userDetailForm) {
+                    document.querySelector(".cancel_invite_friend_button").remove();
+                    // Change accept button to invite button
+                    let acceptBtn = document.querySelector(".accept_invite_friend_button");
+                    acceptBtn.innerText = "Add friend";
+                    acceptBtn.classList.add("invite", "invite_friend_button", "btn-primary");
+                    acceptBtn.classList.remove("btn-success", "accept_invite_friend_button");
+                    acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
+                    profileListeners.invite();
                 }
             }
         }
@@ -186,9 +202,9 @@
         invite: function (btn) {
             let date = new Date();
             let milliseconds = date.getTime();
-            if ((milliseconds - scheduled_functions_time.invite) > interval) {
-                scheduled_functions_time.invite = milliseconds;
-                let invited = btn.dataset.user;
+            let invited = btn.dataset.user;
+            let lastTimeUsed = Number(localStorage[`invite_delay_${invited}`]);
+            if ((milliseconds - lastTimeUsed) > interval || isNaN(lastTimeUsed)) {
                 let invited_img = btn.dataset.user_img;
 
                 const inviteWS = new ReconnectingWebSocket(
@@ -205,25 +221,25 @@
                     }))
                     inviteWS.close();
                 }
+                localStorage.setItem(`invite_delay_${invited}`, String(date.getTime()));
             }
+
         },
         cancel: function (btn) {
             let date = new Date();
             let milliseconds = date.getTime();
-            if ((milliseconds - scheduled_functions_time.cancel) > interval) {
-                scheduled_functions_time.cancel = milliseconds;
-                let invited = btn.dataset.user;
-                let friend = invited;
-                let invited_img = btn.dataset.user_img;
-                let inviting = "{{ request.user }}";
+            let invited = btn.dataset.user;
+            let friend = invited;
+            let invited_img = btn.dataset.user_img;
+            let inviting = "{{ request.user }}";
+            if (btn.classList.contains("swap") || btn.classList.contains("reject_button")) {
+                [invited, inviting] = [inviting, invited];
+            }
+            let lastTimeUsed = Number(localStorage[`cancel_delay_${invited}`]);
+            if ((milliseconds - lastTimeUsed) > interval || isNaN(lastTimeUsed)) {
                 if (btn.classList.contains("reject_button")) {
-                    [invited, inviting] = [inviting, invited]
                     btn.parentNode.parentNode.querySelector(".accept").style.display = "none";
                 }
-                if (btn.classList.contains("swap")) {
-                    [invited, inviting] = [inviting, invited];
-                }
-
                 const inviteWS = new ReconnectingWebSocket(
                     wsStart
                     + window.location.host
@@ -238,34 +254,35 @@
                     }))
                     inviteWS.close();
                 }
+                localStorage.setItem(`cancel_delay_${invited}`, String(date.getTime()));
             }
 
         },
         accept: function (btn) {
-            let date = new Date();
-            let milliseconds = date.getTime();
-            if ((milliseconds - scheduled_functions_time.accept) > interval) {
-                scheduled_functions_time.accept = milliseconds;
-                let inviting = btn.dataset.user;
-                let invited_img = btn.dataset.user_img;
-                let invited = "{{ request.user }}";
-
-                const inviteWS = new ReconnectingWebSocket(
-                    wsStart
-                    + window.location.host
-                    + `/ws/${inviting}/`
-                );
-                inviteWS.onopen = function () {
-                    inviteWS.send(JSON.stringify({
-                        'type': 'accept_invitation',
-                        'invited': invited,
-                        'invited_img': invited_img,
-                        'inviting': inviting
-                    }))
-                    inviteWS.close();
-                }
-
+            let inviting = btn.dataset.user;
+            let invited_img = btn.dataset.user_img;
+            let invited = "{{ request.user }}";
+            const inviteWS = new ReconnectingWebSocket(
+                wsStart
+                + window.location.host
+                + `/ws/${inviting}/`
+            );
+            inviteWS.onopen = function () {
+                inviteWS.send(JSON.stringify({
+                    'type': 'accept_invitation',
+                    'invited': invited,
+                    'invited_img': invited_img,
+                    'inviting': inviting
+                }))
+                inviteWS.close();
             }
+            let notificationCounter = document.querySelector("#invitation_counter");
+            notificationCounter.innerText = Number(notificationCounter.innerText) - 1;
+            if (Number(notificationCounter.innerText === "0")) {
+                notificationCounter.parentNode.classList.add("invitation_counter--hidden");
+            }
+
+
         }
     }
 

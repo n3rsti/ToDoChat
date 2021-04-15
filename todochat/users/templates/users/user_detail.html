@@ -31,7 +31,7 @@
                         </button>
                     </form>
                 {% elif invitation == 'invited' %}
-                    <form method="POST" class="user_detail_form invited">
+                    <form method="POST" class="user_detail_form invited" id="user_detail_form">
                         {% csrf_token %}
                         <input type="hidden" name="invited"
                                value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
