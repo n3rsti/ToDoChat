@@ -47,7 +47,7 @@
                                 <img src="{{ server.image.url }}" alt="{{ server.name }} server image"
                                      class="groups__img mr-2">
                             {% endif %}
-                            {{ server.name|shorter_name:10 }}
+                            <h3 class="li__servername">{{ server.name }}</h3>
                             <span class="badge bg-light text-dark notification-badge">0</span>
                         </a>
                     </li>
@@ -136,7 +136,7 @@
         );
         serverSocket{{ forloop.counter }}.onmessage = function (e) {
             let data = JSON.parse(e.data);
-            if (data.author !== "{{ request.user }}" && localStorage['last_msg_id'] !== String(data.id)) {
+            if (localStorage['last_msg_id'] !== String(data.id)) {
                 localStorage.setItem('last_msg_id', data.id);
                 increment_notification_count(data.server, data.channel);
             }

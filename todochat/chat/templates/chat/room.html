@@ -63,13 +63,12 @@
         if (localStorage["{{ channel.id }}_notifications"]) {
             let lsChannelData = localStorage["{{ channel.id }}_notifications"];
             let lsServerData = localStorage["{{ server.id }}_notifications"];
-            localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
-            document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).innerText = localStorage["{{ server.id }}_notifications"];
-            if (localStorage["{{ server.id }}_notifications"] == 0) {
-                document.querySelector(`.groups__li[data-server="{{ server.id }}"] .badge`).style.opacity = 0;
+            if (lsServerData) {
+                localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
+                resetChannelNotifications("{{ channel.id }}");
+                hideBadges();
             }
-            resetChannelNotifications("{{ channel.id }}");
-            hideBadges();
+
 
         }
         const chatInput = document.querySelector(".chat-message-input");
@@ -164,6 +163,7 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             if (message.length !== 0) {
+                let id = Date.now()
                 chatSocket.send(JSON.stringify({
                     'message': message,
                     'author': '{{ user }}',
@@ -172,8 +172,10 @@
                 serverSocket.send(JSON.stringify({
                     'server': '{{ server.id }}',
                     'channel': '{{ channel.id }}',
-                    'id': Date.now()
-                }));
+                    'id': id
+                }))
+                {# Add id to localStorage so other tabs for the same user won't increment their notification counter for this message #}
+                localStorage.setItem("last_msg_id", id);
             }
 
             messageInputDom.value = '';
