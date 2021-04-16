@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 from django.utils import timezone
+import string
+import random
+
+
+def create_num_id(length):
+    letters = string.digits[1:]
+    id = ''.join(random.choice(letters) for i in range(length))
+    return id
 
 
 class Profile(models.Model):
@@ -36,13 +44,17 @@ class UserInvitation(models.Model):
         invited.profile.friends.add(inviting)
         chat = UsersChat.objects.filter(users=inviting).filter(users=invited).first()
         if chat is None:
-            chat = UsersChat.objects.create()
+            chat_id = create_num_id(10)
+            while UsersChat.objects.filter(id=chat_id).first() is not None:
+                chat_id = create_num_id(10)
+            chat = UsersChat.objects.create(id=chat_id)
             chat.users.add(inviting)
             chat.users.add(invited)
         return self.delete()
 
 
 class UsersChat(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
     users = models.ManyToManyField(User, related_name="users_chat")
 
 

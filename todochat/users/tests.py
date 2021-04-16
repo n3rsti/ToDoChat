@@ -41,7 +41,7 @@ class TestUsersMessageModel(TestCase):
         user2.set_password('test')
         user1.profile.friends.add(user2)
         user2.profile.friends.add(user1)
-        chat = UsersChat.objects.create()
+        chat = UsersChat.objects.create(id=1234)
         chat.users.add(user1, user2)
         message = UsersMessage.objects.create(id="123", chat=chat,
                                               content="test message",

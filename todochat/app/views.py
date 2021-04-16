@@ -112,7 +112,10 @@ def invite_server_user(request, pk, username):
             message_id = create_num_id(20)
             chat = UsersChat.objects.filter(users=request.user).filter(users=invited_user).first()
             if not chat:
-                chat = UsersChat.objects.create()
+                chat_id = create_num_id(10)
+                while UsersChat.objects.filter(id=chat_id).first() is not None:
+                    chat_id = create_num_id(10)
+                chat = UsersChat.objects.create(id=chat_id)
                 chat.users.add(request.user)
                 chat.users.add(invited_user)
                 chat.save()

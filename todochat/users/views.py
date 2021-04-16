@@ -8,6 +8,7 @@ from users.models import User, UserInvitation, UsersChat
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from app.views import create_num_id
 
 
 def register(request):
@@ -148,7 +149,10 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if chat is not None:
             return chat
 
-        chat = UsersChat.objects.create(id=f'{friend.username}_{self.request.user.username}')
+        chat_id = create_num_id(10)
+        while UsersChat.objects.filter(id=chat_id).first() is not None:
+            chat_id = create_num_id(10)
+        chat = UsersChat.objects.create(id=chat_id)
         chat.users.add(friend, self.request.user)
         chat.save()
         return chat
@@ -168,6 +172,9 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             context["messages"] = chat.usersmessage_set.order_by('-created')[:100][::-1]
             return context
 
+        chat_id = create_num_id(10)
+        while UsersChat.objects.filter(id=chat_id).first() is not None:
+            chat_id = create_num_id(10)
         chat = UsersChat.objects.create(id=f'{friend.username}_{self.request.user.username}')
         chat.users.add(friend, self.request.user)
         chat.save()
