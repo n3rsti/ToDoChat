@@ -163,10 +163,10 @@
 
 
             }
-            /* cancel_invitation type is used for:
-            * a) when other user cancel his invitation for us
-            * b) when our 
-            *
+            /*
+            cancel_invitation type is used for:
+            * a) when other user cancel his invitation for us (request.user = invited)
+            * b) when our invitation is rejected (request.user = inviting)
             *  */
             else if (data.type === "cancel_invitation") {
 
@@ -190,18 +190,28 @@
                 // user_detail view
                 let userDetailForm = document.querySelector("#user_detail_form");
                 if (userDetailForm) {
-                    document.querySelector(".cancel_invite_friend_button").remove();
-                    // Change accept button to invite button
-                    let acceptBtn = document.querySelector(".accept_invite_friend_button");
-                    acceptBtn.innerText = "Add friend";
-                    acceptBtn.classList.add("invite", "invite_friend_button", "btn-primary");
-                    acceptBtn.classList.remove("btn-success", "accept_invite_friend_button");
-                    acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
-                    profileListeners.invite();
+                    if (data.invited === "{{ request.user }}") {
+                        document.querySelector(".cancel_invite_friend_button").remove();
+                        // Change accept button to invite button
+                        let acceptBtn = document.querySelector(".accept_invite_friend_button");
+                        acceptBtn.innerText = "Add friend";
+                        acceptBtn.classList.add("invite", "invite_friend_button", "btn-primary");
+                        acceptBtn.classList.remove("btn-success", "accept_invite_friend_button");
+                        acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
+                        profileListeners.invite();
+                    }
+                    else if(data.inviting === "{{ request.user }}"){
+                        let cancelBtn = document.querySelector(".cancel_invite_friend_button");
+                        cancelBtn.innerText = "Add friend";
+                        cancelBtn.classList.remove("btn-danger", "cancel_invite_friend_button");
+                        cancelBtn.classList.add("btn-primary", "invite_friend_button", "invite");
+                        cancelBtn.parentNode.replaceChild(cancelBtn.cloneNode(true), cancelBtn);
+                        profileListeners.invite();
+                    }
                 }
                 // user_search view
                 let acceptBtn = document.querySelector(`.accept_invite_friend_button[data-user="${data.inviting}"]`);
-                if(acceptBtn){
+                if (acceptBtn) {
                     acceptBtn.innerText = "Invite";
                     acceptBtn.parentNode.parentNode.querySelector("form.reject").remove();
                     acceptBtn.classList.add("btn-primary", "invite_friend_button");
@@ -209,6 +219,16 @@
                     // Replace button with its clone so it doesn't have any event listeners
                     acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
                     // Add event listener
+                    user_searchListeners.invite();
+                }
+                let cancelBtn = document.querySelector(`#cancel_button[data-user="${data.invited}"]`);
+                if (cancelBtn) {
+                    cancelBtn.innerText = "Invite";
+                    cancelBtn.classList.add("btn-primary", "invite_friend_button");
+                    cancelBtn.value = "invite";
+                    cancelBtn.classList.remove("btn-danger", "cancel_invite_friend_button");
+                    cancelBtn.removeAttribute("id");
+                    cancelBtn.parentNode.replaceChild(cancelBtn.cloneNode(true), cancelBtn);
                     user_searchListeners.invite();
                 }
             }
@@ -324,8 +344,13 @@
         cancel: function (btn) {
             invitationBase.cancel(btn);
             btn.innerText = "Invite";
-            btn.classList.remove("btn-danger");
-            btn.classList.add("btn-primary");
+            btn.classList.remove("btn-danger", "cancel_invite_friend_button", "reject_button");
+            btn.parentNode.classList.remove("reject");
+            btn.classList.add("btn-primary", "invite_friend_button");
+            let acceptForm = btn.parentNode.parentNode.querySelector("form.accept");
+            if(acceptForm){
+                acceptForm.remove();
+            }
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
@@ -352,8 +377,12 @@
         cancel: function (btn) {
             invitationBase.cancel(btn);
             btn.innerText = "Add friend"
-            btn.classList.add("btn-primary");
-            btn.classList.remove("btn-danger");
+            btn.classList.add("btn-primary", "invite_friend_button", "invite");
+            btn.classList.remove("btn-danger", "cancel_invite_friend_button", "reject_button");
+            let acceptBtn = btn.parentNode.querySelector(".accept_invite_friend_button");
+            if(acceptBtn){
+                acceptBtn.remove();
+            }
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
@@ -364,8 +393,8 @@
         invite: function (btn) {
             invitationBase.invite(btn);
             btn.innerText = "Cancel invitation";
-            btn.classList.remove("btn-primary");
-            btn.classList.add("btn-danger");
+            btn.classList.remove("btn-primary", "invite", "invite_friend_button");
+            btn.classList.add("btn-danger", "cancel_invite_friend_button");
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
