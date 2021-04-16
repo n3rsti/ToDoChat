@@ -312,6 +312,21 @@ div.groups__img, div.nav__server-logo {
     padding: 0 0 0 6px; }
   .groups__li.base.opened {
     display: flex; }
+  .groups__li.hide-overflow {
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; }
+
+.li__servername {
+  font-size: 16px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 50%;
+  margin: 0;
+  font-weight: 600; }
 
 .groups__li:focus, .groups__li:hover {
   background: var(--dark);
