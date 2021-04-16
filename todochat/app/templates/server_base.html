@@ -52,7 +52,7 @@
             {% for channel in server.channel_set.all %}
                 <a href="{% url 'room' server.id channel.name %}" class="groups__li pl-3"
                    title="{{ channel.name }} channel" data-channel="{{ channel.id }}">
-                    #{{ channel.name }}
+                    <h3 class="li__servername">#{{ channel.name }}</h3>
                     <span class="badge bg-light text-dark notification-badge">0</span>
                 </a>
             {% endfor %}
