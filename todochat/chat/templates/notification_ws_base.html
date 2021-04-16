@@ -157,11 +157,19 @@
                     rejectForm.parentNode.replaceChild(rejectForm.cloneNode(true), rejectForm);
 
                     // Add event listeners to new replaced forms
-                    user_searchListeners.cancelInvitationEventListeners();
-                    user_searchListeners.acceptInvitationEventListeners();
+                    user_searchListeners.cancel();
+                    user_searchListeners.accept();
                 }
 
-            } else if (data.type === "cancel_invitation") {
+
+            }
+            /* cancel_invitation type is used for:
+            * a) when other user cancel his invitation for us
+            * b) when our 
+            *
+            *  */
+            else if (data.type === "cancel_invitation") {
+
                 // Decrement notification counter and hide it if counter = 0
                 if (data.invited === "{{ request.user }}") {
                     notificationCounter.innerText = Number(notificationCounter.innerText) - 1;
@@ -190,6 +198,18 @@
                     acceptBtn.classList.remove("btn-success", "accept_invite_friend_button");
                     acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
                     profileListeners.invite();
+                }
+                // user_search view
+                let acceptBtn = document.querySelector(`.accept_invite_friend_button[data-user="${data.inviting}"]`);
+                if(acceptBtn){
+                    acceptBtn.innerText = "Invite";
+                    acceptBtn.parentNode.parentNode.querySelector("form.reject").remove();
+                    acceptBtn.classList.add("btn-primary", "invite_friend_button");
+                    acceptBtn.classList.remove("accept_invite_friend_button", "btn-success");
+                    // Replace button with its clone so it doesn't have any event listeners
+                    acceptBtn.parentNode.replaceChild(acceptBtn.cloneNode(true), acceptBtn);
+                    // Add event listener
+                    user_searchListeners.invite();
                 }
             }
         }
@@ -381,19 +401,19 @@
 
     // Used in user_search.html
     let user_searchListeners = {
-        invitationEventListeners: function () {
+        invite: function () {
             $('.invite_friend_button').click(function (event) {
                 event.preventDefault();
                 searchInvitationFunctions.invite(this);
             })
         },
-        cancelInvitationEventListeners: function () {
+        cancel: function () {
             $('.cancel_invite_friend_button').click(function (event) {
                 event.preventDefault();
                 searchInvitationFunctions.cancel(this);
             })
         },
-        acceptInvitationEventListeners: function () {
+        accept: function () {
             $('.accept_invite_friend_button').click(function (event) {
                 event.preventDefault();
                 searchInvitationFunctions.accept(this);
