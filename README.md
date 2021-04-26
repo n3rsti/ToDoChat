@@ -48,17 +48,6 @@ EMAIL_USER, EMAIL_PASS are used for password reset with gmail smtp.
 ### Collect static for django-ckeditor
 `python3 manage.py collectstatic`
 
-### Install ckeditor plugins
-* balloonpanel
-* balloontoolbar
-* cloudservices
-* button
-* imagebase
-* dialog
-* easyimage
-
-Plugins needs to be located in `todochat/static/ckeditor/ckeditor/plugins/`
-
 
 ### Migrate and start server
 
@@ -91,3 +80,4 @@ Plugins needs to be located in `todochat/static/ckeditor/ckeditor/plugins/`
 ## ToDo
 * HTML and CSS needs to be rewritten or at least refactored (app is not accessible yet and css has a lot of unused styles)
 * RWD for larger devices (now working on mobile devices only for testing backend functionality)
+* Finish DOCS
