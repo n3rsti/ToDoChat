@@ -13,17 +13,27 @@
 {% endblock title %}
 {% block content %}
     {% include "app_base.html" %}
-    <main class="content chat tasks">
-        <div class="tasks__filter">
-            <button class="btn w-50" onclick="$('.task_filter').modal('show')">
-                Filter<i class="fas fa-filter"></i>
-            </button>
-            <button class="btn w-50" onclick="$('.task_sort').modal('show')">
-                Sort<i class="fas fa-sort"></i>
-            </button>
-        </div>
-        {% if tasks.count is 0 %}
-            No tasks matching query
+    <main class="content chat tasks {% if request.user.server_set.count == 0 %}justify-content-center mt-0{% endif %}">
+        {% if tasks.count > 0 %}
+            <div class="tasks__filter">
+                <button class="btn w-50" onclick="$('.task_filter').modal('show')">
+                    Filter<i class="fas fa-filter"></i>
+                </button>
+                <button class="btn w-50" onclick="$('.task_sort').modal('show')">
+                    Sort<i class="fas fa-sort"></i>
+                </button>
+            </div>
+        {% endif %}
+
+        {% if request.user.server_set.count == 0 %}
+            <p class="mb-0 mt-2">
+                You don't have any group created.
+            </p>
+            <a href="{% url 'create_server' %}">Create one</a>.
+        {% elif tasks.count is 0 %}
+            <p class="mb-0 mt-2">
+                No tasks matching query
+            </p>
         {% else %}
             <ul class="task__list">
                 {% for task in tasks %}
@@ -46,10 +56,10 @@
                             </section>
                             <section class="task__date">
                                 {% if task.deadline %}
-                                Deadline:
-                                {{ task.deadline|date:"d M, Y" }},
+                                    Deadline:
+                                    {{ task.deadline|date:"d M, Y" }},
                                 {% else %}
-                                No deadline,
+                                    No deadline,
                                 {% endif %}
                                 by
                                 <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
@@ -60,19 +70,17 @@
             </ul>
         {% endif %}
     </main>
-    <button class="create_task btn-primary btn"><i class="fas fa-plus"></i></button>
+    {% if request.user.server_set.count > 0 %}
+        <button class="create_task btn-primary btn"><i class="fas fa-plus"></i></button>
         <div class="task_section">
             <button class="close_task">
                 <i class="far fa-times-circle"></i>
             </button>
-
-
             <form method="POST" class="task__form">
                 {% csrf_token %}
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="true"
                         aria-controls="form_title">
-
                     <i class="fas fa-minus"></i>Title
                 </button>
                 <div class="form_section show" id="form_title">
@@ -84,19 +92,12 @@
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         aria-controls="form_deadline">
-
                     <i class="fas fa-plus"></i>Deadline (optional)
                 </button>
                 <div class="form_section collapse" id="form_deadline">
                     <label for="deadline" hidden>Deadline</label>
                     <input type="date" id="deadline" name="deadline" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
-
-                <button class="btn" type="button"
-                        onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
-                        aria-controls="form_assigned">
-                    <i class="fas fa-plus"></i>Assigned for
-                </button>
                 <button class="btn" type="button"
                         onclick="collapseFormSection(this, this.getAttribute('aria-expanded'))" aria-expanded="false"
                         aria-controls="form_description">
@@ -108,60 +109,63 @@
                     {{ desc_form.description.as_p }}
                     <small class="form-text text-muted">Description can be maximum 500 characters long.</small>
                 </div>
-            <div class="form_section">{{ desc_form.server|as_crispy_field }}</div>
+                {% if request.user.server_set.count > 0 %}
+                    <div class="form_section">{{ desc_form.server|as_crispy_field }}</div>
+                {% endif %}
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
-    <div class="sort_filter_section">
-        <form method="GET" class="task_sort_filter_form">
-            <div class="modal task_filter" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Filter tasks</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    onclick="$('.task_filter').modal('hide')">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {{ filter_form|crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Filter</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                                    onclick="$('.task_filter').modal('hide')">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal task_sort" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Sort tasks</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    onclick="$('.task_sort').modal('hide')">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {{ sort_form|crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Filter</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                                    onclick="$('.task_sort').modal('hide')">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
 
+        <div class="sort_filter_section">
+            <form method="GET" class="task_sort_filter_form">
+                <div class="modal task_filter" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Filter tasks</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                        onclick="$('.task_filter').modal('hide')">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {{ filter_form|crispy }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        onclick="$('.task_filter').modal('hide')">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal task_sort" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Sort tasks</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                        onclick="$('.task_sort').modal('hide')">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {{ sort_form|crispy }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        onclick="$('.task_sort').modal('hide')">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
 {% endblock content %}
