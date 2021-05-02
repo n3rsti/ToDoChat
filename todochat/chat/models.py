@@ -13,6 +13,8 @@ class ChannelMessage(models.Model):
                                on_delete=models.CASCADE)
     created = models.DateTimeField(editable=False, default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
+    target_users = models.ManyToManyField(User, related_name="user_new_messages")
+    # target_user is basically list of users who didn't read message
 
     def save(self, *args, **kwargs):
         if not self.id:
