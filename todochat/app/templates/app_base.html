@@ -73,14 +73,14 @@
             <h2 class="groups__h2">Friends</h2>
         {% endif %}
         <ul class="groups__ul friends__ul">
-            {% for friend, chat_id in request.user|get_friends_chat_id %}
+            {% for friend, chat_id, notification_counter in request.user|get_friends_chat_id %}
                 <li class="flex pl-3 groups__li" data-channel="{{ chat_id.id }}">
                     <a href="{% url 'user_chat' friend.username %}" class="groups__li"
                        title="{{ friend.username }} profile">
                         <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
                              class="users__img">
                         {{ friend.username }}
-                        <span class="badge bg-light text-dark notification-badge">0</span>
+                        <span class="badge bg-light text-dark">{{ notification_counter }}</span>
                     </a>
                 </li>
             {% endfor %}
@@ -121,8 +121,6 @@
 </nav>
 {% include "notification_ws_base.html" %}
 <script>
-    checkNotificationCounter();
-
     function close_websocket(e) {
         console.error('Chat socket closed unexpectedly');
     }

@@ -65,7 +65,6 @@
             let lsServerData = localStorage["{{ server.id }}_notifications"];
             if (lsServerData) {
                 localStorage.setItem("{{ server.id }}_notifications", parseInt(lsChannelData) - parseInt(lsServerData));
-                resetChannelNotifications("{{ channel.id }}");
                 hideBadges();
             }
 
