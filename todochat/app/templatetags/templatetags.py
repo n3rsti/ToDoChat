@@ -42,9 +42,12 @@ def get_friends_chat_id(user):
     friends = user.profile.friends.all()
     users_chat = user.users_chat.all()
     chats = []
+    notification_counter = []
     for friend in friends:
-        chats.append(users_chat.filter(users=user).filter(users=friend).first())
-    return zip(friends, chats)
+        chat = users_chat.filter(users=user).filter(users=friend).first()
+        chats.append(chat)
+        notification_counter.append(chat.usersmessage_set.all().filter(target_users=user).count())
+    return zip(friends, chats, notification_counter)
 
 
 @register.filter
