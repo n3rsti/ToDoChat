@@ -169,6 +169,9 @@ class UserChatView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         chat = UsersChat.objects.filter(users=self.request.user).filter(users=friend).first()
         # Check if chat for user and friend is already created, else create new chat
         if chat is not None:
+            for message in chat.usersmessage_set.filter(is_read=False).exclude(author=self.request.user):
+                message.is_read = True
+                message.save()
             context["messages"] = chat.usersmessage_set.order_by('-created')[:100][::-1]
             return context
 

@@ -65,8 +65,7 @@ class UsersMessage(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(editable=False, default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
-    target_users = models.ManyToManyField(User, related_name="user_new_private_messages")
-    # target_user is basically list of users who didn't read message
+    is_read = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:

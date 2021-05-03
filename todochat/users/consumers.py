@@ -75,7 +75,8 @@ class ChatConsumer(WebsocketConsumer):
         author_obj = self.user
         while not UsersMessage.objects.filter(id=msg_id).first() is None:
             msg_id = create_num_id(20)
-        return UsersMessage.objects.create(id=msg_id, chat=self.channel, content=message, author=author_obj)
+        msg = UsersMessage.objects.create(id=msg_id, chat=self.channel, content=message, author=author_obj)
+        return msg.save()
 
     def create_server_invitation(self, server_id, invited_user, invitation_id):
         if ServerInvitation.objects.filter(id=invitation_id).first() is None:
