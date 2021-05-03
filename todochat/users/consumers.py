@@ -34,29 +34,32 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         ws_type = text_data_json['type']
-        author = text_data_json['author']
-        image = text_data_json['image']
-        if ws_type == "server_invitation":
-            server_id = text_data_json['server_id']
-            invited_user = text_data_json['invited_user']
-            invitation_id = create_random_id(10)
-            message = f'tdchat.net/i/{invitation_id}'
-            async_to_sync(self.create_server_invitation(server_id, invited_user, invitation_id))
+        if ws_type == "message_read":
+            async_to_sync(self.message_read())
         else:
-            message = text_data_json['message']
+            author = text_data_json['author']
+            image = text_data_json['image']
+            if ws_type == "server_invitation":
+                server_id = text_data_json['server_id']
+                invited_user = text_data_json['invited_user']
+                invitation_id = create_random_id(10)
+                message = f'tdchat.net/i/{invitation_id}'
+                async_to_sync(self.create_server_invitation(server_id, invited_user, invitation_id))
+            else:
+                message = text_data_json['message']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': "chat_message",
-                'message': message,
-                'author': author,
-                'image': image
-            }
-        )
+            # Send message to room group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': "chat_message",
+                    'message': message,
+                    'author': author,
+                    'image': image
+                }
+            )
 
-        async_to_sync(self.create_chat_message(message))
+            async_to_sync(self.create_chat_message(message))
 
     # Receive message from room group
     def chat_message(self, event):
@@ -83,6 +86,16 @@ class ChatConsumer(WebsocketConsumer):
             server = Server.objects.get(pk=server_id)
             invited = User.objects.get(username=invited_user)
             return ServerInvitation.objects.create(server=server, id=invitation_id, invited_user=invited)
+
+    def message_read(self):
+        """
+        get ALL messages which user didn't read
+        in theory we should try to get only last message, but there can be connection problem or any other error which
+        would cause to bug notification counter
+        """
+        for message in self.channel.usersmessage_set.filter(is_read=False).exclude(author=self.user):
+            message.is_read = True
+            message.save()
 
 
 class ChatNotificationConsumer(WebsocketConsumer):

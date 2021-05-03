@@ -78,9 +78,15 @@
             + '/ws/chat_notifications/'
             + '{{ object.id }}/'
         );
-
+        // Used for debugging. Can be removed
+        chatNotificationSocket.onmessage = function (e) {
+            console.log(JSON.parse(e.data));
+        }
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data); // data.message
+            chatSocket.send(JSON.stringify({
+                'type': 'message_read'
+            }));
             let messages = document.querySelectorAll('.chat__msg-author');
             let isPreviousAuthor;
             if (messages.length === 0) {
