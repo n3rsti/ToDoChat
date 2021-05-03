@@ -36,7 +36,7 @@
         <h2 class="groups__h2">Groups</h2>
         {% if user.server_set.count > 0 %}
             <ul class="groups__ul">
-                {% for server in user.server_set.all %}
+                {% for server, notification_counter in user.server_set.all|get_server_notification_counter:request.user %}
                     <li class="groups__li base pl-3 {% if forloop.counter <= 5 %}opened{% endif %}"
                         data-server="{{ server.id }}">
                         <a href="{% url 'server_detail' server.id %}" class="groups__li flex"
@@ -48,7 +48,7 @@
                                      class="groups__img mr-2">
                             {% endif %}
                             <h3 class="li__servername">{{ server.name }}</h3>
-                            <span class="badge bg-light text-dark notification-badge">0</span>
+                            <span class="badge bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
                         </a>
                     </li>
                 {% endfor %}
@@ -80,7 +80,7 @@
                         <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
                              class="users__img">
                         {{ friend.username }}
-                        <span class="badge bg-light text-dark">{{ notification_counter }}</span>
+                        <span class="badge bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
                     </a>
                 </li>
             {% endfor %}

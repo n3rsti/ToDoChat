@@ -47,21 +47,26 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        author = text_data_json['author']
-        image = text_data_json['image']
+        ws_type = text_data_json.get('type')
+        if ws_type == "message_read":
+            async_to_sync(self.message_read())
+        else:
+            message = text_data_json['message']
+            author = text_data_json['author']
+            image = text_data_json['image']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'author': author,
-                'image': image
-            }
-        )
-        async_to_sync(self.create_chat_message(message))
+            async_to_sync(self.create_chat_message(message))
+
+            # Send message to room group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'author': author,
+                    'image': image
+                }
+            )
 
     # Receive message from room group
     def chat_message(self, event):
@@ -81,7 +86,14 @@ class ChatConsumer(WebsocketConsumer):
         author_obj = self.user
         while not ChannelMessage.objects.filter(id=msg_id).first() is None:
             msg_id = create_num_id(20)
-        return ChannelMessage.objects.create(id=msg_id, channel=channel, content=message, author=author_obj)
+        msg = ChannelMessage.objects.create(id=msg_id, channel=channel, content=message, author=author_obj)
+        msg.target_users.set(channel.server.users.exclude(username=self.user))
+        return msg.save()
+
+    def message_read(self):
+        for message in self.user.user_new_messages.filter(channel=self.channel):
+            message.target_users.remove(self.user)
+            message.save()
 
 
 class ServerNotificationConsumer(ChatConsumer):

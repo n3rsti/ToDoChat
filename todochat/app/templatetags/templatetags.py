@@ -1,6 +1,7 @@
 from django import template
 from users.models import UserInvitation
 from app.models import Server, ServerInvitation
+from chat.models import ChannelMessage
 
 register = template.Library()
 
@@ -58,3 +59,23 @@ def get_userschat_objects(request_user):
     for friend in friends:
         chat_obj_list.append(chat_objects.filter(users=request_user).filter(users=friend.user).first().id)
     return zip(friends, chat_obj_list)
+
+
+@register.filter
+def get_server_notification_counter(server_set, user):
+    notification_counter = []
+    for server in server_set:
+        server_channels = server.channel_set.all()
+        counter = 0
+        for channel in server_channels:
+            counter += channel.channelmessage_set.filter(target_users=user).count()
+        notification_counter.append(counter)
+    return zip(server_set, notification_counter)
+
+
+@register.filter
+def get_channel_notification_counter(channel_set, user):
+    notification_counter = []
+    for channel in channel_set:
+        notification_counter.append(channel.channelmessage_set.filter(target_users=user).count())
+    return zip(channel_set, notification_counter)

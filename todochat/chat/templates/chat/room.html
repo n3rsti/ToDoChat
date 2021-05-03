@@ -106,6 +106,10 @@
         );
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data); // data.message
+            console.log(data);
+            chatSocket.send(JSON.stringify({
+                "type": "message_read"
+            }))
             let messages = document.querySelectorAll('.chat__msg-author');
             let isPreviousAuthor;
             if (messages.length === 0) {

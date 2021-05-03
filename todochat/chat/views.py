@@ -21,6 +21,8 @@ class ChannelDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         channel = Channel.objects.filter(name=self.kwargs['room_name'],
                                          server=Server.objects.get(id=self.kwargs['pk'])).first()
+        for message in channel.channelmessage_set.filter(target_users=self.request.user):
+            message.target_users.remove(self.request.user)
         server = Server.objects.get(id=self.kwargs['pk'])
         messages = ChannelMessage.objects.filter(channel=channel).order_by('-created')[:100][::-1]
         context = super().get_context_data(**kwargs)
