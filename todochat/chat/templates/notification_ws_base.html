@@ -410,7 +410,7 @@
             btn.classList.remove("btn-primary");
             btn.classList.add("btn-danger");
             btn.disabled = true;
-            document.querySelector('.accept_invite_friend_button').remove();
+            btn.parentNode.querySelector('.accept_invite_friend_button').remove();
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
@@ -421,7 +421,7 @@
             btn.classList.remove("btn-primary");
             btn.classList.add("btn-success");
             btn.disabled = true;
-            document.querySelector('.reject_friend_button').remove();
+            btn.parentNode.querySelector('.reject_friend_button').remove();
             let old_element = btn;
             let new_element = old_element.cloneNode(true);
             old_element.parentNode.replaceChild(new_element, old_element);
