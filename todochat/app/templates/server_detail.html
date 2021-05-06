@@ -73,7 +73,8 @@
                                             {% if friend|get_server_invitation_status:server.id %}
                                                 <button class="btn btn-success w-25" disabled>Invited</button>
                                             {% else %}
-                                                <button type="button" class="btn btn-success w-25 invite_btn"
+                                                <input type="hidden" name="invited_user" value="{{ friend.user.username }}">
+                                                <button type="submit" class="btn btn-success w-25 invite_btn"
                                                         onclick="inviteUser('{{ chat }}', '{{ friend.user.username }}')"
                                                         data-chat="{{ chat }}">Invite
                                                 </button>

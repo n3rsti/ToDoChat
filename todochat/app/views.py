@@ -76,6 +76,7 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def post(self, request, pk):
         new_channel = request.POST.get("name")
         removed_user = request.POST.get("removed_user")
+        invited_user = request.POST.get("invited_user")
         server = Server.objects.get(id=self.kwargs['pk'])
 
         if (new_channel is not None and 0 < len(new_channel) <= 20 and
@@ -90,6 +91,8 @@ class DetailServerView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         elif request.POST.get("leave_server") and request.user != server.owner:
             server.users.remove(request.user)
             return redirect("index")
+        elif invited_user:
+            return redirect("invite_server_user", pk, invited_user)
         return redirect("server_detail", pk)
 
     def get_context_data(self, **kwargs):
