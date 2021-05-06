@@ -166,10 +166,12 @@
                     + `${chat}/`
                 );
                 chatNotificationSocket.onopen = function (e) {
+                    let id = Date.now()
                     chatNotificationSocket.send(JSON.stringify({
                         'channel_id': chat,
-                        'msg_id': Date.now()
+                        'msg_id': id
                     }));
+                    localStorage.setItem("last_msg_id", id);
                     chatNotificationSocket.close();
                 }
                 chatSocket.onopen = function (e) {
