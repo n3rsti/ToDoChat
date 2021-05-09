@@ -1309,18 +1309,31 @@ main.task {
     .task__comment .confirm_delete .btn {
       margin: 5px; }
 
-.calendar .calendar__a {
-  color: #000;
-  text-decoration: none;
-  display: flex;
-  justify-content: center; }
-.calendar .task__td .calendar__a {
-  color: #e74c3c;
-  font-weight: 600; }
-.calendar .today {
-  background: #0d6efd; }
-.calendar td {
-  padding: 3px; }
+.calendar {
+  border: 0; }
+  .calendar .calendar__a {
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    justify-content: center; }
+  .calendar .task__td {
+    background: #e74c3c;
+    border-radius: 15px; }
+    .calendar .task__td .calendar__a {
+      color: #fff;
+      font-weight: 600; }
+  .calendar .today {
+    background: #0d6efd;
+    border-radius: 15px; }
+    .calendar .today .calendar__a {
+      color: #fff;
+      font-weight: 500; }
+  .calendar td {
+    padding: 5px; }
+  .calendar th {
+    text-align: center; }
+  .calendar td, .calendar th, .calendar tr {
+    border: 0; }
 
 .month-year .fa {
   font-size: 25px;

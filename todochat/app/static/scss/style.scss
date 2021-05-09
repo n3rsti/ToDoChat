@@ -1671,6 +1671,8 @@ main.task {
 }
 
 .calendar {
+  border: 0;
+
   .calendar__a {
     color: #000;
     text-decoration: none;
@@ -1679,18 +1681,33 @@ main.task {
   }
 
   .task__td {
+    background: #e74c3c;
+    border-radius: 15px;
+
     .calendar__a {
-      color: #e74c3c;
+      color: #fff;
       font-weight: 600;
     }
   }
 
   .today {
     background: #0d6efd;
+    border-radius: 15px;
+
+    .calendar__a {
+      color: #fff;
+      font-weight: 500;
+    }
   }
 
   td {
-    padding: 3px;
+    padding: 5px;
+  }
+  th {
+    text-align: center;
+  }
+  td, th, tr {
+    border: 0;
   }
 }
 
