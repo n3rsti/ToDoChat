@@ -250,17 +250,20 @@ def filter_tasks(request, tasks):
 
 
 def render_calendar(request):
-    now = datetime.now()
+    # Get GET parameters. If no parameters are provided, month and year are set as current date
     year = request.GET.get('year')
     month = request.GET.get('month')
+    now = datetime.now()
     if year is None:
         year = now.year
     if month is None:
         month = now.month
-    months = {"January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6, "July": 7, "August": 8,
-              "September": 9, "October": 10, "November": 11, "December": 12}
 
-    # Get all possible values for deadline year
+    months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"]
+
+    # Get all possible values for deadline year and parse into sorted list
+    # If user has tasks in years: 2008, 2013, 2015 => output: [2008, 2013, 2015]
     years = []
     for _year in request.user.users_tasks.values_list('deadline__year', flat=True).distinct():
         years.append(_year)
@@ -268,7 +271,11 @@ def render_calendar(request):
         years.append(int(year))
     years.sort()
 
-    task_days = list(request.user.users_tasks.filter(deadline__year=year, deadline__month=month).values_list('deadline__day', flat=True).distinct())
+    # Get all days in current month with existing task and parse into list
+    # Example output: [1, 10, 23, 25] where each number is representing day in month where task has its deadline
+    task_days = list(request.user.users_tasks.filter(deadline__year=year, deadline__month=month).
+                     values_list('deadline__day', flat=True).distinct())
+
     context = {
         "year": int(year),
         "month": int(month),
