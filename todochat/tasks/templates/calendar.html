@@ -57,5 +57,13 @@
                 <button class="calendar__btn --dark" type="submit">Search</button>
             </section>
         </form>
+        {% if user.users_tasks.count > 0 %}
+            <section class="container__bottom">
+                <a href="#tasks" class="deadline_href">
+                    <i class="fas fa-angle-down"></i>
+                </a>
+            </section>
+        {% endif %}
+
     </div>
 {% endblock content %}
