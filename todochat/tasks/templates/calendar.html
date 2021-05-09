@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<form method="GET">
+    <label for="cars">Year:</label>
+    <select id="cars" name="cars">
+        {% for loop_year in years %}
+            <option value="{{ forloop.counter }}" {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
+        {% endfor %}
+    </select>
+     <label for="cars">Month:</label>
+    <select id="cars" name="cars">
+        {% for key, val in months.items %}
+            <option value="{{ val }}" {% if val == month %}selected{% endif %}>{{ key }}</option>
+        {% endfor %}
+    </select>
+</form>
+<div class="calendar"></div>
+{{ year }}
+{{ month }}
+{{ task_days }}
+</body>
+</html>

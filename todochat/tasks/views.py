@@ -1,4 +1,5 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from datetime import datetime
 from django.views.generic import ListView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task, TaskComment
@@ -246,3 +247,34 @@ def filter_tasks(request, tasks):
         if request.GET['order'] in sort_fields:
             tasks = tasks.order_by(request.GET['order'])
     return tasks
+
+
+def render_calendar(request):
+    now = datetime.now()
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    if year is None:
+        year = now.year
+    if month is None:
+        month = now.month
+    months = {"January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6, "July": 7, "August": 8,
+              "September": 9, "October": 10, "November": 11, "December": 12}
+
+    # Get all possible values for deadline year
+    years = []
+    for _year in request.user.users_tasks.values_list('deadline__year', flat=True).distinct():
+        years.append(_year)
+    if year not in years:
+        years.append(int(year))
+    years.sort()
+
+    task_days = list(request.user.users_tasks.filter(deadline__year=year, deadline__month=month).values_list('deadline__day', flat=True).distinct())
+    context = {
+        "year": int(year),
+        "month": int(month),
+        "months": months,
+        "years": years,
+        "task_days": task_days
+    }
+
+    return render(request, "calendar.html", context)
