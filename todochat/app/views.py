@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.http import HttpResponseRedirect
+from tasks.views import render_calendar
 
 
 def filter_by_date(date, user):
@@ -40,10 +41,9 @@ def create_random_id(length):
 
 @login_required
 def main_view(request):
-    tasks = request.user.users_tasks.all().order_by('created').values('deadline')
     context = {
-        "tasks_json": json.dumps(list(tasks), cls=DjangoJSONEncoder),
-        "today_tasks": filter_by_date(date=datetime.today(), user=request.user)
+        "today_tasks": request.user.users_tasks.order_by("-deadline")[:10],
+        "calendar": render_calendar(request)
     }
     return render(request, 'index.html', context)
 
