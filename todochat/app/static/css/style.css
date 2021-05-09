@@ -1309,6 +1309,16 @@ main.task {
     .task__comment .confirm_delete .btn {
       margin: 5px; }
 
+.calendar_div {
+  margin: 85px 0 30px 0;
+  min-height: calc(100vh - 65px - 40px); }
+
+.deadline_href {
+  text-align: center;
+  font-size: 35px;
+  margin: 30px auto auto auto;
+  display: block; }
+
 .calendar {
   border: 0;
   border-spacing: 3px;
@@ -1368,7 +1378,8 @@ main.task {
   display: flex;
   text-decoration: none;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 15px;
+  font-weight: 500;
   border: 0;
   outline: none;
   padding: 10px 15px; }
