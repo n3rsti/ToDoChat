@@ -1,31 +1,61 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-<form method="GET">
-    <label for="year">Year:</label>
-    <select id="year" name="year">
-        {% for loop_year in years %}
-            <option value="{{ loop_year }}" {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
-        {% endfor %}
-    </select>
-     <label for="month">Month:</label>
-    <select id="month" name="month">
-        {% for loop_month in months %}
-            <option value="{{ forloop.counter }}" {% if forloop.counter == month %}selected{% endif %}>{{ loop_month }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit">Search</button>
-</form>
-<div class="calendar"></div>
-{{ year }}
-{{ month }}
-{{ task_days }}
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+    {% load mathfilters %}
+    <div class="container calendar_div">
+        <form method="GET" class="calendar__form">
+            <section class="form__top">
+                <label for="year" hidden>Year:</label>
+                <select id="year" name="year">
+                    {% for loop_year in years %}
+                        <option value="{{ loop_year }}"
+                                {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
+                    {% endfor %}
+                </select>
+                <label for="month" hidden>Month:</label>
+                <select id="month" name="month">
+                    {% for loop_month in months %}
+                        <option value="{{ forloop.counter }}"
+                                {% if forloop.counter == month %}selected{% endif %}>{{ loop_month }}</option>
+                    {% endfor %}
+                </select>
+            </section>
+
+            <table class="table table-bordered calendar">
+                <thead>
+                <tr>
+                    <th scope="col">M</th>
+                    <th scope="col">T</th>
+                    <th scope="col">W</th>
+                    <th scope="col">T</th>
+                    <th scope="col">F</th>
+                    <th scope="col">S</th>
+                    <th scope="col">S</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for loop_day in render_days %}
+                    {% if forloop.first %}
+                        <tr>
+                            {% elif forloop.counter != 0 and forloop.counter|sub:1|mod:7 == 0 %}
+                        </tr>
+                        <tr>
+                    {% endif %}
+                <td class="{% if loop_day in task_days %}task__td{% elif is_current_month and loop_day == current_day %} today{% endif %}">
+                    {% if loop_day != None %}
+                        <a class="calendar__a"
+                           href="/tasks/?deadline={{ year }}-{{ month }}-{{ loop_day }}">{{ loop_day }}</a>
+                    {% endif %}
+                </td>
+                {% if forloop.last %}
+                    </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <section class="calendar__bottom">
+                <a class="calendar__btn --light" href="{% url 'index' %}">Reset</a>
+                <button class="calendar__btn --dark" type="submit">Search</button>
+            </section>
+        </form>
+    </div>
+{% endblock content %}
