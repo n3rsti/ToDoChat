@@ -1,4 +1,5 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from datetime import datetime
 from django.views.generic import ListView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -262,20 +263,18 @@ def render_calendar(request):
 
     month = int(month)
     year = int(year)
-
     is_current_month = (month == now.month) and (year == now.year)
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
               "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     # Get all possible values for deadline year and parse into sorted list
     # If user has tasks in years: 2008, 2013, 2015 => output: [2008, 2013, 2015]
-    years = []
-    for _year in request.user.users_tasks.values_list('deadline__year', flat=True).distinct():
-        years.append(_year)
+    years = list(request.user.users_tasks.values_list('deadline__year', flat=True).distinct())
+    if None in years:
+        years.remove(None)
     if year not in years:
         years.append(int(year))
     years.sort()
-
     # Get all days in current month with existing task and parse into list
     # Example output: [1, 10, 23, 25] where each number is representing day in month where task has its deadline
     task_days = list(request.user.users_tasks.filter(deadline__year=year, deadline__month=month).
@@ -306,7 +305,11 @@ def render_calendar(request):
         "task_days": task_days,
         "render_days": total_days,
         "is_current_month": is_current_month,
-        "current_day": now.day
+        "current_day": now.day,
+        "user": request.user
     }
-
-    return render(request, "calendar.html", context)
+    html = render_to_string(
+        template_name="calendar.html",
+        context=context
+    )
+    return html
