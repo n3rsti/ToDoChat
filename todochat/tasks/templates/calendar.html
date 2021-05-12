@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
     {% load mathfilters %}
+    {% load templatetags %}
     <div class="container calendar_div">
         <form method="GET" class="calendar__form">
             <section class="form__top">
-                <label for="year" hidden>Year:</label>
-                <select id="year" name="year">
-                    {% for loop_year in years %}
-                        <option value="{{ loop_year }}"
-                                {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
-                    {% endfor %}
-                </select>
                 <label for="month" hidden>Month:</label>
                 <select id="month" name="month">
                     {% for loop_month in months %}
@@ -18,8 +12,14 @@
                                 {% if forloop.counter == month %}selected{% endif %}>{{ loop_month }}</option>
                     {% endfor %}
                 </select>
+                <label for="year" hidden>Year:</label>
+                <select id="year" name="year">
+                    {% for loop_year in years %}
+                        <option value="{{ loop_year }}"
+                                {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
+                    {% endfor %}
+                </select>
             </section>
-
             <table class="table table-bordered calendar">
                 <thead>
                 <tr>
@@ -55,6 +55,10 @@
             <section class="calendar__bottom">
                 <a class="calendar__btn --light" href="{% url 'index' %}">Reset</a>
                 <button class="calendar__btn --dark" type="submit">Search</button>
+            </section>
+            <section class="change_calendar_date">
+                <button name="prev-month" class="btn btn-primary w-50"><i class="fas fa-angle-left"></i> Previous month</button>
+                <button name="next-month" class="btn btn-primary w-50">Next month <i class="fas fa-angle-right"></i></button>
             </section>
         </form>
         {% if user.users_tasks.count > 0 %}

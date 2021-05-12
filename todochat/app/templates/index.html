@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 {% load static %}
+{% block extra_head %}
+    <script>
+        $(document).ready(function () {
+            // If user has no tasks. #tasks element won't be displayed
+            // so prev/next month section can be shown all the time
+            if (document.querySelector("#tasks") !== null) {
+                let taskSectionPos;
+                let winHeight = window.innerHeight;
+                window.addEventListener('resize', () => {
+                    // Update winHeight when user changes window size
+                    winHeight = window.innerHeight;
+                });
+                $(window).scroll(function () {
+                    taskSectionPos = winHeight - document.querySelector("#tasks").getBoundingClientRect().top;
+                    if (taskSectionPos > 60) {
+                        $(".change_calendar_date").css("transform", "scale(0)");
+                    } else {
+                        $(".change_calendar_date").css("transform", "scale(1)");
+                    }
+                });
+            }
+        });
+
+    </script>
+{% endblock extra_head %}
 {% block title %}
     <title>ToDoChat</title>
 {% endblock title %}
@@ -11,7 +36,7 @@
             <h2 class="text-center" id="tasks">Closest to deadline</h2>
             <ul class="task__list">
                 {% for task in today_tasks %}
-                    <li class="task__li">
+                    <li class="task__li {% if forloop.last %}mb-3{% endif %}">
                         <article class="task">
                             <section class="task__top">
                                 <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}

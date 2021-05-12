@@ -1390,6 +1390,23 @@ main.task {
     color: #000;
     background-color: #f3f4f6; }
 
+.change_calendar_date {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1; }
+  .change_calendar_date .fas {
+    font-size: 1.2rem; }
+  .change_calendar_date .btn {
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly; }
+
 .month-year .fa {
   font-size: 25px;
   padding: 10px; }

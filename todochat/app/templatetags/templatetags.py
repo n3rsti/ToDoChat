@@ -1,7 +1,7 @@
 from django import template
 from users.models import UserInvitation
 from app.models import Server, ServerInvitation
-from chat.models import ChannelMessage
+import calendar
 
 register = template.Library()
 
@@ -79,3 +79,8 @@ def get_channel_notification_counter(channel_set, user):
     for channel in channel_set:
         notification_counter.append(channel.channelmessage_set.filter(target_users=user).count())
     return zip(channel_set, notification_counter)
+
+
+@register.filter
+def get_month_name(month_number: int):
+    return calendar.month_name[month_number]
