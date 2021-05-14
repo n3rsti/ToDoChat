@@ -1798,6 +1798,9 @@ main.task {
     align-items: center;
     justify-content: space-evenly;
   }
+  &.hidden {
+    transform: scale(0);
+  }
 }
 .month-year {
   .fa {

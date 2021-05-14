@@ -61,12 +61,18 @@ def main_view(request):
         year = now.year
     if month is None:
         month = now.month
-    prev_month, next_month = get_prev_and_next_month_params(int(month), int(year))
+    
+    month = int(month)
+    year = int(year)
+    prev_month, next_month = get_prev_and_next_month_params(month, year)
     context = {
         "today_tasks": request.user.users_tasks.order_by("-deadline")[:10],
         "calendar": render_calendar(request),
         "prev_month_params": prev_month,
-        "next_month_params": next_month
+        "next_month_params": next_month,
+        # variables used in calendar
+        "month": month,
+        "year": year
     }
     return render(request, 'index.html', context)
 

@@ -1406,6 +1406,8 @@ main.task {
     display: flex;
     align-items: center;
     justify-content: space-evenly; }
+  .change_calendar_date.hidden {
+    transform: scale(0); }
 
 .month-year .fa {
   font-size: 25px;

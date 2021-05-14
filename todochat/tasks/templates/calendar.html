@@ -52,7 +52,7 @@
         </table>
         <section class="calendar__bottom">
             <a class="calendar__btn --light" href="{% url 'index' %}">Reset</a>
-            <button class="calendar__btn --dark" type="submit">Search</button>
+            <button class="calendar__btn --dark" id="calendar__search" type="submit">Search</button>
         </section>
     </form>
     {% if user.users_tasks.count > 0 %}
@@ -64,38 +64,3 @@
     {% endif %}
 
 </div>
-<!-- Calendar script -->
-<script>
-    // These variables are declared in index.html
-    changeCalendarSection = document.querySelector(".change_calendar_date");
-    calendarSection = $(".calendar_section");
-
-    function getPreviousMonth() {
-
-        // these 2 variables are from django view
-        let month = {{ month }};
-        let year = {{ year }};
-
-        let prev_month_year = year;
-        let prev_month = month - 1;
-        if (prev_month === 0) {  // if month is January, month - 1 would give 0
-            prev_month = 12;
-            prev_month_year = year - 1;
-        }
-        return {"month": prev_month, "year": prev_month_year};
-    }
-
-    function getNextMonth() {
-        // these 2 variables are from django view
-        let month = {{ month }};
-        let year = {{ year }};
-
-        let next_month_year = year;
-        let next_month = month + 1;
-        if (next_month === 13) {  // if month is December, month + 1 would give 13
-            next_month = 1;
-            next_month_year = year + 1;
-        }
-        return {"month": next_month, "year": next_month_year}
-    }
-</script>

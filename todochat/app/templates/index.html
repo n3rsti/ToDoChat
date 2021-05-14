@@ -2,13 +2,17 @@
 {% load static %}
 {% block extra_head %}
     <script>
-        let changeCalendarSection;
-        let calendarSection;
+        let calendar_month = {{ month }};
+        let calendar_year = {{ year }};
         $(document).ready(function () {
+            let changeCalendarSection = document.querySelector(".change_calendar_date");
+            let calendarSection = $(".calendar_section");
+            let calendarForm = document.querySelector(".calendar__form");
+            let submitCalendarFormBtn = document.querySelector("#calendar__search");
+
             // If user has no tasks. #tasks element won't be displayed
             // so prev/next month section can be shown all the time
             let tasksElem = document.querySelector("#tasks");
-            changeCalendarSection = document.querySelector(".change_calendar_date");
             if (tasksElem !== null) {
                 let taskSectionPos;
                 let winHeight = window.innerHeight;
@@ -19,36 +23,67 @@
                 $(window).scroll(function () {
                     taskSectionPos = winHeight - tasksElem.getBoundingClientRect().top;
                     if (taskSectionPos > 60) {
-                        changeCalendarSection.style.transform = "scale(0)";
+                        changeCalendarSection.classList.add("hidden");
                     } else {
-                        changeCalendarSection.style.transform = "scale(1)";
+                        changeCalendarSection.classList.remove("hidden");
                     }
+                });
+            }
+            function getPreviousMonth() {
+                let prev_month_year = calendar_year;
+                let prev_month = calendar_month - 1;
+                if (prev_month === 0) {  // if month is January, month - 1 gives 0
+                    prev_month = 12;
+                    prev_month_year = calendar_year - 1;
+                }
+                return {"month": prev_month, "year": prev_month_year};
+            }
+
+            function getNextMonth() {
+                let next_month_year = calendar_year;
+                let next_month = calendar_month + 1;
+                if (next_month === 13) {  // if month is December, month + 1  gives 13
+                    next_month = 1;
+                    next_month_year = calendar_year + 1;
+                }
+                return {"month": next_month, "year": next_month_year}
+            }
+
+            // This function adds eventListener to "Search" button so it can change month in calendar using ajax call
+            function updateCalendarButtonListener() {
+                submitCalendarFormBtn = document.querySelector("#calendar__search");
+                submitCalendarFormBtn.type = "button";
+                submitCalendarFormBtn.addEventListener("click", function () {
+                    // Refresh variable value so it has new values
+                    calendarForm = document.querySelector(".calendar__form");
+                    updateCalendar(calendarForm.month.value, calendarForm.year.value);
                 });
             }
 
             function updateCalendar(month, year) {
                 let endpoint = "/calendar/";
-                let req_response = "";
                 let data = {"month": month, "year": year};
-
+                calendar_month = month;
+                calendar_year = year;
                 $.getJSON(endpoint, data)
                     .done(response => {
                         // change calendar content
                         calendarSection.fadeTo("fast", 0).promise().then(() => {
                             calendarSection.html(response["html_from_view"]);
-                            calendarSection.fadeTo(400, 1);
+                            calendarSection.fadeTo("fast", 1);
 
                             // Change get params
                             let url = new URL(window.location);
                             url.searchParams.set('month', data["month"]);
                             url.searchParams.set('year', data["year"]);
                             window.history.pushState({}, '', url);
+
+                            updateCalendarButtonListener();
                         })
 
                     })
             }
 
-            console.log(getPreviousMonth(), getNextMonth());
             // This code replaces <a> tags (used for calendar navigation for nonJS users )
             // with <button> tags to create ajax requests for calendar update
 
@@ -88,6 +123,7 @@
             }
 
             replaceChangeDateA();
+            updateCalendarButtonListener();
         });
 
     </script>
