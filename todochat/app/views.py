@@ -12,10 +12,22 @@ import string
 from chat.models import Channel
 from app.forms import ServerUpdateForm, ServerCreateForm
 from django.contrib.auth.models import User
-from django.core.serializers.json import DjangoJSONEncoder
-import json
 from django.http import HttpResponseRedirect
 from tasks.views import render_calendar
+
+
+def get_prev_and_next_month_params(month, year):
+    prev_month_year = next_month_year = year
+    prev_month = month - 1
+    next_month = month + 1
+    if prev_month == 0:  # if month is January, month - 1 would give 0
+        prev_month = 12
+        prev_month_year = year - 1
+    elif next_month == 13:  # if month is December, month + 1 would give 13
+        next_month = 1
+        next_month_year = year + 1
+
+    return f"?month={prev_month}&year={prev_month_year}", f"?month={next_month}&year={next_month_year}"
 
 
 def filter_by_date(date, user):
@@ -41,9 +53,20 @@ def create_random_id(length):
 
 @login_required
 def main_view(request):
+    # Get GET parameters. If no parameters are provided, month and year are set as current date
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+    now = datetime.now()
+    if year is None:
+        year = now.year
+    if month is None:
+        month = now.month
+    prev_month, next_month = get_prev_and_next_month_params(int(month), int(year))
     context = {
         "today_tasks": request.user.users_tasks.order_by("-deadline")[:10],
-        "calendar": render_calendar(request)
+        "calendar": render_calendar(request),
+        "prev_month_params": prev_month,
+        "next_month_params": next_month
     }
     return render(request, 'index.html', context)
 

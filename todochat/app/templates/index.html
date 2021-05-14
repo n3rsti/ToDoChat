@@ -2,11 +2,13 @@
 {% load static %}
 {% block extra_head %}
     <script>
+        let changeCalendarSection;
+        let calendarSection;
         $(document).ready(function () {
             // If user has no tasks. #tasks element won't be displayed
             // so prev/next month section can be shown all the time
             let tasksElem = document.querySelector("#tasks");
-            let changeCalendarSection = document.querySelector(".change_calendar_date");
+            changeCalendarSection = document.querySelector(".change_calendar_date");
             if (tasksElem !== null) {
                 let taskSectionPos;
                 let winHeight = window.innerHeight;
@@ -23,6 +25,69 @@
                     }
                 });
             }
+
+            function updateCalendar(month, year) {
+                let endpoint = "/calendar/";
+                let req_response = "";
+                let data = {"month": month, "year": year};
+
+                $.getJSON(endpoint, data)
+                    .done(response => {
+                        // change calendar content
+                        calendarSection.fadeTo("fast", 0).promise().then(() => {
+                            calendarSection.html(response["html_from_view"]);
+                            calendarSection.fadeTo(400, 1);
+
+                            // Change get params
+                            let url = new URL(window.location);
+                            url.searchParams.set('month', data["month"]);
+                            url.searchParams.set('year', data["year"]);
+                            window.history.pushState({}, '', url);
+                        })
+
+                    })
+            }
+
+            console.log(getPreviousMonth(), getNextMonth());
+            // This code replaces <a> tags (used for calendar navigation for nonJS users )
+            // with <button> tags to create ajax requests for calendar update
+
+            // Remove <a> tags
+            function replaceChangeDateA() {
+                $('.change_calendar_date .btn').remove();
+
+                // 1st button (previous month)
+                let prevMonthBtn = document.createElement("button");
+                let prevMonthIcon = document.createElement("i");
+                prevMonthIcon.classList.add("fas", "fa-angle-left");
+                prevMonthBtn.classList.add("btn", "btn-primary", "w-50");
+                prevMonthBtn.type = "button";
+                prevMonthBtn.addEventListener("click", () => {
+                    let prevMonth = getPreviousMonth();
+                    updateCalendar(prevMonth["month"], prevMonth["year"]);
+                })
+
+                // 2nd button (next month) using already created 1st button with changed classes and event listeners
+                let nextMonthBtn = prevMonthBtn.cloneNode(true);
+                let nextMonthIcon = prevMonthIcon.cloneNode(true);
+                nextMonthIcon.classList.remove("fa-angle-left");
+                nextMonthIcon.classList.add("fa-angle-right");
+
+                prevMonthBtn.append(prevMonthIcon);
+                prevMonthBtn.innerHTML += "Previous month";
+
+                nextMonthBtn.innerText = "Next month"
+                nextMonthBtn.appendChild(nextMonthIcon);
+                nextMonthBtn.addEventListener("click", () => {
+                    let nextMonth = getNextMonth();
+                    updateCalendar(nextMonth["month"], nextMonth["year"]);
+                })
+
+                changeCalendarSection.append(prevMonthBtn);
+                changeCalendarSection.append(nextMonthBtn);
+            }
+
+            replaceChangeDateA();
         });
 
     </script>
@@ -33,7 +98,17 @@
 {% block content %}
     {% include "app_base.html" %}
     <main class="content">
-        {{ calendar }}
+        <section class="calendar_section">
+            {{ calendar }}
+        </section>
+        <form action="" method="get">
+            <section class="change_calendar_date">
+                <a href="{% url 'index' %}{{ prev_month_params }}" class="btn btn-primary w-50"><i
+                        class="fas fa-angle-left"></i> Previous month</a>
+                <a href="{% url 'index' %}{{ next_month_params }}" class="btn btn-primary w-50">Next month <i
+                        class="fas fa-angle-right"></i></a>
+            </section>
+        </form>
         {% if request.user.users_tasks.count > 0 %}
             <h2 class="text-center" id="tasks">Closest to deadline</h2>
             <ul class="task__list">

@@ -18,7 +18,7 @@ from django.urls import path, include
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, \
     InvitationView
 from users.views import register, UserInvitations, UserSearchView, invitation_card
-from tasks.views import FilterTaskView
+from tasks.views import FilterTaskView, render_calendar
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.views import ChannelDetailView
@@ -61,6 +61,7 @@ urlpatterns = [
     path('profile/', include('users.urls')),
     path('search/', UserSearchView.as_view(), name="user_search"),
     path('components/invitation_card/<str:username>', invitation_card, name="invitation_card"),
+    path('calendar/', render_calendar, name="calendar")
     
 ]
 

@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect
 from operator import attrgetter
 from itertools import chain
 from calendar import monthrange
+from django.http import JsonResponse
 
 
 class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
@@ -298,17 +299,6 @@ def render_calendar(request):
     """
     total_days = [None for x in range(1, first_weekday)] + list(range(1, current_month_days_count + 1))
 
-    # get year and month for previous month
-    prev_month_year = next_month_year = year
-    prev_month = month - 1
-    next_month = month + 1
-    if prev_month == 0:  # if month is January, month - 1 would give 0
-        prev_month = 12
-        prev_month_year = year - 1
-    elif next_month == 13:  # if month is December, month + 1 would give 13
-        next_month = 1
-        next_month_year = year + 1
-
     context = {
         "year": int(year),
         "month": int(month),
@@ -319,11 +309,12 @@ def render_calendar(request):
         "is_current_month": is_current_month,
         "current_day": now.day,
         "user": request.user,
-        "next_month_params": f"?month={next_month}&year={next_month_year}",
-        "prev_month_params": f"?month={prev_month}&year={prev_month_year}"
     }
     html = render_to_string(
         template_name="calendar.html",
         context=context
     )
+    if request.is_ajax():
+        data_dict = {"html_from_view": html}
+        return JsonResponse(data=data_dict, safe=False)
     return html

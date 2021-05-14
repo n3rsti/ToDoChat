@@ -1,73 +1,101 @@
-{% extends "base.html" %}
-{% block content %}
-    {% load mathfilters %}
-    {% load templatetags %}
-    <div class="container calendar_div">
-        <form method="GET" class="calendar__form">
-            <section class="form__top">
-                <label for="month" hidden>Month:</label>
-                <select id="month" name="month">
-                    {% for loop_month in months %}
-                        <option value="{{ forloop.counter }}"
-                                {% if forloop.counter == month %}selected{% endif %}>{{ loop_month }}</option>
-                    {% endfor %}
-                </select>
-                <label for="year" hidden>Year:</label>
-                <select id="year" name="year">
-                    {% for loop_year in years %}
-                        <option value="{{ loop_year }}"
-                                {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
-                    {% endfor %}
-                </select>
-            </section>
-            <table class="table table-bordered calendar">
-                <thead>
-                <tr>
-                    <th scope="col">M</th>
-                    <th scope="col">T</th>
-                    <th scope="col">W</th>
-                    <th scope="col">T</th>
-                    <th scope="col">F</th>
-                    <th scope="col">S</th>
-                    <th scope="col">S</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for loop_day in render_days %}
-                    {% if forloop.first %}
-                        <tr>
-                            {% elif forloop.counter != 0 and forloop.counter|sub:1|mod:7 == 0 %}
-                        </tr>
-                        <tr>
-                    {% endif %}
-                <td class="{% if loop_day in task_days %}task__td{% elif is_current_month and loop_day == current_day %} today{% endif %}">
-                    {% if loop_day != None %}
-                        <a class="calendar__a"
-                           href="/tasks/?deadline={{ year }}-{{ month }}-{{ loop_day }}">{{ loop_day }}</a>
-                    {% endif %}
-                </td>
-                {% if forloop.last %}
-                    </tr>
-                {% endif %}
+{% load mathfilters %}
+{% load templatetags %}
+<div class="container calendar_div">
+    <form method="GET" class="calendar__form">
+        <section class="form__top">
+            <label for="month" hidden>Month:</label>
+            <select id="month" name="month">
+                {% for loop_month in months %}
+                    <option value="{{ forloop.counter }}"
+                            {% if forloop.counter == month %}selected{% endif %}>{{ loop_month }}</option>
                 {% endfor %}
-                </tbody>
-            </table>
-            <section class="calendar__bottom">
-                <a class="calendar__btn --light" href="{% url 'index' %}">Reset</a>
-                <button class="calendar__btn --dark" type="submit">Search</button>
-            </section>
-            <section class="change_calendar_date">
-                <a href="{% url 'index' %}{{ prev_month_params }}" class="btn btn-primary w-50"><i class="fas fa-angle-left"></i> Previous month</a>
-                <a href="{% url 'index' %}{{ next_month_params }}" class="btn btn-primary w-50">Next month <i class="fas fa-angle-right"></i></a>
-            </section>
-        </form>
-        {% if user.users_tasks.count > 0 %}
-            <section class="container__bottom">
-                <a href="#tasks" class="deadline_href">
-                    <i class="fas fa-angle-down"></i>
-                </a>
-            </section>
-        {% endif %}
+            </select>
+            <label for="year" hidden>Year:</label>
+            <select id="year" name="year">
+                {% for loop_year in years %}
+                    <option value="{{ loop_year }}"
+                            {% if loop_year == year %}selected{% endif %}>{{ loop_year }}</option>
+                {% endfor %}
+            </select>
+        </section>
+        <table class="table table-bordered calendar">
+            <thead>
+            <tr>
+                <th scope="col">M</th>
+                <th scope="col">T</th>
+                <th scope="col">W</th>
+                <th scope="col">T</th>
+                <th scope="col">F</th>
+                <th scope="col">S</th>
+                <th scope="col">S</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for loop_day in render_days %}
+                {% if forloop.first %}
+                    <tr>
+                        {% elif forloop.counter != 0 and forloop.counter|sub:1|mod:7 == 0 %}
+                    </tr>
+                    <tr>
+                {% endif %}
+            <td class="{% if loop_day in task_days %}task__td{% elif is_current_month and loop_day == current_day %} today{% endif %}">
+                {% if loop_day != None %}
+                    <a class="calendar__a"
+                       href="/tasks/?deadline={{ year }}-{{ month }}-{{ loop_day }}">{{ loop_day }}</a>
+                {% endif %}
+            </td>
+            {% if forloop.last %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <section class="calendar__bottom">
+            <a class="calendar__btn --light" href="{% url 'index' %}">Reset</a>
+            <button class="calendar__btn --dark" type="submit">Search</button>
+        </section>
+    </form>
+    {% if user.users_tasks.count > 0 %}
+        <section class="container__bottom">
+            <a href="#tasks" class="deadline_href">
+                <i class="fas fa-angle-down"></i>
+            </a>
+        </section>
+    {% endif %}
 
-    </div>
-{% endblock content %}
+</div>
+<!-- Calendar script -->
+<script>
+    // These variables are declared in index.html
+    changeCalendarSection = document.querySelector(".change_calendar_date");
+    calendarSection = $(".calendar_section");
+
+    function getPreviousMonth() {
+
+        // these 2 variables are from django view
+        let month = {{ month }};
+        let year = {{ year }};
+
+        let prev_month_year = year;
+        let prev_month = month - 1;
+        if (prev_month === 0) {  // if month is January, month - 1 would give 0
+            prev_month = 12;
+            prev_month_year = year - 1;
+        }
+        return {"month": prev_month, "year": prev_month_year};
+    }
+
+    function getNextMonth() {
+        // these 2 variables are from django view
+        let month = {{ month }};
+        let year = {{ year }};
+
+        let next_month_year = year;
+        let next_month = month + 1;
+        if (next_month === 13) {  // if month is December, month + 1 would give 13
+            next_month = 1;
+            next_month_year = year + 1;
+        }
+        return {"month": next_month, "year": next_month_year}
+    }
+</script>
