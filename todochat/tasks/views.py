@@ -1,6 +1,4 @@
 from django.shortcuts import redirect
-from django.template.loader import render_to_string
-from datetime import datetime
 from django.views.generic import ListView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from tasks.models import Task, TaskComment
@@ -11,8 +9,6 @@ import json
 from django.http import HttpResponseRedirect
 from operator import attrgetter
 from itertools import chain
-from calendar import monthrange
-from django.http import JsonResponse
 
 
 class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
@@ -250,71 +246,3 @@ def filter_tasks(request, tasks):
         if request.GET['order'] in sort_fields:
             tasks = tasks.order_by(request.GET['order'])
     return tasks
-
-
-def render_calendar(request):
-    # Get GET parameters. If no parameters are provided, month and year are set as current date
-    year = request.GET.get('year')
-    month = request.GET.get('month')
-    now = datetime.now()
-    if year is None:
-        year = now.year
-    if month is None:
-        month = now.month
-
-    month = int(month)
-    year = int(year)
-    is_current_month = (month == now.month) and (year == now.year)
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-              "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-    # Get all possible values for deadline year and parse into sorted list
-    # If user has tasks in years: 2008, 2013, 2015 => output: [2008, 2013, 2015]
-    years = list(request.user.users_tasks.values_list('deadline__year', flat=True).distinct())
-    if None in years:
-        years.remove(None)
-    if year not in years:
-        years.append(int(year))
-    years.sort()
-    # Get all days in current month with existing task and parse into list
-    # Example output: [1, 10, 23, 25] where each number is representing day in month where task has its deadline
-    task_days = list(request.user.users_tasks.filter(deadline__year=year, deadline__month=month).
-                     values_list('deadline__day', flat=True).distinct())
-
-    """
-    Create list of calendar days to be rendered
-    """
-    # first_weekday contains weekday of first day in month => 1-Monday, 7-Sunday
-    first_weekday = datetime(year, month, 1).weekday() + 1
-
-    current_month_days_count = monthrange(year, month)[1]
-    """
-    Create blank tile for every day from previous month (x on scheme) and concatenate them with list of
-    actual days to be rendered
-    
-    M, T, W etc. - weekdays
-    Example: month starts at Thursday:
-    M  T  W  T  F  S  S
-    x  x  x  1  2  3  4
-    """
-    total_days = [None for x in range(1, first_weekday)] + list(range(1, current_month_days_count + 1))
-
-    context = {
-        "year": int(year),
-        "month": int(month),
-        "months": months,
-        "years": years,
-        "task_days": task_days,
-        "render_days": total_days,
-        "is_current_month": is_current_month,
-        "current_day": now.day,
-        "user": request.user,
-    }
-    html = render_to_string(
-        template_name="calendar.html",
-        context=context
-    )
-    if request.is_ajax():
-        data_dict = {"html_from_view": html}
-        return JsonResponse(data=data_dict, safe=False)
-    return html

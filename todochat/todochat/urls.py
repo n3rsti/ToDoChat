@@ -16,9 +16,9 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from app.views import main_view, CreateServerView, DetailServerView, UpdateServerView, invite_server_user, \
-    InvitationView
+    InvitationView, render_calendar
 from users.views import register, UserInvitations, UserSearchView, invitation_card
-from tasks.views import FilterTaskView, render_calendar
+from tasks.views import FilterTaskView
 from django.conf import settings
 from django.conf.urls.static import static
 from chat.views import ChannelDetailView
