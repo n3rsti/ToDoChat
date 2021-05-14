@@ -57,8 +57,8 @@
                 <button class="calendar__btn --dark" type="submit">Search</button>
             </section>
             <section class="change_calendar_date">
-                <button name="prev-month" class="btn btn-primary w-50"><i class="fas fa-angle-left"></i> Previous month</button>
-                <button name="next-month" class="btn btn-primary w-50">Next month <i class="fas fa-angle-right"></i></button>
+                <a href="{% url 'index' %}{{ prev_month_params }}" class="btn btn-primary w-50"><i class="fas fa-angle-left"></i> Previous month</a>
+                <a href="{% url 'index' %}{{ next_month_params }}" class="btn btn-primary w-50">Next month <i class="fas fa-angle-right"></i></a>
             </section>
         </form>
         {% if user.users_tasks.count > 0 %}

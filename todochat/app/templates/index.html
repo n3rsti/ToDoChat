@@ -5,7 +5,9 @@
         $(document).ready(function () {
             // If user has no tasks. #tasks element won't be displayed
             // so prev/next month section can be shown all the time
-            if (document.querySelector("#tasks") !== null) {
+            let tasksElem = document.querySelector("#tasks");
+            let changeCalendarSection = document.querySelector(".change_calendar_date");
+            if (tasksElem !== null) {
                 let taskSectionPos;
                 let winHeight = window.innerHeight;
                 window.addEventListener('resize', () => {
@@ -13,11 +15,11 @@
                     winHeight = window.innerHeight;
                 });
                 $(window).scroll(function () {
-                    taskSectionPos = winHeight - document.querySelector("#tasks").getBoundingClientRect().top;
+                    taskSectionPos = winHeight - tasksElem.getBoundingClientRect().top;
                     if (taskSectionPos > 60) {
-                        $(".change_calendar_date").css("transform", "scale(0)");
+                        changeCalendarSection.style.transform = "scale(0)";
                     } else {
-                        $(".change_calendar_date").css("transform", "scale(1)");
+                        changeCalendarSection.style.transform = "scale(1)";
                     }
                 });
             }
