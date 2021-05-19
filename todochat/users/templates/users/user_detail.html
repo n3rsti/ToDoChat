@@ -5,59 +5,95 @@
 {% endblock title %}
 {% block content %}
     {% include "app_base.html" %}
-
     <main class="content content--profile">
         <button onClick="window.history.back();return false;" class="back__button">
             <i class="fas fa-angle-left"></i>
         </button>
-        <section class="profile__image-section">
-            <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image" class="profile__img">
-        </section>
-        <h1 class="title--thin profile_invited">{{ object.username }}</h1>
-        {% if not object == user %}
-            {% if object in user.profile.friends.all %}
-                <section class="friend__buttons" id="friend__buttons">
-                    {% include "profile_friend_base.html" %}
-                </section>
-            {% else %}
-                {% if invitation == 'waiting' %}
-                    <form method="POST" class="user_detail_form" id="user_detail_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="invited" value="{{ object.username }}">
-                        <button type="submit" class="btn btn-danger cancel_invite_friend_button" value="cancel"
-                                name="invite_button" data-user="{{ object.username }}"
-                                data-user_img="{{ object.profile.image.url }}">Cancel
-                            invitation
-                        </button>
-                    </form>
-                {% elif invitation == 'invited' %}
-                    <form method="POST" class="user_detail_form invited" id="user_detail_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="invited"
-                               value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
-                        <button type="submit" class="btn btn-success accept_invite_friend_button accept" value="invite"
-                                name="invite_button" data-user="{{ object.username }}"
-                                data-user_img="{{ object.profile.image.url }}">Accept
-                        </button>
-                        <button type="submit" class="btn btn-danger ml-1 cancel_invite_friend_button reject_button"
-                                name="invite_button" value="reject" data-user="{{ object.username }}"
-                                data-user_img="{{ object.profile.image.url }}">Reject
-                        </button>
-                    </form>
+        <section class="user_info">
+            <section class="profile__image-section">
+                <img src="{{ object.profile.image.url }}" alt="{{ object.username }} profile image"
+                     class="profile__img">
+            </section>
+
+            <h1 class="title--thin profile_invited">{{ object.username }}</h1>
+            {% if not object == user %}
+                {% if object in user.profile.friends.all %}
+                    <section class="friend__buttons mb-4" id="friend__buttons">
+                        {% include "profile_friend_base.html" %}
+                    </section>
                 {% else %}
-                    <form method="POST" class="user_detail_form" id="user_detail_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="invited" value="{{ object.username }}">
-                        <button type="submit" class="btn btn-primary invite invite_friend_button" value="invite"
-                                name="invite_button" data-user="{{ object.username }}"
-                                data-user_img="{{ object.profile.image.url }}">Add friend
-                        </button>
-                    </form>
+                    {% if invitation == 'waiting' %}
+                        <form method="POST" class="user_detail_form" id="user_detail_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="invited" value="{{ object.username }}">
+                            <button type="submit" class="btn btn-danger cancel_invite_friend_button" value="cancel"
+                                    name="invite_button" data-user="{{ object.username }}"
+                                    data-user_img="{{ object.profile.image.url }}">Cancel
+                                invitation
+                            </button>
+                        </form>
+                    {% elif invitation == 'invited' %}
+                        <form method="POST" class="user_detail_form invited" id="user_detail_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="invited"
+                                   value="{{ object.username }}">{# invited is basically inviting, but it's name like that to make python func shorter #}
+                            <button type="submit" class="btn btn-success accept_invite_friend_button accept"
+                                    value="invite"
+                                    name="invite_button" data-user="{{ object.username }}"
+                                    data-user_img="{{ object.profile.image.url }}">Accept
+                            </button>
+                            <button type="submit" class="btn btn-danger ml-1 cancel_invite_friend_button reject_button"
+                                    name="invite_button" value="reject" data-user="{{ object.username }}"
+                                    data-user_img="{{ object.profile.image.url }}">Reject
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" class="user_detail_form" id="user_detail_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="invited" value="{{ object.username }}">
+                            <button type="submit" class="btn btn-primary invite invite_friend_button" value="invite"
+                                    name="invite_button" data-user="{{ object.username }}"
+                                    data-user_img="{{ object.profile.image.url }}">Add friend
+                            </button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             {% endif %}
-        {% endif %}
-        {% if object.profile.description %}
-            <p class="profile__description">{{ object.profile.description }}</p>
+            {% if object.profile.description %}
+                <p class="profile__description">{{ object.profile.description }}</p>
+            {% endif %}
+        </section>
+        {% if object != user %}
+            <section class="mutual_section">
+                {% if mutual_friends_count > 0 %}
+                    <h3 class="profile__content ml-3 mt-3">Mutual friends <span
+                            class="badge badge-primary ml-3">{{ mutual_friends_count }}</span></h3>
+                    <ul class="mutual_ul ml-3">
+                        {% for friend in mutual_friends %}
+                            <li class="mutual__li">
+                                <a href="{% url 'user_detail' friend.user.username %}">
+                                    <img src="{{ friend.image.url }}" alt="" class="users__img w-10 h-10">
+                                    {{ friend.user.username }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if mutual_servers_count > 0 %}
+                    <h3 class="profile__content ml-3 mt-3">Mutual servers<span
+                            class="badge badge-primary ml-3">{{ mutual_servers_count }}</span></h3>
+                    <ul class="mutual_ul ml-3">
+                        {% for server in mutual_servers %}
+                            <li class="mutual__li">
+                                <a href="{% url 'server_detail' server.pk %}">
+                                    <img src="{{ server.image.url }}" alt="" class="users__img w-10 h-10">
+                                    {{ server.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
         {% endif %}
         <span class="profile__description ml-3">Account created:</span>
         <h3 class="small font-weight-bold ml-3 profile__content">{{ object.date_joined|date:"d F Y" }}</h3>

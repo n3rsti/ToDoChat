@@ -104,6 +104,19 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["taskbar_img"] = True
         friend = get_object_or_404(User, username=self.kwargs.get("username"))
+
+        # Get mutual friends
+        user_friends = self.request.user.friends_set.values_list('pk', flat=True)
+        mutual_friends = friend.friends_set.filter(pk__in=user_friends)
+        context["mutual_friends"] = mutual_friends
+        context["mutual_friends_count"] = mutual_friends.count()
+
+        # Get mutual servers
+        user_servers = self.request.user.server_set.values_list('pk', flat=True)
+        mutual_servers = friend.server_set.filter(pk__in=user_servers)
+        context["mutual_servers"] = mutual_servers
+        context["mutual_servers_count"] = mutual_servers.count()
+
         context["friend"] = friend
         context["taskbar_title"] = friend.username
         if UserInvitation.objects.filter(inviting=self.request.user, invited=friend).first() is not None:

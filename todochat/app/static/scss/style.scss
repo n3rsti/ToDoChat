@@ -662,9 +662,10 @@ div.groups__img, div.nav__server-logo {
   border-radius: 9999px;
   width: 130px;
   height: 130px;
-  margin-top: 80px;
+  margin-top: 20vh;
   object-fit: cover;
   align-self: center;
+  border: 5px solid #fff;
 
   &.no-img {
     display: flex;
@@ -1127,7 +1128,7 @@ main.chat {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 25vh;
+  height: 20vh;
   margin: 0 0 10vh 0;
 }
 
@@ -1868,4 +1869,24 @@ main.task {
 
 .invitation_counter--hidden {
   display: none;
+}
+.mutual_ul {
+  list-style-type: none;
+  padding-left: 0;
+
+  .mutual__li {
+    padding: 5px 0;
+    font-weight: 500;
+  }
+}
+.mutual_section {
+  .profile__content {
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+  }
+  a {
+    text-decoration: none;
+  }
 }
