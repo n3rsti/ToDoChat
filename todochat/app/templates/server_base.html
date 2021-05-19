@@ -31,7 +31,7 @@
         <a href="{% url 'user_invitations' %}"
            class="groups__h2 flex {% if user.invited_user.count < 1 %}invitation_counter--hidden{% endif %}"
            title="Invitations">Invitations
-            <span id="invitation_counter" class="badge bg-light text-dark">{{ user.invited_user.count }}</span></a>
+            <span id="invitation_counter" class="badge ml-auto mr-1 bg-light text-dark">{{ user.invited_user.count }}</span></a>
         <section class="groups__li groups__li--server">
             {% if server.image == 'default.png' %}
                 <div class="groups__img ml-1 p2">{{ server.name.0 }}</div>
@@ -43,17 +43,17 @@
         </section>
         <h2 class="groups__h2 groups__h2--top-border">Tasks</h2>
         <a href="{% url 'server_tasks' server.id %}?order=-deadline" class="groups__li pl-3">All tasks <span
-                class="badge bg-light text-dark">{{ server.server_tasks.count }}</span></a>
+                class="badge ml-auto mr-1 bg-light text-dark">{{ server.server_tasks.count }}</span></a>
         <a href="{% url 'server_tasks' server.id %}?assigned_for={{ request.user.id }}&order=-deadline"
            class="groups__li pl-3">My tasks <span
-                class="badge bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
+                class="badge ml-auto mr-1 bg-light text-dark">{{ request.user|get_user_task_count:server.id }}</span></a>
         <h2 class="groups__h2 groups__h2--top-border">Channels</h2>
         <ul class="groups__ul">
             {% for channel, notification_counter in server.channel_set.all|get_channel_notification_counter:request.user %}
                 <a href="{% url 'room' server.id channel.name %}" class="groups__li pl-3"
                    title="{{ channel.name }} channel" data-channel="{{ channel.id }}">
                     <h3 class="li__servername">#{{ channel.name }}</h3>
-                    <span class="badge bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
+                    <span class="badge ml-auto mr-1 bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
                 </a>
             {% endfor %}
         </ul>
@@ -73,7 +73,7 @@
                                          class="groups__img mr-2">
                                 {% endif %}
                                 <h3 class="li__servername">{{ loop_server.name }}</h3>
-                                <span class="badge bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
+                                <span class="badge ml-auto mr-1 bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
                             </a>
 
                         </li>
@@ -92,7 +92,7 @@
                             <img src="{{ friend.profile.image.url }}" alt="{{ friend.username }} profile picture"
                                  class="users__img">
                             {{ friend.username }}
-                            <span class="badge bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
+                            <span class="badge ml-auto mr-1 bg-light text-dark {% if notification_counter == 0 %}notification-badge{% endif %}">{{ notification_counter }}</span>
                         </a>
                     </li>
 
