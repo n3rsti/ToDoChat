@@ -38,21 +38,17 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control',
-                                                               'maxlength': '100',
-                                                               'rows': '3'}))
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
     background = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-light'}))
     default_validators = [validators.validate_image_file_extension]
 
     class Meta:
         model = Profile
-        fields = ['description', 'image', 'background']
+        fields = ['image', 'background']
 
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         self.fields['image'].required = False
-        self.fields['description'].required = False
         self.fields['background'].required = False
 
 
