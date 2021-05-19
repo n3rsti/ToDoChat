@@ -13,11 +13,6 @@ class TestProfileModel(TestCase):
         user1.profile.friends.add(user2)
         user2.profile.friends.add(user1)
 
-    def test_description_max_length(self):
-        user1 = User.objects.get(id=1)
-        max_length = user1.profile._meta.get_field('description').max_length
-        self.assertEqual(max_length, 100)
-
     def test_str(self):
         user1 = User.objects.get(id=1)
         expected_str = f'{user1.username} Profile'
