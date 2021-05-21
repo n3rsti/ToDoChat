@@ -219,7 +219,7 @@ class FilterTaskView(ListView):
         return redirect("task_detail", server_id, task.id)
 
 
-def filter_tasks(request, tasks):
+def filter_tasks(request, tasks, task_count=100):
     field_names = []
     for field_name in Task._meta.get_fields():
         field_names.append(field_name.name)
@@ -245,4 +245,4 @@ def filter_tasks(request, tasks):
     if request.GET.get('order'):
         if request.GET['order'] in sort_fields:
             tasks = tasks.order_by(request.GET['order'])
-    return tasks
+    return tasks[:task_count]
