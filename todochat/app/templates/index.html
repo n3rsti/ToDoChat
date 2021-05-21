@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load mathfilters %}
 {% block extra_head %}
     <script>
         let calendar_month = {{ month }};
@@ -29,6 +30,7 @@
                     }
                 });
             }
+
             function getPreviousMonth() {
                 let prev_month_year = calendar_year;
                 let prev_month = calendar_month - 1;
@@ -146,13 +148,15 @@
             </section>
         </form>
         {% if request.user.users_tasks.count > 0 %}
-            <h2 class="text-center" id="tasks">Closest to deadline</h2>
+            <h2 class="text-center mb-3" id="tasks">Closest to deadline</h2>
             <ul class="task__list">
                 {% for task in today_tasks %}
                     <li class="task__li {% if forloop.last %}mb-3{% endif %}">
                         <article class="task">
                             <section class="task__top">
-                                <a href="{% url 'task_detail' task.server.id task.id %}"><strong>{{ task.server.name }}#{{ task.task_id }}</strong> {{ task.title }}
+                                <a href="{% url 'task_detail' task.server.id task.id %}"
+                                   class="task__title">{{ task.title }}<strong
+                                        class="task_id">#{{ task.task_id }}</strong>
                                 </a>
                                 <div class="top__users task_status_section task_status_section--center">
                                     {% if task.status == "open" %}
@@ -166,15 +170,30 @@
                                     {% endif %}
                                 </div>
                             </section>
-                            <section class="task__date">
+                            <section class="task__date mb-2">
+                                <i class="far fa-clock mr-1"></i>
                                 {% if task.deadline %}
-                                    Deadline:
-                                    {{ task.deadline|date:"d M, Y" }},
+                                    {{ task.deadline|date:"d M, Y" }}
                                 {% else %}
-                                    No deadline,
+                                    No deadline
                                 {% endif %}
-                                by
-                                <a href="{% url 'user_detail' task.author %}">{{ task.author }}</a>
+                                <div class="task__users">
+                                    {% if task.assigned_for.count > 3 %}
+                                        {% for user in task.assigned_for.all|slice:":3" %}
+                                            <img src="{{ user.profile.image.url }}" class="users__img mr-0"
+                                                 alt="{{ user }} profile image">
+                                            {% if forloop.last %}
+                                                <div class="users__img mr-0 bg-primary">
+                                                    +{{ task.assigned_for.count|sub:"3" }}</div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for user in task.assigned_for.all|slice:":3" %}
+                                            <img src="{{ user.profile.image.url }}" alt="" class="users__img mr-0">
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
                             </section>
                         </article>
                     </li>

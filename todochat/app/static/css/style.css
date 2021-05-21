@@ -1092,10 +1092,33 @@ article.task {
       display: flex;
       align-items: center;
       justify-content: center; }
+    article.task .task__top .task__title {
+      text-decoration: none;
+      font-size: 16px; }
+    article.task .task__top .task_id {
+      color: #2A2D35;
+      font-size: 80%;
+      font-weight: 400; }
   article.task .task__date {
     color: #586069;
     font-weight: 400;
-    font-size: .8rem; }
+    font-size: .8rem;
+    display: flex;
+    align-items: center; }
+  article.task .task__users {
+    margin-left: auto;
+    display: flex;
+    align-items: center; }
+  article.task .users__img {
+    width: 25px;
+    height: 25px;
+    margin-left: -5px;
+    text-align: center;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
 
 .task__list {
   list-style: none;
@@ -1106,9 +1129,12 @@ article.task {
   margin-bottom: 20px;
   width: 100%; }
   .task__list .task__li {
-    width: 100%;
+    width: 95%;
     overflow: hidden;
-    border-bottom: 1px solid var(--primary); }
+    padding: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin-bottom: 10px;
+    border-radius: 6px; }
 
 .django-ckeditor-widget {
   width: 100%; }
