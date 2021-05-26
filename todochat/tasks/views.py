@@ -11,12 +11,12 @@ from operator import attrgetter
 from itertools import chain
 
 
-class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
+class TaskListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "task_list.html"
     model = Task
 
     def test_func(self):
-        server = self.get_object().server
+        server = Server.objects.get(id=self.kwargs['server_id'])
         if self.request.user in server.users.all():
             return True
         return False
@@ -70,7 +70,7 @@ class TaskListView(ListView, LoginRequiredMixin, UserPassesTestMixin):
             return HttpResponseRedirect(self.request.path_info)
 
 
-class TaskDetailView(DetailView, LoginRequiredMixin, UserPassesTestMixin):
+class TaskDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Task
     template_name = "task_detail.html"
     slug_field = "id"
@@ -136,7 +136,7 @@ def change_status_view(request, server_id, id):
     return redirect("task_detail", server_id, id)
 
 
-class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     template_name = "task_update.html"
     slug_field = "id"
@@ -184,7 +184,7 @@ class TaskUpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
         return redirect("task_detail", server_id, id)
 
 
-class FilterTaskView(ListView):
+class FilterTaskView(LoginRequiredMixin, ListView):
     model = Task
     template_name = "user_task_list.html"
 
