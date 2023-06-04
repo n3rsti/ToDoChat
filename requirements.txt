@@ -17,7 +17,7 @@ configparser==5.0.1
 constantly==15.1.0
 contextlib2==0.6.0
 crayons==0.4.0
-cryptography==3.4.3
+cryptography==41.0.0
 daphne==2.5.0
 distlib==0.3.0
 distro==1.4.0
@@ -51,12 +51,12 @@ pyOpenSSL==20.0.1
 pyparsing==2.4.6
 pytoml==0.1.21
 pytz==2019.3
-requests==2.22.0
+requests==2.31.0
 retrying==1.3.3
 selenium==3.141.0
 service-identity==18.1.0
 six==1.14.0
-sqlparse==0.3.0
+sqlparse==0.4.4
 static3==0.7.0
 toml==0.10.2
 Twisted==20.3.0
